@@ -1,44 +1,30 @@
 import RevenueChart from "../components/BarChart";
+import Calenda from "../components/Calenda";
 
 const Home = () => {
   return (
     <>
-      {/* 🔧 SỬA 1: size-full → w-full */}
-      <div className="flex flex-col w-full min-w-0">
+      <div className="flex flex-col w-full min-w-0 bg-w">
 
-        <div>
-          <span className="text-black font-bold text-2xl">
-            Dashboard
-          </span>
-        </div>
-
-        {/* 🔧 SỬA 2: thêm flex-wrap */}
         <div className="flex mt-5 gap-4 flex-wrap">
+          <div className="flex-1 min-w-[200px] h-60 bg-white rounded-xl border border-gray-300 border-2 shadow-md"></div>
+          <div className="flex-1 min-w-[200px] h-60 bg-white rounded-xl border border-gray-300 border-2 shadow-md"></div>
+          <div className="flex-1 min-w-[200px] h-60 bg-white rounded-xl border border-gray-300 border-2 shadow-md"></div>
+          <div className="flex-1 min-w-[200px] h-60 bg-white rounded-xl border border-gray-300 border-2 shadow-md"></div>
+        </div>
 
-          {/* 🔧 SỬA 3: w-100 → flex-1 + min-w */}
-          <div className="flex-1 min-w-[220px] h-40 bg-white rounded-xl p-5">
-            <div className="flex flex-col gap-3">
-              <div className="size-10 bg-blue-200 rounded-full"></div>
-              <div>item2</div>
+        <div className="flex gap-5 mt-10">
+          <div className="flex-3 h-100 bg-white rounded-xl border border-gray-300 border-2 shadow-md p-10">
+            <div className="flex justify-between">
+              <div className="text-black font-bold text-xl">Revenue</div>
+              <div className="text-black font-bold text-xl">Revenue</div>
             </div>
+            <RevenueChart/>
           </div>
-
-          <div className="flex-1 min-w-[220px] h-40 bg-white rounded-xl"></div>
-          <div className="flex-1 min-w-[220px] h-40 bg-white rounded-xl"></div>
-          <div className="flex-1 min-w-[220px] h-40 bg-white rounded-xl"></div>
-
+          <div className="flex-1 h-100 bg-white rounded-xl border border-gray-300 border-2 shadow-md p-10">
+            <Calenda/>
+          </div>
         </div>
-
-        {/* Chart */}
-        <div className="bg-white p-5 rounded-lg shadow mt-10">
-          <h2 className="mb-4 text-lg font-semibold">
-            Doanh thu theo tháng
-          </h2>
-
-          <RevenueChart />
-        </div>
-
-        <div>item4</div>
       </div>
     </>
   );

@@ -1,42 +1,67 @@
 import { Home } from "iconsax-react";
 import { NavLink } from "react-router-dom";
-
+import avatar from "../images/avatar.png"
 const Sidebar = () =>{
     return (
         <>
         <div className="flex flex-col pt-5 px-5">
-            <div className="flex flex gap-1 items-center">
-                <div className="h-10 w-10 bg-blue-200 rounded-full"></div>
-                <div className="text-blue-500 text-lg font-bold">Name</div>
+            <div className="flex flex gap-1 items-center gap-5">
+                <div className="h-12 w-12 bg-blue-200 rounded-full"></div>
+                <div className="flex flex-col">
+                <div className="text-black text-xl font-bold">Pivora</div>
+                <div className="text-gray-320 text-sm">Pivora</div>
+                </div>
             </div>
-            <div className="flex flex-col p-5 gap-2 border-t border-gray-300 mt-15">
-                <span className="my-4">MENU</span>
-                <div className="flex flex-col gap-4 ml-2">
+
+            <div className="flex flex-row h-13 w-80 justify-between border bg-gray-200 border-none rounded-xl
+            mt-10 px-3 py-1 items-center
+            ">
+                <div className="w-10 h-10 bg-gray-300 rounded-full items-center">
+                    <img src={avatar} className="w-full rounded-full"/>
+                </div>
+                <div>0306231233@gmail.com</div>
+                <div>item3</div>
+            </div>
+            <div className="flex flex-col p-5 gap-2 border-gray-300 border-t mt-5">
+                <div className="flex flex-col gap-4">
                     <NavLink to="/" className={({isActive})=>
                         `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-blue-100 text-blue-600":"hover:bg-gray-50-100"}`
+                        ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
                     }>
                         <div className="flex items-center gap-3">
                         <Home size="20" color="#000" />
-                        <span className="text-sm">Home</span>
+                        <span className="text-xl">Dashboard</span>
                         </div>
                     </NavLink>
-                    <NavLink to="/product" className={({isActive})=>
-                     `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-blue-100 text-blue-600":"hover:bg-gray-50-100"}`}>
-                    <div className="flex items-center gap-3">
+
+                    <NavLink to="/post" className={({isActive})=>
+                        `block rounded-lg px-4 py-2 transition 
+                        ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
+                    }>
+                        <div className="flex items-center gap-3">
                         <Home size="20" color="#000" />
-                        <span className="text-sm">Product</span></div>
+                        <span className="text-xl">Post</span>
+                        </div>
                     </NavLink>
-                    <div className="flex items-center gap-3"><span>icon</span><span className="text-sm">title</span></div>
-                    <div className="flex items-center gap-3"><span>icon</span><span className="text-sm">title</span></div>
-                </div>
-                <span className="my-4">ORDERS</span>
-                <div className="flex flex-col gap-4 ml-2">
-                    <div className="flex items-center gap-3"><span>icon</span><span className="text-sm">title</span></div>
-                    <div className="flex items-center gap-3"><span>icon</span><span className="text-sm">title</span></div>
-                    <div className="flex items-center gap-3"><span>icon</span><span className="text-sm">title</span></div>
-                    <div className="flex items-center gap-3"><span>icon</span><span className="text-sm">title</span></div>
+                    <NavLink to="/user" className={({isActive})=>
+                        `block rounded-lg px-4 py-2 transition 
+                        ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
+                    }>
+                        <div className="flex items-center gap-3">
+                        <Home size="20" color="#000" />
+                        <span className="text-xl">User</span>
+                        </div>
+                    </NavLink>
+
+                    <NavLink to="/lockout" className={({isActive})=>
+                        `block rounded-lg px-4 py-2 transition 
+                        ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
+                    }>
+                        <div className="flex items-center gap-3">
+                        <Home size="20" color="#000" />
+                        <span className="text-xl">Out</span>
+                        </div>
+                    </NavLink>
                 </div>
             </div>
         </div>

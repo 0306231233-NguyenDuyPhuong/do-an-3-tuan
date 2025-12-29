@@ -1,32 +1,63 @@
-import { Notification, SearchNormal } from "iconsax-react";
-import avarta from "../images/avatar.png"
-const Header = () =>{
+import { EmojiNormal, Notification, SearchNormal, Share } from "iconsax-react";
+const Header = () => {
     return (
         <>
-            <div className="flex justify-between items-center">
-                <div className="w-80 h-11 border rounded-xl border-gray-300
-                p-2 flex
+            <div className="flex flex-col h-20">
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <Notification size="25" color="#000" />
+                        <div className="text-2xl">Darshboard</div>
+                    </div>
+                    <div className="flex items-center">
+                        <div className="w-50 h-13 border rounded-xl border-gray-300
+                p-3 flex shadow-md mr-5 border-r
                 ">
-                    <SearchNormal size="20" color="#000" className="mr-2"/>
-                    <div>
-                        <input type="text" placeholder="Search" className="border-none outline-none" />
+                            <div className="flex">
+                                <SearchNormal size="20" color="#6F45E6" />
+                                <input type="text" placeholder="Search All Mode" className="border-none outline-none" />
+                            </div>
+                        </div>
+
+                        <div className="w-12 h-12 border rounded-md p-3 border-gray-200 shadow-md mr-4">
+                            <Notification size="25" color="#000" />
+                        </div>
+                        <div className="w-12 h-12 border rounded-md p-3 border-gray-200 shadow-md mr-4">
+                            <EmojiNormal size="25" color="#000" />
+                        </div>
+                        <div className="w-12 h-12 border rounded-md p-3 border-gray-200 shadow-md mr-4">
+                            <Share size="25" color="#000" />
+                        </div>
                     </div>
                 </div>
-                <div className="flex items-center">
-                    <Notification size="30" color="#000" className="mr-2"/>
-                    <div className="flex gap-2 items-center">
-                        <div className="size-12 rounded-full p-1 border border-gray-200">
-                            <img src={avarta}
-                            className="w-full rounded-full"
-                            />
+
+
+                <div className="flex justify-between items-center mt-5 border-y border-gray-200 py-5">
+                    <div className="text-md text-green-400 font-bold">Last updated now</div>
+
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex flex-row w-50 h-13 border border-gray-200 shadow-md rounded-md justify-center items-center">
+                            <Notification size="25" color="#000" />
+                            <div>Customize Wiget</div>
                         </div>
-                        <div className="flex flex-col">
-                            <div>item1</div>
-                            <div>item2</div>
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-row w-50 h-13 border border-gray-200 shadow-md rounded-md justify-center items-center">
+                                <Notification size="25" color="#000" />
+                                <div>Customize Wiget</div>
+                            </div>
                         </div>
-                    </div>    
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-row w-50 h-13 bg-[rgb(111,69,230)] border border-gray-200 shadow-md rounded-md justify-center items-center">
+                                <Notification size="25" color="#000" />
+                                <div className="text-white">Customize Wiget</div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
+
         </>
     )
 };
