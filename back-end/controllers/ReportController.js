@@ -2,8 +2,11 @@ import { where } from "sequelize";
 import db from "../models/index.js";
 import { date } from "joi";
 import REPORTSTATUS from "../constants/ReportStatus.js"
+
 const getReport = async (req, res) => {
-  const reportData = await db.Report.findAll();
+  const reportData = await db.Report.findAll({
+      
+    });
   return res.status(200).json({ message: "ok", data:reportData });
 };
 
@@ -40,7 +43,7 @@ const postReport = async (req, res) => {
         description,
         status: REPORTSTATUS.PENDING
     });
-      return res.status(200).json({ 
+      return res.status(201).json({ 
         message: "Insert report success",
         data: reportData 
    });

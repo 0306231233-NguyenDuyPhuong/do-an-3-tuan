@@ -14,7 +14,6 @@ import UpdateLocationRequest from './dtos/requests/location/UpdateLocationReques
 import UpdatePostRequest from './dtos/requests/post/UpdatePostRequest.js';
 import UpdateReportRequest from './dtos/requests/report/UpdateReportRequest.js';
 import UpdateReportActionRequest from './dtos/requests/report-action/UpdateReportActionRequest.js';
-
 import validate  from './middledewares/Validate.js';
 
 const AppRoute = (app) => {

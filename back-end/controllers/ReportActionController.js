@@ -2,13 +2,29 @@ import { where } from "sequelize";
 import db from "../models/index.js";
 
 const getReportAction = async (req, res) => {
-  const reprotActionData = await db.ReportAction.findAll();
+  const reprotActionData = await db.ReportAction.findAll({
+    include:[ 
+      {model: db.User},
+      {model: db.Report, 
+        include:[
+          {
+            model : db.User
+          }
+        ]
+      }
+    ], 
+  });
   return res.status(200).json({ message: "Get report action", data: reprotActionData });
 };
 
 const getReportActionById = async (req, res) => {
   const {id} = req.params;
-  const reportActionData = await db.ReportAction.findByPk(id);
+  const reportActionData = await db.ReportAction.findByPk(id, {
+    include:[ 
+      {model: db.User},
+      {model: db.Report}
+    ], 
+  });
   if(reportActionData){
   return res.status(200).json({ message: "Get report action" , data: reportActionData});
   } else{

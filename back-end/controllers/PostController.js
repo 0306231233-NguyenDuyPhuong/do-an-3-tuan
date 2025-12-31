@@ -4,7 +4,9 @@ import { date, when } from "joi";
 import { where } from "sequelize";
 import ReportStatus from "../constants/ReportStatus.js"
 const getPost = async (req, res) => {
-  const postData = await db.Post.findAll();
+  const postData = await db.Post.findAll({
+    include: db.User,
+  });
   return res.status(200).json({
     message: "Post",
     data: postData
@@ -13,7 +15,9 @@ const getPost = async (req, res) => {
 
 const getPostById = async (req, res) => {
   const {id} = req.params;
-  const postData = await db.Post.findOne({id});
+  const postData = await db.Post.findOne({id, 
+    include: db.User
+  });
   return res.status(200).json({ message: "Get post success" , data:postData});
 };
 
