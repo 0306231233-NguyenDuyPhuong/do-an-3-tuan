@@ -15,11 +15,13 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       email: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: true, 
       },
 
       phone: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+          allowNull: true,
       },
 
       password: {
@@ -48,7 +50,19 @@ module.exports = (sequelize, DataTypes) => {
 
       role: {
         type: DataTypes.STRING
-      }
+      },
+      refresh_token: {
+        type: DataTypes.STRING(500), 
+        allowNull: true,
+      },
+      reset_token: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+      reset_token_expire: {
+        type: DataTypes.BIGINT, // timestamp
+        allowNull: true,
+      },
     },
     {
       tableName: 'users',
