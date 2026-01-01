@@ -1,17 +1,27 @@
+import { stat } from "@babel/core/lib/gensync-utils/fs.js";
 import db from "../models/index.js";
-import PostStatus from "../constants/PostStatus.js";
-import { date, when } from "joi";
 import { Sequelize, where, Op } from "sequelize";
-import ReportStatus from "../constants/ReportStatus.js"
 
 const getPost = async (req, res) => {
   const userId = req.user.userId;
+
+  const blockedUsers = await db.Friendship.findAll({
+    where:{
+      user_id: userId,
+      status: "blocked"
+    },
+    attributes: ["friend_id"]
+  });
+  
+  const blockedIds = blockedUsers.map(item=>item.friend_id);
+
   const postData = await db.Post.findAll({
     where: {
       [Op.or]:[
         {privacy: "public"},
         {privacy: "private", user_id: userId}
       ],
+      userId: {[Sequelize.Op.notIn]: blockedIds}
     },
     attributes: {
       include: [
@@ -41,6 +51,7 @@ const getPost = async (req, res) => {
     ],
     group: ["Post.id", "User.id"]
   });
+
   return res.status(200).json({
     message: "Post",
     data: postData
