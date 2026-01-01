@@ -17,7 +17,7 @@
 
         <!-- Chỉ giữ LoginActivity trước -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".view.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,16 +26,16 @@
         </activity>
 
         <activity
-            android:name=".VerifyActivity"
+            android:name=".view.VerifyActivity"
             android:exported="false" />
         <activity
-            android:name=".SignUpActivity"
+            android:name=".view.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".SetNewPasswordActivity"
+            android:name=".view.SetNewPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".ForgotPasswordActivity"
+            android:name=".view.ForgotPasswordActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
