@@ -18,6 +18,8 @@ import UpdateReportRequest from './dtos/requests/report/UpdateReportRequest.js';
 import UpdateReportActionRequest from './dtos/requests/report-action/UpdateReportActionRequest.js';
 import validate  from './middledewares/Validate.js';
 import verifyToken from "./middledewares/verifyToken.js"
+import isAdmin from './middledewares/IsAdmin.js';
+
 const AppRoute = (app) => {
   //Auth
   router.get('/user/login', AuthController.login)
@@ -28,7 +30,6 @@ const AppRoute = (app) => {
   router.post("/auth/forgot-password",AuthController.forgotPassword)
   router.post("/auth/reset-password",AuthController.resetPassword)
 
-
   //User
   router.get("/user/get-profile",verifyToken,UserController.getProfile)
 
@@ -37,6 +38,7 @@ const AppRoute = (app) => {
   router.get('/locations/:id', LocationController.getLocationById)
   router.post('/locations', 
     validate(InsertLocationRequest),
+    verifyToken,
     AsyncHandler(LocationController.postLocation))
   router.put('/locations/:id', 
     validate(UpdateLocationRequest),
@@ -44,12 +46,16 @@ const AppRoute = (app) => {
   router.delete('/locations/:id', LocationController.deleteLocation)
 
   // Post
-  router.get('/posts', PostController.getPost);
+  router.get('/posts', 
+    verifyToken,
+    PostController.getPost);
   router.get('/posts/:id', PostController.getPostById);
   router.post('/posts', 
     validate(InsertPostRequest),
     AsyncHandler(PostController.postPost));
   router.put('/posts/:id', 
+    verifyToken, 
+    isAdmin,
     validate(UpdatePostRequest),
     AsyncHandler(PostController.putPost));
   router.delete('/posts/:id', PostController.deletePost);

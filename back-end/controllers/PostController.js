@@ -1,11 +1,45 @@
 import db from "../models/index.js";
 import PostStatus from "../constants/PostStatus.js";
 import { date, when } from "joi";
-import { where } from "sequelize";
+import { Sequelize, where, Op } from "sequelize";
 import ReportStatus from "../constants/ReportStatus.js"
+
 const getPost = async (req, res) => {
+  const userId = req.user.userId;
   const postData = await db.Post.findAll({
-    include: db.User,
+    where: {
+      [Op.or]:[
+        {privacy: "public"},
+        {privacy: "private", user_id: userId}
+      ],
+    },
+    attributes: {
+      include: [
+        [
+          Sequelize.fn("COUNT", Sequelize.col("Likes.id")),
+          "LikeCount", 
+        ],
+        [
+          Sequelize.fn("COUNT", Sequelize.col("Comments.id")),
+          "CommentCount"
+        ]
+      ]
+    },
+    include: [
+      {
+        model: db.User,
+        attributes: ["id", "full_name", "avatar"]
+      },
+      {
+        model: db.Like,
+        attributes: []
+      },
+      {
+        model: db.Comment, 
+        attributes: []
+      }
+    ],
+    group: ["Post.id", "User.id"]
   });
   return res.status(200).json({
     message: "Post",
@@ -14,11 +48,12 @@ const getPost = async (req, res) => {
 };
 
 const getPostById = async (req, res) => {
-  const {id} = req.params;
-  const postData = await db.Post.findOne({id, 
+  const { id } = req.params;
+  const postData = await db.Post.findOne({
+    id,
     include: db.User
   });
-  return res.status(200).json({ message: "Get post success" , data:postData});
+  return res.status(200).json({ message: "Get post success", data: postData });
 };
 
 const postPost = async (req, res) => {

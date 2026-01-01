@@ -3,6 +3,7 @@ import {Op} from "sequelize";
 import crypto from "crypto";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
+
 const login = async (req, res) => {
   try {
     const {username,password}=req.body
@@ -55,10 +56,6 @@ const login = async (req, res) => {
         { refresh_token: hashedRefreshToken },
         { where: { id: user.id } }
       );
-
-    
-
-    
      return res.status(200).json({
       message: "Login successful",
       accessToken,
