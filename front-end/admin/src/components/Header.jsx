@@ -3,7 +3,7 @@ const Header = () => {
     return (
         <>
             <div className="flex flex-col h-20">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center px-10">
                     <div className="flex items-center gap-2">
                         <Notification size="25" color="#000" />
                         <div className="text-2xl">Darshboard</div>
@@ -31,7 +31,7 @@ const Header = () => {
                 </div>
 
 
-                <div className="flex justify-between items-center mt-5 border-y border-gray-200 py-5">
+                <div className="flex justify-between items-center mt-5 border-y border-gray-200 py-5 px-10">
                     <div className="text-md text-green-400 font-bold">Last updated now</div>
 
                     <div className="flex items-center justify-between gap-4">
