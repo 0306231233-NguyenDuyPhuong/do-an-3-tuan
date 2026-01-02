@@ -4,12 +4,6 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
-<<<<<<< HEAD
-      email: DataTypes.STRING,
-      password: DataTypes.STRING,
-      full_name: DataTypes.STRING,
-      role: DataTypes.STRING,
-=======
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -72,7 +66,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BIGINT,
         allowNull: true,
       },
->>>>>>> origin/nguyencongman
     },
     {
       tableName: 'users',
