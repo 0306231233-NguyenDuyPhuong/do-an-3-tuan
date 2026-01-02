@@ -3,6 +3,7 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Friendship extends Model {
+<<<<<<< HEAD
     /**
      * Helper method for defining associations.
      */
@@ -10,12 +11,28 @@ module.exports = (sequelize, DataTypes) => {
       // Một Friendship liên kết với user_id (người gửi) và friend_id (người nhận)
       Friendship.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
       Friendship.belongsTo(models.User, { foreignKey: 'friend_id', as: 'friend' });
+=======
+    static associate(models) {
+
+      // người gửi lời mời
+      Friendship.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        as: 'sender'
+      });
+
+      // người nhận lời mời
+      Friendship.belongsTo(models.User, {
+        foreignKey: 'friend_id',
+        as: 'receiver'
+      });
+>>>>>>> origin/nguyencongman
     }
   }
 
   Friendship.init({
     user_id: {
       type: DataTypes.INTEGER,
+<<<<<<< HEAD
       allowNull: false,
       field: 'user_id'
     },
@@ -29,14 +46,31 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'pending', // ví dụ: pending, accepted, blocked
       field: 'status'
+=======
+      allowNull: false
+    },
+    friend_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    status: {
+      type: DataTypes.INTEGER, // ⚠️ nên là INTEGER
+      allowNull: false
+>>>>>>> origin/nguyencongman
     }
   }, {
     sequelize,
     modelName: 'Friendship',
+<<<<<<< HEAD
     tableName: 'friendships', // đảm bảo đúng tên bảng trong database
     timestamps: true,         // có createdAt / updatedAt
     createdAt: 'created_at',
     updatedAt: false
+=======
+    tableName: 'friendships',
+    underscored: true,
+    timestamps: false
+>>>>>>> origin/nguyencongman
   });
 
   return Friendship;

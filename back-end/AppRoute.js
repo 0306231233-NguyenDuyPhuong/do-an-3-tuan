@@ -19,6 +19,7 @@ import UpdateReportActionRequest from './dtos/requests/report-action/UpdateRepor
 import validate  from './middledewares/Validate.js';
 import verifyToken from "./middledewares/verifyToken.js"
 import isAdmin from './middledewares/IsAdmin.js';
+import FriendController from './controllers/FriendController.js';
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser)
@@ -33,6 +34,18 @@ const AppRoute = (app) => {
 
   //User
   router.get("/user/get-profile",verifyToken,UserController.getProfile)
+  router.get("/users/:id",verifyToken,UserController.getUserById)
+  router.get("/users",verifyToken,UserController.getUsers)
+
+
+    //Friend
+  router.post("/friends/requests",verifyToken,FriendController.sendFriendRequest) 
+  router.get("/friends/requests",verifyToken,FriendController.getFriendRequests)
+   router.patch("/friends/requests/accept",verifyToken,FriendController.acceptFriendRequest) 
+   router.patch("/friends/requests/reject", verifyToken, FriendController.rejectFriendRequest);
+    router.get("/friends", verifyToken, FriendController.getFriends);
+     router.post("/friends/requests/cancel", verifyToken, FriendController.cancelFriendRequest);
+   router.post("/friends/unfriend", verifyToken, FriendController.unFriend);
 
   //Location
   router.get('/locations', LocationController.getLocation)
