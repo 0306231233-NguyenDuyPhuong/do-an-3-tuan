@@ -20,6 +20,8 @@ const login = async (req, res) => {
         ]
       }
     });
+
+    console.log(">>>>>User ", user)
     // if not found user 
       if (!user || !(await argon2.verify(user.password, password))) {
       return res.status(401).json({
@@ -323,6 +325,9 @@ const resetPassword = async (req,res)=>{
   return res.status(200).json({ message: "Password updated successfully" });
 }
 
+const getUser = async(req,res)=>{
+  
+}
 
 export default {
     login,
@@ -330,6 +335,6 @@ export default {
     refresh,
     logout,
     forgotPassword,
-    resetPassword
-
+    resetPassword,
+    getUser
 }
