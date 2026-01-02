@@ -21,6 +21,7 @@ import verifyToken from "./middledewares/verifyToken.js"
 import isAdmin from './middledewares/IsAdmin.js';
 
 const AppRoute = (app) => {
+  router.get("/user", AuthController.getUser)
   //Auth
   router.get('/user/login', AuthController.login)
   router.post('/auth/login', AuthController.login)
@@ -46,9 +47,13 @@ const AppRoute = (app) => {
   router.delete('/locations/:id', LocationController.deleteLocation)
 
   // Post
-  router.get('/posts', 
+  router.get('/posts/users', 
     verifyToken,
-    PostController.getPost);
+    PostController.getPostUser);
+  router.get('/posts/admin', 
+    verifyToken,
+    PostController.getPostAdmin
+  )
   router.get('/posts/:id', PostController.getPostById);
   router.post('/posts', 
     validate(InsertPostRequest),
