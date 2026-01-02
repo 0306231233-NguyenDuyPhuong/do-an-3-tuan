@@ -15,8 +15,12 @@ const handleLogin = async () => {
     });
 
     localStorage.setItem("accessToken", res.data.accessToken);
-    console.log(">>>>>>>>>>>>token :",  res.data.accessToken)
-    navigate("/");
+    console.log(res.data.user)
+    if(res.data.user.role == "admin"){
+      navigate("/");
+    } else{
+      alert("Tài khoản không có quyền truy cập")
+    }
   } catch (error) {
     console.error("LOGIN ERROR:", error.response?.data);
     alert("Sai tài khoản hoặc mật khẩu");

@@ -3,85 +3,64 @@ import db from "../models/index.js";
 import { Sequelize, where, Op } from "sequelize";
 
 const getPostUser = async (req, res) => {
-  const userId = req.user.userId;
-<<<<<<< HEAD
-
-  const blockedUsers = await db.Friendship.findAll({
-    where:{
-      user_id: userId,
-      status: "blocked"
-    },
-    attributes: ["friend_id"]
-  });
-  
-  const blockedIds = blockedUsers.map(item=>item.friend_id);
-
-  const postData = await db.Post.findAll({
-=======
-  const page = Number(req.query.page) ||1;
+  const page = Number(req.query.page) || 1;
   const limit = 10;
-  const offset = (page-1)*limit;
-
+  const offset = (page - 1) * limit;
+  const userId = req.user.userId;
+  const blockedIds = userId.map((item)=>item.id);
   const [postData, postTotal] = await Promise.all([
     db.Post.findAll({
-    subQuery: false,
-    limit, 
-    offset,
-    order: [['created_at', 'DESC']],
->>>>>>> 74ecf401e46f34561eafae719a8d74d6a1e8a578
-    where: {
-      [Op.or]:[
-        {privacy: "public"},
-        {privacy: "private", user_id: userId}
-      ],
-      userId: {[Sequelize.Op.notIn]: blockedIds}
-    },
-    attributes: {
-      include: [
-        [
-          Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
-          "LikeCount", 
+      subQuery: false,
+      limit,
+      offset,
+      order: [['created_at', 'DESC']],
+      where: {
+        [Op.or]: [
+          { privacy: "public" },
+          { privacy: "private", user_id: userId }
         ],
-        [
-          Sequelize.fn("COUNT",  Sequelize.fn("DISTINCT",Sequelize.col("Comments.id"))),
-          "CommentCount"
+        userId: { [Sequelize.Op.notIn]: blockedIds }
+      },
+      attributes: {
+        include: [
+          [
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
+            "LikeCount",
+          ],
+          [
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
+            "CommentCount"
+          ]
         ]
-      ]
-    },
-    include: [
-      {
-        model: db.User,
-        attributes: ["id", "full_name", "avatar"]
       },
-      {
-        model: db.Like,
-        attributes: []
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "full_name", "avatar"]
+        },
+        {
+          model: db.Like,
+          attributes: []
+        },
+        {
+          model: db.Comment,
+          attributes: []
+        },
+        {
+          model: db.PostMedia,
+        }
+      ],
+      group: ["Post.id", "User.id"]
+    }),
+    db.Post.count({
+      where: {
+        [Op.or]: [
+          { privacy: "public" },
+          { privacy: "private", user_id: userId },
+        ],
       },
-      {
-        model: db.Comment, 
-        attributes: []
-      }, 
-      {
-        model: db.PostMedia,
-      }
-    ],
-    group: ["Post.id", "User.id"]
-<<<<<<< HEAD
-  });
-
-=======
-  }),
-  db.Post.count({
-  where: {
-    [Op.or]: [
-      { privacy: "public" },
-      { privacy: "private", user_id: userId },
-    ],
-  },
-})
-
+    })
   ])
->>>>>>> 74ecf401e46f34561eafae719a8d74d6a1e8a578
   return res.status(200).json({
     message: "Post",
     total: postTotal,
@@ -91,55 +70,58 @@ const getPostUser = async (req, res) => {
   });
 };
 
-const getPostAdmin = async(req,res)=>{
-  const page = Number(req.query.page)||1;
+
+const getPostAdmin = async (req, res) => {
+  const page = Number(req.query.page) || 1;
   const limit = 10;
-  const offset = (page-1)*limit;
+  const offset = (page - 1) * limit;
 
   const [postData, totalPost] = await Promise.all([
     db.Post.findAll({
       subQuery: false,
       limit,
       offset,
-    attributes: {
-      include: [
-        [
-          Sequelize.fn("COUNT",Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
-          "LikeCount", 
-        ],
-        [
-          Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
-          "CommentCount"
+      attributes: {
+        include: [
+          [
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
+            "LikeCount",
+          ],
+          [
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
+            "CommentCount"
+          ]
         ]
-      ]
-    },
-    include: [
-      {
-        model: db.User,
-        attributes: ["id", "full_name", "avatar"]
       },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "full_name", "avatar"]
+        },
+        {
+          model: db.Like,
+          attributes: []
+        },
+        {
+          model: db.Comment,
+          attributes: []
+        },
+        {
+          model: db.PostMedia
+        }
+      ],
+      group: ["Post.id", "User.id"]
+    }),
+    db.Post.count(
       {
-        model: db.Like,
-        attributes: []
-      },
-      {
-        model: db.Comment, 
-        attributes: []
-      }, 
-      {
-        model: db.PostMedia
+        distinct: true,
+        col: "id",
       }
-    ],
-    group: ["Post.id", "User.id"]
-  }),
-  db.Post.count(
-    {distinct: true,
-    col: "id",}
-  )
+    )
   ])
 
   return res.status(200).json({
-    message:"Get post success",
+    message: "Get post success",
     total: totalPost,
     limit,
     page,

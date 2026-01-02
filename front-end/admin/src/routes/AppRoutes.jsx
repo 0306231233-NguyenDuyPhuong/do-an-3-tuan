@@ -7,13 +7,13 @@ import Post from "../pages/Post";
 import Comment from "../pages/Comment";
 import Report from "../pages/Report";
 import Logout from "../pages/Logout";
+import PostDetail from "../pages/PostDetail";
 import ProtectedRoute from "./ProtectedRoute";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-
       <Route
         path="/"
         element={
@@ -23,7 +23,8 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Home />} />
-        <Route path="post" element={<Post />} />
+        <Route path="post" element = {<Post/>}/>
+        <Route path="post/:postId" element={< PostDetail/>} />
         <Route path="user" element={<User />} />
         <Route path="comment" element={<Comment />} />
         <Route path="report" element={<Report />} />
