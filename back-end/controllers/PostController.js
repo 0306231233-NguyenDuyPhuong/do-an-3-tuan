@@ -87,9 +87,12 @@ const getPostAdmin = async (req, res) => {
             "LikeCount",
           ],
           [
-            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comment.id"))),
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
             "CommentCount"
-          ]
+          ],
+         /* [
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Shares.id")))
+          ]*/
         ]
       },
       include: [
@@ -105,6 +108,10 @@ const getPostAdmin = async (req, res) => {
           model: db.Comment,
           attributes: [],
         },
+        /*{
+          model: db.Share,
+          attributes:[]
+        },*/
         {
           model: db.PostMedia,
           separate: true
@@ -141,7 +148,7 @@ const getPostById = async (req, res) => {
           Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
           "LikeCount"
         ],
-[
+        [
           Sequelize.fn(
             "COUNT",
             Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))
@@ -203,7 +210,7 @@ const postPost = async (req, res) => {
   });
 };
 
-const putPost = async (req, res) => {
+const putPostUser = async (req, res) => {
   const { user_id, location_id } = req.body;
   const { id } = req.params;
   const userCheck = await db.User.findOne({
@@ -235,6 +242,20 @@ const putPost = async (req, res) => {
   }
 };
 
+const putPostAdmin = async(req,res)=>{
+  const {id} = req.params;
+  const role = req.user.role;
+  if(role !== "admin"){
+    return res.status(400).json({
+      message: 'User not admin'
+    })
+  }
+    await db.Post.update(req.body, { where: { id } });
+  return res.status(200).json({
+    message: "Update post success"
+  })
+}
+
 const deletePost = async (req, res) => {
   const { id } = req.params;
   const postData = await db.Post.findByPk(id);
@@ -255,6 +276,7 @@ export default {
   getPostAdmin,
   getPostById,
   postPost,
-  putPost,
+  putPostUser,
+  putPostAdmin,
   deletePost,
 };
