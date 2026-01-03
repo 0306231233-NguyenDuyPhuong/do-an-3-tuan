@@ -8,6 +8,15 @@ const fetchPostAdmin = (page)=>{
     })
 }
 
+const fetchPostById = (id) =>{
+    return axios.get(`posts/${id}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    })
+}
+
 export {
-    fetchPostAdmin
+    fetchPostAdmin,
+    fetchPostById
 }

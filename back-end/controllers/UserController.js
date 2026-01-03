@@ -10,7 +10,7 @@ const login = async (req, res) => {
       data
     });
   } catch (error) {
-    console.error('❌ MYSQL ERROR:', error);   // 👈 CỰC KỲ QUAN TRỌNG
+    console.error('MYSQL ERROR:', error);  
     return res.status(500).json({
       error: error.message
     });

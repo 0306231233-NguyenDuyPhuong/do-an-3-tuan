@@ -7,7 +7,7 @@ const getPostUser = async (req, res) => {
   const limit = 10;
   const offset = (page - 1) * limit;
   const userId = req.user.userId;
-  const blockedIds = userId.map((item)=>item.id);
+  //const blockedIds = userId.map((item)=>item.id);
   const [postData, postTotal] = await Promise.all([
     db.Post.findAll({
       subQuery: false,
@@ -19,7 +19,7 @@ const getPostUser = async (req, res) => {
           { privacy: "public" },
           { privacy: "private", user_id: userId }
         ],
-        userId: { [Sequelize.Op.notIn]: blockedIds }
+        // userId: { [Sequelize.Op.notIn]: blockedIds }
       },
       attributes: {
         include: [
@@ -70,7 +70,6 @@ const getPostUser = async (req, res) => {
   });
 };
 
-
 const getPostAdmin = async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = 10;
@@ -88,7 +87,7 @@ const getPostAdmin = async (req, res) => {
             "LikeCount",
           ],
           [
-            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comment.id"))),
             "CommentCount"
           ]
         ]
@@ -100,14 +99,15 @@ const getPostAdmin = async (req, res) => {
         },
         {
           model: db.Like,
-          attributes: []
+          attributes: [],
         },
         {
           model: db.Comment,
-          attributes: []
+          attributes: [],
         },
         {
-          model: db.PostMedia
+          model: db.PostMedia,
+          separate: true
         }
       ],
       group: ["Post.id", "User.id"]
@@ -132,10 +132,50 @@ const getPostAdmin = async (req, res) => {
 const getPostById = async (req, res) => {
   const { id } = req.params;
   const postData = await db.Post.findOne({
-    id,
-    include: db.User
+    where: {
+      id
+    },
+    attributes: {
+      include: [
+        [
+          Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
+          "LikeCount"
+        ],
+[
+          Sequelize.fn(
+            "COUNT",
+            Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))
+          ),
+          "CommentCount"
+        ]
+      ]
+    },
+    include: [
+      {
+        model: db.User,
+        attributes: ["id", "full_name", "avatar", "status"]
+      },
+      {
+        model: db.Location
+      },
+      {
+        model: db.PostMedia,
+      },
+      {
+        model: db.Like,
+        attributes: []
+      },
+      {
+        model: db.Comment,
+        attributes: []
+      }
+    ],
+    group: ["Post.id", "User.id", "Location.id", "PostMedia.id"]
   });
-  return res.status(200).json({ message: "Get post success", data: postData });
+  return res.status(200).json({
+    message: "Get post success",
+    data: postData
+  });
 };
 
 const postPost = async (req, res) => {
