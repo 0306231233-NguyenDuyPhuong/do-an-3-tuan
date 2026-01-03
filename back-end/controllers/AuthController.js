@@ -330,7 +330,7 @@ const getUser = async(req,res)=>{
 }
 
 export default {
-    login,
+    login,  
     register,
     refresh,
     logout,

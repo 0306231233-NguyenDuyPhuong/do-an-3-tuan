@@ -1,5 +1,6 @@
 import db from "../models/index"
 import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
 
 const login = async (req, res) => {
   try {
@@ -34,7 +35,6 @@ const getProfile = async (req, res) => {
   }
 };
 
-import { Op } from "sequelize";
 
 const getUsers = async (req, res) => {
   try {

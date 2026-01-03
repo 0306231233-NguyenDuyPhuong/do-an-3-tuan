@@ -135,6 +135,43 @@ const acceptFriendRequest = async (req, res) => {
   }
 };
 
+const blockFriendRequest = async (req, res) => {
+  try {
+    const { from } = req.body;
+    const myId = req.user.userId;
+
+    if (!from)
+      return res.status(400).json({
+        message: "Sender user id is required",
+      });
+
+    if (Number(from) === Number(myId))
+      return res.status(400).json({ message: "Invalid friend request" });
+
+    const friendship = await db.Friendship.findOne({
+      where: {
+        user_id: from,
+        friend_id: myId,
+        status: 1,
+      },
+    });
+
+    if (!friendship)
+      return res.status(404).json({
+        message: "Friend request not found",
+      });
+
+    friendship.status = 4;
+    await friendship.save();
+
+    return res
+      .status(200)
+      .json({ message: "Friend request block successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 const rejectFriendRequest = async (req, res) => {
   try {
     const { from } = req.body;
@@ -286,4 +323,5 @@ export default {
   cancelFriendRequest,
   getFriends,
   unFriend,
+  blockFriendRequest
 };

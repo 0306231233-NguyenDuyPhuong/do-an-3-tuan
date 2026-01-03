@@ -46,6 +46,8 @@ const AppRoute = (app) => {
     router.get("/friends", verifyToken, FriendController.getFriends);
      router.post("/friends/requests/cancel", verifyToken, FriendController.cancelFriendRequest);
    router.post("/friends/unfriend", verifyToken, FriendController.unFriend);
+      router.patch("/friends/requests/block", verifyToken, FriendController.blockFriendRequest);
+
 
   //Location
   router.get('/locations', LocationController.getLocation)
