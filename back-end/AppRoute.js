@@ -1,5 +1,8 @@
 import express from 'express';
 const router = express.Router();
+import ImageController from './controllers/ImageController.js';
+import ValidateImageExists from "./middledewares/ValidateImageExists.js"
+import uploadImage from "./middledewares/ImageUpload.js"
 import UserController from './controllers/UserController.js';
 import AuthController from './controllers/AuthController.js';
 import LocationController from './controllers/LocationController.js';
@@ -12,6 +15,7 @@ import InsertLocationRequest from './dtos/requests/location/InsertLocatioinReque
 import InsertPostRequest from './dtos/requests/post/InsertPostRequest.js';
 import InsertReportActionRequest from './dtos/requests/report-action/InsertReportActionRequest.js';
 import InsertReportRequest from './dtos/requests/report/InsertReportRequest.js';
+import InsertPostMediaRequest from './dtos/requests/post-media/InsertPostMediaRequest.js';
 import UpdateLocationRequest from './dtos/requests/location/UpdateLocationRequest.js';
 import UpdatePostRequest from './dtos/requests/post/UpdatePostRequest.js';
 import UpdateReportRequest from './dtos/requests/report/UpdateReportRequest.js';
@@ -20,6 +24,7 @@ import validate  from './middledewares/Validate.js';
 import verifyToken from "./middledewares/verifyToken.js"
 import isAdmin from './middledewares/IsAdmin.js';
 import FriendController from './controllers/FriendController.js';
+import validateImageExists from './middledewares/ValidateImageExists.js';
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser)
@@ -67,7 +72,9 @@ const AppRoute = (app) => {
     verifyToken,
     PostController.getPostAdmin
   )
-  router.get('/posts/:id', PostController.getPostById);
+  router.get('/posts/:id', 
+    verifyToken,
+    PostController.getPostById);
   router.post('/posts', 
     validate(InsertPostRequest),
     AsyncHandler(PostController.postPost));
@@ -81,7 +88,10 @@ const AppRoute = (app) => {
   // Post Media
   router.get('/post-medias', PostMediaController.getPostMedia);
   router.get('/post-medias/:id', PostMediaController.getPostMediaById);
-  router.post('/post-medias', PostMediaController.postPostMedia);
+  router.post('/post-medias', 
+    validate(InsertPostMediaRequest),
+    validateImageExists,
+    AsyncHandler(PostMediaController.postPostMedia));
   router.delete('/post-medias/:id', PostMediaController.deletePostMedia);
 
   // Report
@@ -104,6 +114,15 @@ const AppRoute = (app) => {
   router.put('/report-actions/:id', 
     validate(UpdateReportActionRequest),
     AsyncHandler(ReportActionController.putReportAction));
+
+  // Upload image
+  router.get('/images/:fileName', 
+    AsyncHandler(ImageController.viewImage)
+  )
+  router.post('/images/upload', 
+    uploadImage.array('images', 5),
+    AsyncHandler(ImageController.uploadImages)
+  )
   app.use("/api/", router)
 
   

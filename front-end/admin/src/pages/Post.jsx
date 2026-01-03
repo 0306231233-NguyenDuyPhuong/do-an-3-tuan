@@ -35,12 +35,14 @@ const Post = () =>{
                             <td className="h-15 border border-gray-200 text-center text-2xl">{item.id}</td>
                             <td className="flex items-center justify-center h-15 border border-gray-200 text-2xl">
                                 <div className="size-12 bg-amber-400 rounded-full">
-                                    {item.User.avatar}
+                                    <img 
+                                    className="size-12 rounded-full"
+                                    src={`http://localhost:8989/api/images/${item.User.avatar}`} alt="" />
                                 </div>
                                 </td>
                             <td className="h-15 border border-gray-200 text-center text-2xl">{item.User.full_name}</td>
                             <td className= "h-15 p-2 border border-gray-200 text-center">
-                                <div className="h-10 w-30">
+                                <div className="text-center h-10 w-30">
                                 <div className={item.status === "delete"?"border rounded-2xl bg-red-500 text-center font-bold text-white":"border rounded-2xl bg-green-600 text-center font-bold text-white"}>
                                 {item.status}
                                 </div>

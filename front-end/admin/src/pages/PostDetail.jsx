@@ -1,37 +1,97 @@
-const postDetail = () =>{
-    return( <>
-        <div className="flex flex-col">
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { fetchPostById } from "../services/PostService";
+import { ArrowCircleLeft, CommandSquare, Like, Like1 } from "iconsax-react";
+
+const PostDetail = () => {
+  const { postId } = useParams();
+  const [postDetailData, setPostDetailData] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (postId) {
+      // eslint-disable-next-line react-hooks/immutability
+      getPostDetail(postId);
+    }
+  }, [postId]);
+
+  const getPostDetail = async (id) => {
+    try {
+      const res = await fetchPostById(id);
+      if (res?.data) {
+        setPostDetailData(res.data);
+        console.log("Post detail:", res.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (!postDetailData) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="flex flex-col gap-5">
+       <ArrowCircleLeft size="40" color="#6F45E6" onClick={()=>navigate(-1)}/>
+      <h2 className="font-bold text-2xl">
+        {postDetailData.title}
+      </h2>
+      <div className="flex gap-5">
+        <div className="flex-2 min-h-[100px] min-w-[200px] bg-white border border-gray-200 rounded-2xl shadow-md p-10">
+          <div className="flex gap-5 items-center justify-between">
+            <div className="flex items-center gap-5">
+                <div className="size-20 border border-b-gray-100 rounded-full flex justify-center items-center">
+                <img
+                className="size-20 border rounded-full border-b-gray-100"
+                src={`http://localhost:8989/api/images/${postDetailData.User.avatar}`}
+                />
+            </div>
             <div>
-                <span className="font-bold text-2xl">back</span>
+                <span className="text-2xl font-bold">
+                    {postDetailData.User?.full_name}
+                </span>
             </div>
-            <div className="flex gap-5">
-                <div className="flex-2 h-200 w- min-[200] bg-gray-100 border border-gray-300 rounded-2xl shadow-md">
-                    <div className="flex flex-col p-10">
-                        <div className="flex gap-5 items-center">
-                        <div className="size-20 border rounded-full">
-                            <div className="flex justify-center items-center p-2">
-                                avatar
-                            </div>
-                        </div>
-                        <div>name user</div>
-                        </div>
+            </div>
+            <div className="mt-5 flex justify-between items-center">
+            <div className={postDetailData.status==='delete'?"flex justify-center items-center rounded-2xl h-10 w-25  bg-red-500":"flex justify-center items-center rounded-2xl h-10 w-25  bg-grey-500"}>
+                <select name="" id="status"
+                value={postDetailData.status}
+                className="text-white font-bold">
+                    <option value="delete" className="text-xl text-red-500 ">delete</option>
+                    <option value="approved" className="text-xl text-green-500">approved</option>
+                </select>
+            </div>
+          </div>
+          </div>
 
-                        <div>item5</div>
-                        <div className="flex justify-between">
-                            <div>title</div>
-                            <div>action</div>
-                        </div>
-                        <div className="flex-1 h-min[200] border">image list</div>
-                        <div className="flex gap-5">
-                            <div>like</div>
-                            <div>item</div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex-1 h-200 w- min-[200] bg-gray-100 border border-gray-300 rounded-2xl shadow-md">item1</div>
-            </div>
+          
+
+        <div className="my-5">
+            <span className="text-xl font-bold text-gray-500">{postDetailData.content}</span>
         </div>
-    </>)
-}
+          <div className="min-h-[100px] grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {postDetailData.PostMedia.map((img)=>(
+                <img 
+                className="flex flex-1"
+            src={`http://localhost:8989/api/images/${img.media_url}`}/>
+            ))}
+            
+          </div>
 
-export default postDetail;
+          <div className="flex justify-between mt-5 flex gap-5 mt-20">
+            <Like1 size="30" color="#000"/>
+            <CommandSquare size="30" color="#000"/>
+            <CommandSquare size="30" color="#000"/>
+          </div>
+        </div>
+
+        <div className="flex-1 min-h-[100px] min-w-[200px] bg-white border border-gray-200 rounded-2xl shadow-md p-10">
+          item1
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PostDetail;

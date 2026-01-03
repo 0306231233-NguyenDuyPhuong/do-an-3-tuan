@@ -19,7 +19,8 @@ const handleLogin = async () => {
     if(res.data.user.role == "admin"){
       navigate("/");
     } else{
-      alert("Tài khoản không có quyền truy cập")
+      alert("Tài khoản không có quyền truy cập");
+      navigate('/login')
     }
   } catch (error) {
     console.error("LOGIN ERROR:", error.response?.data);
