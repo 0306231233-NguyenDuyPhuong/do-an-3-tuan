@@ -52,5 +52,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("io.coil-kt:coil:2.6.0")
+    implementation("com.google.android.material:material:1.11.0")
 
 }

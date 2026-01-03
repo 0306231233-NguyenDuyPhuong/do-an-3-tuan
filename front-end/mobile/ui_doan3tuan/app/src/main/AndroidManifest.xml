@@ -15,23 +15,22 @@
         android:theme="@style/Theme.Ui_doan3tuan"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".view.HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.MessageActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.message.MessageFragment"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".view.TaoBaiDangActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.BangTinActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
