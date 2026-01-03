@@ -16,7 +16,18 @@ const fetchPostById = (id) =>{
     })
 }
 
+const updateStatusPost = (id, newStatus) =>{
+    return axios.put(`posts/${id}`,
+        {status: newStatus},
+        {
+            headers:{
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+        }
+    })
+}
 export {
     fetchPostAdmin,
-    fetchPostById
+    fetchPostById,
+    updateStatusPost
 }

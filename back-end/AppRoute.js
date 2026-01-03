@@ -20,6 +20,7 @@ import UpdateLocationRequest from './dtos/requests/location/UpdateLocationReques
 import UpdatePostRequest from './dtos/requests/post/UpdatePostRequest.js';
 import UpdateReportRequest from './dtos/requests/report/UpdateReportRequest.js';
 import UpdateReportActionRequest from './dtos/requests/report-action/UpdateReportActionRequest.js';
+import UpdatePostAdminRequest from './dtos/requests/post/UpdatePostAdminRequest.js';
 import validate  from './middledewares/Validate.js';
 import verifyToken from "./middledewares/verifyToken.js"
 import isAdmin from './middledewares/IsAdmin.js';
@@ -78,11 +79,14 @@ const AppRoute = (app) => {
   router.post('/posts', 
     validate(InsertPostRequest),
     AsyncHandler(PostController.postPost));
-  router.put('/posts/:id', 
+  router.put('/posts/users/:id', 
     verifyToken, 
-    isAdmin,
     validate(UpdatePostRequest),
-    AsyncHandler(PostController.putPost));
+    AsyncHandler(PostController.putPostUser));
+  router.put('/posts/admin/:id', 
+    verifyToken, 
+    validate(UpdatePostAdminRequest),
+    AsyncHandler(PostController.putPostAdmin));
   router.delete('/posts/:id', PostController.deletePost);
 
   // Post Media
