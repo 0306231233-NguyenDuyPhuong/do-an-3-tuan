@@ -15,16 +15,15 @@ const getPostUser = async (req, res) => {
       offset,
       order: [['created_at', 'DESC']],
       where: {
-        [Op.and]:[
-          {status: "approved"},
+        [Op.and]: [
+          { status: "approved" },
           {
             [Op.or]: [
-            { privacy: "private", user_id: userId },
-
-        ]
+              { privacy: "private", user_id: userId },
+            ]
           }
         ]
-        
+
         // userId: { [Sequelize.Op.notIn]: blockedIds }
       },
       attributes: {
@@ -60,14 +59,16 @@ const getPostUser = async (req, res) => {
     }),
     db.Post.count({
       where: {
-        [Op.and]:[
-          {status: "approved"},
-          {[Op.or]: [
-          { privacy: "public" },
-          { privacy: "private", user_id: userId },
-        ]}
+        [Op.and]: [
+          { status: "approved" },
+          {
+            [Op.or]: [
+              { privacy: "public" },
+              { privacy: "private", user_id: userId },
+            ]
+          }
         ]
-        
+
       },
     })
   ])
@@ -100,9 +101,9 @@ const getPostAdmin = async (req, res) => {
             Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
             "CommentCount"
           ],
-         /* [
-            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Shares.id")))
-          ]*/
+          /* [
+             Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Shares.id")))
+           ]*/
         ]
       },
       include: [
@@ -252,15 +253,15 @@ const putPostUser = async (req, res) => {
   }
 };
 
-const putPostAdmin = async(req,res)=>{
-  const {id} = req.params;
+const putPostAdmin = async (req, res) => {
+  const { id } = req.params;
   const role = req.user.role;
-  if(role !== "admin"){
+  if (role !== "admin") {
     return res.status(400).json({
       message: 'User not admin'
     })
   }
-    await db.Post.update(req.body, { where: { id } });
+  await db.Post.update(req.body, { where: { id } });
   return res.status(200).json({
     message: "Update post success"
   })

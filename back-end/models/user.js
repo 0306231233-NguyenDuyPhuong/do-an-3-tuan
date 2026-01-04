@@ -74,22 +74,24 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  // ================= ASSOCIATIONS =================
   User.associate = (models) => {
 
-    // User gửi lời mời kết bạn
-    User.hasMany(models.Friendship, {
-      foreignKey: 'user_id',
-      as: 'sentFriendships'
-    });
+  // ===== POSTS =====
+  User.hasMany(models.Post, {
+    foreignKey: 'user_id'
+  });
 
-    // User nhận lời mời kết bạn
-    User.hasMany(models.Friendship, {
-      foreignKey: 'friend_id',
-      as: 'receivedFriendships'
-    });
-  };
-  // =================================================
+  // ===== FRIENDSHIPS =====
+  User.hasMany(models.Friendship, {
+    foreignKey: 'user_id',
+    as: 'sentFriendships'
+  });
+
+  User.hasMany(models.Friendship, {
+    foreignKey: 'friend_id',
+    as: 'receivedFriendships'
+  });
+};
 
   return User;
 };
