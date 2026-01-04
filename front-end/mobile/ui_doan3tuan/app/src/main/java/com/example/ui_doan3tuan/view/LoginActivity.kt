@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         TokenManager.init(applicationContext)
         if (TokenManager.isLoggedIn()) {
-            navigateToHome()
+//            navigateToHome()
             return
         }
         setupViews()
@@ -127,7 +127,7 @@ class LoginActivity : AppCompatActivity() {
             is LoginState.Success -> {
                 showLoading(false)
                 showSuccessMessage(state.authResponse.message)
-                navigateToHome()
+//                navigateToHome()
             }
 
             // 4. Lỗi
@@ -177,11 +177,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigateToHome() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
+//    private fun navigateToHome() {
+//        val intent = Intent(this, HomeActivity::class.java)
+//        startActivity(intent)
+//        finish()
+//    }
 
     private fun navigateToForgotPassword() {
         val intent = Intent(this, ForgotPasswordActivity::class.java)

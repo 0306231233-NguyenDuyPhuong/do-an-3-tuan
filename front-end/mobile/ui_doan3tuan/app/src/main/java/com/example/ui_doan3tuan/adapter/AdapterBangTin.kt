@@ -30,16 +30,16 @@ class AdapterBangTin(private var list: List<PostModel>): RecyclerView.Adapter<Ad
     }
 
     class BangTinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var txtTen = itemView.findViewById<TextView>(R.id.txtName_Home)
-        var txtNoiDung = itemView.findViewById<TextView>(R.id.txtConten_Home)
-        var txtThoiGian = itemView.findViewById<TextView>(R.id.txtHour_Home)
-        var txtSoLuongThich = itemView.findViewById<TextView>(R.id.txtSoLuongTim_Home)
-        var txtSoLuongBinhLuan = itemView.findViewById<TextView>(R.id.txtSLBinhLuan_Home)
-        var txtSoLuongChiaSe = itemView.findViewById<TextView>(R.id.txtSoLuongChiaSe_Home)
-        var imgThich = itemView.findViewById<ImageView>(R.id.imgTim_Home)
-        var imgBinhLuan = itemView.findViewById<ImageView>(R.id.imgBinhLuan_Home)
-        var imgChiaSe = itemView.findViewById<ImageView>(R.id.imgChiaSe_Home)
-        var imgHienBaiDang = itemView.findViewById<ImageView>(R.id.imgItem_Home)
+        var txtTen = itemView.findViewById<TextView>(R.id.txtName_BaiDang)
+        var txtNoiDung = itemView.findViewById<TextView>(R.id.txtConten_BaiDang)
+        var txtThoiGian = itemView.findViewById<TextView>(R.id.txtHour_BaiDang)
+        var txtSoLuongThich = itemView.findViewById<TextView>(R.id.txtSoLuongTim_BaiDang)
+        var txtSoLuongBinhLuan = itemView.findViewById<TextView>(R.id.txtSLBinhLuan_BaiDang)
+        var txtSoLuongChiaSe = itemView.findViewById<TextView>(R.id.txtSoLuongChiaSe_BaiDang)
+        var imgThich = itemView.findViewById<ImageView>(R.id.imgTim_BaiDang)
+        var imgBinhLuan = itemView.findViewById<ImageView>(R.id.imgBinhLuan_BaiDang)
+        var imgChiaSe = itemView.findViewById<ImageView>(R.id.imgChiaSe)
+        var imgHienBaiDang = itemView.findViewById<ImageView>(R.id.imgBaiDang)
         var imgDaiDien = itemView.findViewById<ImageView>(R.id.imgAnhDaiDien_Home)
 
 
