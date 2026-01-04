@@ -1,19 +1,26 @@
-// server.js
-import express from 'express'
-import dotenv from 'dotenv'
-import AppRoute from './AppRoute.js'
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import AppRoute from "./AppRoute.js";
 
-const app = express()
+dotenv.config();
 
-dotenv.config(); 
-app.use(express.json())
-express.urlencoded({extended:true})
+const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
-const port = process.env.PORT || 3000; 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-AppRoute(app)
+AppRoute(app);
 
-app.listen(8989, "0.0.0.0", () => {
-  console.log(`Server run at ${port}`);
+const port = process.env.PORT || 8989;
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running at http://localhost:${port}`);
 });

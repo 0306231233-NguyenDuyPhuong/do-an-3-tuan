@@ -1,0 +1,399 @@
+import { Op, where } from "sequelize";
+import db from "../models";
+import FollowController from "./FollowController";
+
+// status friendship
+// 1 = pending
+// 2 = accepted
+// 3 = rejected
+
+const sendFriendRequest = async (req, res) => {
+  try {
+    const { to } = req.body;
+    const from = req.user.userId;
+
+    if (!to)
+      return res.status(400).json({ message: "Receiver user id is required" });
+
+    if (Number(from) === Number(to))
+      return res
+        .status(400)
+        .json({ message: "You can not send a friend request to yourself" });
+
+    // check user tồn tại
+    const userExists = await db.User.findByPk(to);
+    if (!userExists)
+      return res.status(404).json({ message: "User does not exist" });
+
+    // check đã tồn tại quan hệ hay chưa (2 chiều)
+    const existed = await db.Friendship.findOne({
+      where: {
+        [Op.or]: [
+          { user_id: from, friend_id: to },
+          { user_id: to, friend_id: from },
+        ],
+      },
+    });
+
+    if (existed) {
+      // đã bị reject → gửi lại
+      if (existed.status === 3) {
+        existed.status = 1;
+        existed.user_id = from;
+        existed.friend_id = to;
+        await existed.save();
+
+        return res.status(200).json({ message: "Friend request sent again" });
+      }
+
+      if (existed.status === 2)
+        return res.status(400).json({ message: "You are already friends" });
+
+      if (existed.status === 1)
+        return res
+          .status(400)
+          .json({ message: "Friend request already exists" });
+    }
+
+    // TAO FOLLOW TU DONG
+    const existedFollow = await db.Follow.findOne({
+      where: {
+        follower_id: from,
+        following_id: to,
+      },
+      paranoid: false,
+    });
+    if (existedFollow) {
+      if (existedFollow.deleted_at !== null) {
+        await existedFollow.restore();
+      }
+      // nếu đã follow, không làm gì thêm
+    } else {
+      await db.Follow.create({
+        follower_id: from,
+        following_id: to,
+      });
+    }
+
+    //-----------------------------------
+
+    // tạo mới
+    await db.Friendship.create({
+      user_id: from,
+      friend_id: to,
+      status: 1,
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Friend request sent successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getFriendRequests = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const requests = await db.Friendship.findAll({
+      where: {
+        friend_id: userId,
+        status: 1,
+      },
+      include: [
+        {
+          model: db.User,
+          as: "sender",
+          attributes: ["id", "full_name", "avatar"],
+        },
+      ],
+    });
+
+    return res.status(200).json({ data: requests });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const acceptFriendRequest = async (req, res) => {
+  try {
+    const { from } = req.body;
+    const myId = req.user.userId;
+
+    if (!from)
+      return res.status(400).json({
+        message: "Sender user id is required",
+      });
+
+    if (Number(from) === Number(myId))
+      return res.status(400).json({ message: "Invalid friend request" });
+
+    const friendship = await db.Friendship.findOne({
+      where: {
+        user_id: from,
+        friend_id: myId,
+        status: 1,
+      },
+    });
+
+    if (!friendship)
+      return res.status(404).json({
+        message: "Friend request not found",
+      });
+
+    friendship.status = 2;
+    await friendship.save();
+
+    //FOLLOW (khi accept thi ca 2 follow nhau)
+    const follow1 = await db.Follow.findOne({
+      where: { follower_id: myId, following_id: from },
+      paranoid: false,
+    });
+    if (!follow1) {
+      await db.Follow.create({ follower_id: myId, following_id: from });
+    } else if (follow1.deleted_at !== null) {
+      await follow1.restore();
+    }
+
+    // 2. Tạo follow từ from -> myId nếu chưa có
+    const follow2 = await db.Follow.findOne({
+      where: { follower_id: from, following_id: myId },
+      paranoid: false,
+    });
+    if (!follow2) {
+      await db.Follow.create({ follower_id: from, following_id: myId });
+    } else if (follow2.deleted_at !== null) {
+      await follow2.restore();
+    }
+
+    //---------------
+
+    return res
+      .status(200)
+      .json({ message: "Friend request accepted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const blockFriendRequest = async (req, res) => {
+  try {
+    const { from } = req.body;
+    const myId = req.user.userId;
+
+    if (!from)
+      return res.status(400).json({
+        message: "Sender user id is required",
+      });
+
+    if (Number(from) === Number(myId))
+      return res.status(400).json({ message: "Invalid friend request" });
+
+    const friendship = await db.Friendship.findOne({
+      where: {
+        user_id: from,
+        friend_id: myId,
+        status: 1,
+      },
+    });
+
+    if (!friendship)
+      return res.status(404).json({
+        message: "Friend request not found",
+      });
+
+    friendship.status = 4;
+    await friendship.save();
+
+    return res
+      .status(200)
+      .json({ message: "Friend request block successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const rejectFriendRequest = async (req, res) => {
+  try {
+    const { from } = req.body;
+    const myId = req.user.userId;
+
+    if (!from)
+      return res.status(400).json({
+        message: "Sender user id is required",
+      });
+
+    if (Number(from) === Number(myId))
+      return res.status(400).json({ message: "Invalid friend request" });
+
+    const friendship = await db.Friendship.findOne({
+      where: {
+        user_id: from,
+        friend_id: myId,
+        status: 1,
+      },
+    });
+
+    if (!friendship)
+      return res.status(404).json({
+        message: "Friend request not found",
+      });
+
+    friendship.status = 3;
+    await friendship.save();
+
+    return res
+      .status(200)
+      .json({ message: "Friend request rejected successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const cancelFriendRequest = async (req, res) => {
+  try {
+    const from = req.user.userId;
+    const { to } = req.body;
+
+    if (!to)
+      return res.status(400).json({ message: "Receiver user id is required" });
+
+    const friendship = await db.Friendship.findOne({
+      where: {
+        user_id: from,
+        friend_id: to,
+        status: 1,
+      },
+    });
+
+    if (!friendship)
+      return res.status(404).json({ message: "Friend request not found" });
+
+    await friendship.destroy();
+
+    //XOA FOLLOW
+    const follow = await db.Follow.findOne({
+      where: {
+        follower_id: from,
+        following_id: to,
+      },
+    });
+    if (follow) await follow.destroy();
+
+    return res
+      .status(200)
+      .json({ message: "Friend request canceled successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getFriends = async (req, res) => {
+  try {
+    const myId = req.user.userId;
+
+    const friendships = await db.Friendship.findAll({
+      where: {
+        status: 2,
+        [Op.or]: [{ user_id: myId }, { friend_id: myId }],
+      },
+      include: [
+        {
+          model: db.User,
+          as: "sender",
+          attributes: ["id", "full_name", "avatar"],
+        },
+        {
+          model: db.User,
+          as: "receiver",
+          attributes: ["id", "full_name", "avatar"],
+        },
+      ],
+    });
+
+    const friends = friendships.map((f) => {
+      const friend = Number(f.user_id) === Number(myId) ? f.receiver : f.sender;
+
+      return {
+        id: friend.id,
+        full_name: friend.full_name,
+        avatar: friend.avatar,
+      };
+    });
+
+    return res.status(200).json({ data: friends });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const unFriend = async (req, res) => {
+  try {
+    const myId = req.user.userId;
+    const { friendId } = req.body;
+
+    if (!friendId)
+      return res.status(400).json({ message: "Friend id is required" });
+
+    const friendship = await db.Friendship.findOne({
+      where: {
+        status: 2,
+        [Op.or]: [
+          { user_id: myId, friend_id: friendId },
+          { user_id: friendId, friend_id: myId },
+        ],
+      },
+    });
+
+    if (!friendship)
+      return res.status(404).json({ message: "Friendship not found" });
+
+    await friendship.destroy();
+
+    return res.status(200).json({ message: "Unfriend successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const isFriend = async (req, res) => {
+  try {
+    const { friendId } = req.params;
+    const myId = req.user.userId;
+
+    // check user tồn tại
+    const userExists = await db.User.findByPk(friendId);
+    if (!userExists)
+      return res.status(404).json({ message: "User does not exist" });
+
+    // check friendship (status = 2)
+    const friendship = await db.Friendship.findOne({
+      where: {
+        status: 2, // accepted
+        [Op.or]: [
+          { user_id: myId, friend_id: friendId },
+          { user_id: friendId, friend_id: myId },
+        ],
+      },
+    });
+
+    return res.status(200).json({
+      isFriend: friendship ? true : false,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export default {
+  sendFriendRequest,
+  getFriendRequests,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  cancelFriendRequest,
+  getFriends,
+  unFriend,
+  blockFriendRequest,
+  isFriend,
+};

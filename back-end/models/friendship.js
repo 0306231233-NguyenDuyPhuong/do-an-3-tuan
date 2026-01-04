@@ -1,25 +1,44 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Friendship extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+
+      // người gửi lời mời
+      Friendship.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        as: 'sender'
+      });
+
+      // người nhận lời mời
+      Friendship.belongsTo(models.User, {
+        foreignKey: 'friend_id',
+        as: 'receiver'
+      });
     }
   }
+
   Friendship.init({
-    user_id: DataTypes.INTEGER,
-    friend_id: DataTypes.INTEGER,
-    status: DataTypes.STRING
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    friend_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    status: {
+      type: DataTypes.INTEGER, // ⚠️ nên là INTEGER
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'Friendship',
+    tableName: 'friendships',
+    underscored: true,
+    timestamps: false
   });
+
   return Friendship;
 };

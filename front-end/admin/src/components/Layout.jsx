@@ -10,11 +10,11 @@ const Layout = () => {
       </div>
 
       <div className="flex flex-col flex-1">
-        <div className="h-50 bg-white py-5 px-20">
+        <div className="h-50 bg-white py-5">
           <Header />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 bg-white">
+        <div className="flex-1 overflow-y-auto p-10 bg-white">
           <Outlet /> 
         </div>
       </div>

@@ -20,6 +20,7 @@ const login = async (req, res) => {
         ]
       }
     });
+
     // if not found user 
       if (!user || !(await argon2.verify(user.password, password))) {
       return res.status(401).json({
@@ -35,7 +36,7 @@ const login = async (req, res) => {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: "10m"
+          expiresIn: "1h"
         }
       )
         //create refresh token
@@ -212,7 +213,7 @@ const refresh = async (req, res) => {
     const newAccessToken = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "10m" }
+      { expiresIn: "1h" }
     );
 
     return res.json({ accessToken: newAccessToken });
@@ -323,13 +324,16 @@ const resetPassword = async (req,res)=>{
   return res.status(200).json({ message: "Password updated successfully" });
 }
 
+const getUser = async(req,res)=>{
+  
+}
 
 export default {
-    login,
+    login,  
     register,
     refresh,
     logout,
     forgotPassword,
-    resetPassword
-
+    resetPassword,
+    getUser
 }

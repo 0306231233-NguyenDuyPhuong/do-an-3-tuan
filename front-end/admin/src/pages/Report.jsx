@@ -1,28 +1,45 @@
 import { useEffect, useState } from "react";
-import { fetchPostAdmin } from "../services/PostService";
+import { fetchReport, updateStatusReport } from "../services/ReportService";
 import { Eye, Warning2 , Notification} from "iconsax-react";
 import { NavLink, Outlet } from "react-router-dom";
 import ReactPaginate from 'react-paginate';
 
-const Post = () => {
-    const [listPosts, setListPosts] = useState([]);
+const Report = () => {
+    const [ listReport, setListReports] = useState([]);
     let [total, setTotatl] = useState(null);
+    const statusClasses = {
+    pending: "bg-yellow-100 text-yellow-500 border border-yellow-300",
+    reviewed: "bg-blue-100 text-blue-500 border border-blue-300",
+    resolved: "bg-green-100 text-green-500 border border-green-300",
+    rejected: "bg-red-100 text-red-500 border border-red-300",
+    };
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/immutability
-        getPostAdmin(1)
+        getReport(1)
     }, []);
 
-    const getPostAdmin = async (page) => {
-        let res = await fetchPostAdmin(page);
+    const getReport = async (page) => {
+        let res = await fetchReport(page);
         setTotatl(res.total);
+        console.log(">>>>>>>>>>Report: ", res.data)
         if (res && res.data) {
-            setListPosts(res.data)
+            setListReports(res.data)
         }
     }
+
+    const updateStatus = async(id) =>{
+        try {
+            await updateStatusReport(id, "reviewed");
+            getReport();
+        } catch (error) {
+            alert("Update status error: ", error)
+        }
+    }
+
     const handlePageClick = (event) =>{
       console.log(">>> seleted: ",event)
-      getPostAdmin(+event.selected+1);
+      getReport(+event.selected+1);
     }
 
     return (
@@ -101,40 +118,36 @@ const Post = () => {
             <thead className="bg-gray-100">
             <tr>
                 <th className="text-2xl h-15 px-4 py-2 text-center">Id</th>
-                <th className="text-2xl h-15 px-4 py-2 text-center">Avatar</th>
-                <th className="text-2xl h-15 px-4 py-2 text-center">Full name</th>
+                <th className="text-2xl h-15 px-4 py-2 text-center">Target type</th>
+                <th className="text-2xl h-15 px-4 py-2 text-center">Reason</th>
                 <th className="text-2xl h-15 px-4 py-2 text-center">Status</th>
                 <th className="text-2xl h-15 px-4 py-2 text-center">Action</th>
             </tr>
             </thead>
             <tbody>
-            {listPosts.map((item, index) => (
+            {listReport.map((item, index) => (
                 <tr key={`data-${index}`} className="hover:bg-gray-50">
                 <td className="h-15 px-4 py-2 text-center text-2xl text-gray-400">{item.id}</td>
-                <td className="h-15 px-4 py-2 flex items-center justify-center">
-                    <div className="w-12 h-12 bg-amber-400 rounded-full overflow-hidden">
-                    <img
-                        className="w-12 h-12 object-cover rounded-full"
-                        src={`http://localhost:8989/api/images/${item.User.avatar}`}
-                        alt={item.User.full_name}
-                    />
-                    </div>
-                </td>
-                <td className="h-15 px-4 py-2 text-center text-2xl text-gray-400">{item.User.full_name}</td>
+                
+                <td className="h-15 px-4 py-2 text-center text-2xl text-gray-400">{item.target_type}</td>
+                <td className="h-15 px-4 py-2 text-center text-2xl text-gray-400">{item.reason}</td>
                 <td className="h-15 px-4 py-2 text-center">
                     <div
                     className={`inline-block px-3 py-1 rounded-md font-bold ${
-                        item.status === "delete"
-                        ? "bg-red-100 text-red-500 border border-red-300"
-                        : "bg-green-100 text-green-500 border border-green-300"
-                    }`}
+                    statusClasses[item.status] ||
+                    "bg-gray-100 text-gray-600 border border-gray-300"
+                 }`}
                     >
                     {item.status}
                     </div>
                 </td>
                 <td className="h-15 px-4 py-2 text-center">
-                    <NavLink to={`/post/${item.id}`} className="hover:text-blue-500">
-                    <Eye size="30" color="#C0C0C0" />
+                    <NavLink to={item.target_type ==="post"? `/post/${item.target_id}`:`/user`} state={
+                      {
+                        reportId: item.id,
+                      }
+                    } className="hover:text-blue-500">
+                    <Eye size="30" color="#C0C0C0" onClick={()=>updateStatus(item.id)}/>
                     </NavLink>
                 </td>
                 </tr>
@@ -158,4 +171,4 @@ const Post = () => {
     )
 }
 
-export default Post;
+export default Report;
