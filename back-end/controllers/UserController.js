@@ -46,10 +46,12 @@ const getUsers = async (req, res) => {
           [Op.ne]: currentUserId, 
         },
       },
-      attributes: ["id", "full_name", "avatar"], 
+      attributes: ["id", "full_name", "avatar", "status", "role"], 
     });
 
-    return res.json(users);
+    return res.json(
+      {message: "Get user success",
+      data:users});
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -67,7 +69,7 @@ const getUserById = async (req, res) => {
           id
         },
        
-        attributes: ["id", "full_name", "email", "phone", "avatar"]
+        attributes: ["id", "full_name", "email", "phone", "avatar", "status"]
       }),
 
       db.Post.findAll({
