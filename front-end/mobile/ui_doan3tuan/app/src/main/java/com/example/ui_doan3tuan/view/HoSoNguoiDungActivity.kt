@@ -1,35 +1,34 @@
 package com.example.ui_doan3tuan.view
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.ui_doan3tuan.R
-import com.example.ui_doan3tuan.adapter.AdapterBangTin
-import com.example.ui_doan3tuan.viewmodel.BangTinViewModel
 
-class BangTinActivity : AppCompatActivity() {
+class HoSoNguoiDungActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_bang_tin)
+        setContentView(R.layout.activity_ho_so_nguoi_dung)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        val viewModel: BangTinViewModel by viewModels()
-        // Lắng nghe khi có dữ liệu mới
-        viewModel.posts.observe(this) { listPosts ->
-            // Cập nhật Adapter của RecyclerView tại đây
-            AdapterBangTin(listPosts)
+        findViewById<ImageView>(R.id.imgSetting).setOnClickListener {
+            startActivity(Intent(this, CaiDangActivity::class.java))
         }
-        // Gọi hàm lấy dữ liệu
-        viewModel.getProduct("your_token_here")
-
+        findViewById<ImageView>(R.id.imgThoatHoSoNguoiDung).setOnClickListener {
+            finish()
+        }
+        findViewById<Button>(R.id.btnChinhSuaTrangCaNhan).setOnClickListener {
+            startActivity(Intent(this, ChinhSuaHoSoActivity::class.java))
+        }
 
 
     }

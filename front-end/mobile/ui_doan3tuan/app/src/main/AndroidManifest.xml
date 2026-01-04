@@ -15,8 +15,26 @@
         android:theme="@style/Theme.Ui_doan3tuan"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".view.DanhSachBanBeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.TroChuyenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.HoSoBanBeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.CaiDangActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ChinhSuaHoSoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.HoSoNguoiDungActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.TaoBaiDangActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,11 +44,9 @@
         <activity
             android:name=".view.BangTinActivity"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
-            android:exported="false"/>
-
+            android:exported="false" />
     </application>
 
 </manifest>

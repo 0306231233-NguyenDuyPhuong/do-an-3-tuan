@@ -9,29 +9,39 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
-
-class AdapterChonAnhVideo: ListAdapter<Uri, AdapterChonAnhVideo.MediaVH>(DiffCallback()) {
+class AdapterChonAnhVideo(
+    private val onItemClick: (Uri) -> Unit // Thêm Callback này
+) : ListAdapter<Uri, AdapterChonAnhVideo.MediaVH>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaVH {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_anh_video, parent, false)
-        return MediaVH(view)
+        return MediaVH(view, onItemClick)
     }
 
     override fun onBindViewHolder(holder: MediaVH, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class MediaVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class MediaVH(
+        itemView: View,
+        private val onItemClick: (Uri) -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
         private val imageView: ImageView = itemView.findViewById(R.id.imgPreview)
         private val videoIcon: ImageView = itemView.findViewById(R.id.imgVideoIcon)
+        private val imgTick: ImageView = itemView.findViewById(R.id.imgDelete)
 
         fun bind(uri: Uri) {
-            val type = itemView.context.contentResolver.getType(uri)
-            val isVideo = type?.startsWith("video") == true
-
             imageView.setImageURI(uri)
-            videoIcon.visibility = if (isVideo) View.VISIBLE else View.GONE
+
+            val type = itemView.context.contentResolver.getType(uri)
+            videoIcon.visibility = if (type?.startsWith("video") == true) View.VISIBLE else View.GONE
+            imgTick.visibility = View.VISIBLE // Luôn hiện tick vì đã chọn
+
+            // Khi nhấn vào ảnh thì thực hiện hàm onItemClick để xóa
+            itemView.setOnClickListener {
+                onItemClick(uri)
+            }
         }
     }
 
