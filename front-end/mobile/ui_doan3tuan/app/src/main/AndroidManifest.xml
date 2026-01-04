@@ -15,6 +15,7 @@
         android:theme="@style/Theme.Ui_doan3tuan"
         android:usesCleartextTraffic="true">
         <activity
+
             android:name=".view.DanhSachBanBeActivity"
             android:exported="false" />
         <activity
@@ -34,6 +35,28 @@
             android:exported="false" />
         <activity
             android:name=".view.TaoBaiDangActivity"
+ />
+        <activity
+            android:name=".view.SignupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.MessageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.WelcomeActivity"
+
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,12 +64,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".view.BangTinActivity"
             android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+
+
     </application>
 
 </manifest>

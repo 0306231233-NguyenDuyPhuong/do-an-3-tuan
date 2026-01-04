@@ -1,5 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+
     <style name="Base.Theme.Ui_doan3tuan"
         parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Có thể custom màu ở đây -->

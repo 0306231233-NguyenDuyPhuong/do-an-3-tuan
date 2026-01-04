@@ -14,7 +14,7 @@ class AdapterBangTin(private var list: List<PostModel>): RecyclerView.Adapter<Ad
         parent: ViewGroup,
         viewType: Int
     ): BangTinViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.item_home, parent, false)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.item_bangtin, parent, false)
         return BangTinViewHolder(view)
     }
 
