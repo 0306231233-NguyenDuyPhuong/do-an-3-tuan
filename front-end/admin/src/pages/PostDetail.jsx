@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { fetchPostById } from "../services/PostService";
-import { ArrowCircleLeft, CommandSquare, Like, Like1 } from "iconsax-react";
+import { ArrowCircleLeft, CommandSquare, DirectRight, Like, Like1, Message2 } from "iconsax-react";
 
 const PostDetail = () => {
   const { postId } = useParams();
@@ -32,6 +32,7 @@ const PostDetail = () => {
   }
 
   return (
+    <>
     <div className="flex flex-col gap-5">
        <ArrowCircleLeft size="40" color="#6F45E6" onClick={()=>navigate(-1)}/>
       <h2 className="font-bold text-2xl">
@@ -54,13 +55,8 @@ const PostDetail = () => {
             </div>
             </div>
             <div className="mt-5 flex justify-between items-center">
-            <div className={postDetailData.status==='delete'?"flex justify-center items-center rounded-2xl h-10 w-25  bg-red-500":"flex justify-center items-center rounded-2xl h-10 w-25  bg-grey-500"}>
-                <select name="" id="status"
-                value={postDetailData.status}
-                className="text-white font-bold">
-                    <option value="delete" className="text-xl text-red-500 ">delete</option>
-                    <option value="approved" className="text-xl text-green-500">approved</option>
-                </select>
+            <div className={postDetailData.status == "delete"? "flex justify-center items-center rounded-md h-10 font-bold w-30 bg-red-100":"flex justify-center items-center rounded-md h-10  w-30 font-bold bg-green-100"}>
+                <span className={postDetailData.status == "delete"? "text-red-500":"text-green-500"} onClick={()=>console.log(">>>>>>>>>CLicek")}>{postDetailData.status}</span>
             </div>
           </div>
           </div>
@@ -80,17 +76,25 @@ const PostDetail = () => {
           </div>
 
           <div className="flex justify-between mt-5 flex gap-5 mt-20">
-            <Like1 size="30" color="#000"/>
-            <CommandSquare size="30" color="#000"/>
-            <CommandSquare size="30" color="#000"/>
+            <div className="flex gap-2 items-center">
+              <Like1 size="30" color="#000"/>
+              <span>{postDetailData.LikeCount}</span>
+            </div>
+            <div className="flex gap-2 items-center">
+               <Message2 size="30" color="#000"/>
+              <span>{postDetailData.CommentCount}</span>
+
+            </div>
+            <DirectRight size="30" color="#000"/>
           </div>
         </div>
 
         <div className="flex-1 min-h-[100px] min-w-[200px] bg-white border border-gray-200 rounded-2xl shadow-md p-10">
-          item1
+          <h1>{postDetailData.status}</h1>
         </div>
       </div>
     </div>
+    </>
   );
 };
 
