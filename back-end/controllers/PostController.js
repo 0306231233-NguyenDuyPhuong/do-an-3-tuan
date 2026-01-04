@@ -15,10 +15,16 @@ const getPostUser = async (req, res) => {
       offset,
       order: [['created_at', 'DESC']],
       where: {
-        [Op.or]: [
-          { privacy: "public" },
-          { privacy: "private", user_id: userId }
-        ],
+        [Op.and]:[
+          {status: "approved"},
+          {
+            [Op.or]: [
+            { privacy: "private", user_id: userId },
+
+        ]
+          }
+        ]
+        
         // userId: { [Sequelize.Op.notIn]: blockedIds }
       },
       attributes: {
@@ -54,10 +60,14 @@ const getPostUser = async (req, res) => {
     }),
     db.Post.count({
       where: {
-        [Op.or]: [
+        [Op.and]:[
+          {status: "approved"},
+          {[Op.or]: [
           { privacy: "public" },
           { privacy: "private", user_id: userId },
-        ],
+        ]}
+        ]
+        
       },
     })
   ])

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchPostAdmin } from "../services/PostService";
 import { Eye, Warning2 , Notification} from "iconsax-react";
 import { NavLink, Outlet } from "react-router-dom";
+import ReactPaginate from 'react-paginate';
 
 const Post = () => {
     const [listPosts, setListPosts] = useState([]);
@@ -19,6 +20,11 @@ const Post = () => {
             setListPosts(res.data)
         }
     }
+    const handlePageClick = (event) =>{
+      console.log(">>> seleted: ",event)
+      getPostAdmin(+event.selected+1);
+    }
+
     return (
         <>
                 <div className="flex gap-5">
@@ -137,6 +143,15 @@ const Post = () => {
         </table>
         <Outlet />
         </div>
+      <ReactPaginate
+        pageCount={Math.ceil(total / 10)}
+        onPageChange={handlePageClick}
+        containerClassName="flex justify-center gap-2 mt-4"
+        pageLinkClassName="px-3 py-1 border rounded hover:bg-gray-100"
+        previousLinkClassName="px-3 py-1 border rounded"
+        nextLinkClassName="px-3 py-1 border rounded"
+        activeLinkClassName="bg-black text-white"
+      />
 
 
         </>

@@ -1,11 +1,16 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { fetchPostById } from "../services/PostService";
+import { fetchPostById, putStatusPost } from "../services/PostService";
+import { updateStatusReport } from "../services/ReportService";
 import { ArrowCircleLeft, CommandSquare, DirectRight, Like, Like1, Message2 } from "iconsax-react";
+import { ToastContainer, toast } from 'react-toastify';
 
 const PostDetail = () => {
   const { postId } = useParams();
   const [postDetailData, setPostDetailData] = useState(null);
+  const {state} = useLocation();
+  const reportId = state?.reportId;
+  console.log(">>>>>>>>>>>Report id: ", reportId)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,12 +25,22 @@ const PostDetail = () => {
       const res = await fetchPostById(id);
       if (res?.data) {
         setPostDetailData(res.data);
-        console.log("Post detail:", res.data);
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+  const updateStatusPost = async(postId, status) =>{
+    try {
+      await putStatusPost(postId, status);
+      getPostDetail(postId)
+      await updateStatusReport(reportId, "resolved")
+      toast.success("Update status success!")
+    } catch (error) {
+      alert("Update status post faild, error: ", error)
+    }
+  }
 
   if (!postDetailData) {
     return <div>Loading...</div>;
@@ -42,9 +57,9 @@ const PostDetail = () => {
         <div className="flex-2 min-h-[100px] min-w-[200px] bg-white border border-gray-200 rounded-2xl shadow-md p-10">
           <div className="flex gap-5 items-center justify-between">
             <div className="flex items-center gap-5">
-                <div className="size-20 border border-b-gray-100 rounded-full flex justify-center items-center">
+                <div className="size-20 rounded-full flex justify-center items-center">
                 <img
-                className="size-20 border rounded-full border-b-gray-100"
+                className="size-20 rounded-full border-gray-100"
                 src={`http://localhost:8989/api/images/${postDetailData.User.avatar}`}
                 />
             </div>
@@ -56,12 +71,11 @@ const PostDetail = () => {
             </div>
             <div className="mt-5 flex justify-between items-center">
             <div className={postDetailData.status == "delete"? "flex justify-center items-center rounded-md h-10 font-bold w-30 bg-red-100":"flex justify-center items-center rounded-md h-10  w-30 font-bold bg-green-100"}>
-                <span className={postDetailData.status == "delete"? "text-red-500":"text-green-500"} onClick={()=>console.log(">>>>>>>>>CLicek")}>{postDetailData.status}</span>
+                <span className={postDetailData.status == "delete"? "text-red-500":"text-green-500"} 
+                onClick={()=> updateStatusPost(postDetailData.id, postDetailData.status==="delete"? "approved":"delete")}>{postDetailData.status}</span>
             </div>
           </div>
           </div>
-
-          
 
         <div className="my-5">
             <span className="text-xl font-bold text-gray-500">{postDetailData.content}</span>
@@ -94,6 +108,18 @@ const PostDetail = () => {
         </div>
       </div>
     </div>
+
+    <ToastContainer
+      position="top-left"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
     </>
   );
 };

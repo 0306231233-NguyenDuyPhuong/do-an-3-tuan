@@ -4,10 +4,22 @@ import { date } from "joi";
 import REPORTSTATUS from "../constants/ReportStatus.js"
 
 const getReport = async (req, res) => {
-  const reportData = await db.Report.findAll({
-      
-    });
-  return res.status(200).json({ message: "ok", data:reportData });
+  const page = Number(req.query.page) || 1;
+  const limit = 10;
+  const offet = (page-1)*limit;
+  const [reportData, totalReport] = await Promise.all([
+    db.Report.findAll({
+      limit,
+      offet
+    }),
+    db.Report.count()
+  ])
+  return res.status(200).json({ 
+    message: "Get report success", 
+    total: totalReport,
+    page, 
+    limit,
+    data:reportData });
 };
 
 const getReportById = async (req, res) => {

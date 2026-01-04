@@ -15,7 +15,8 @@ const handleLogin = async () => {
     });
 
     localStorage.setItem("accessToken", res.data.accessToken);
-    console.log(res.data.user)
+    localStorage.setItem("user",
+      JSON.stringify(res.data.user))
     if(res.data.user.role == "admin"){
       navigate("/");
     } else{

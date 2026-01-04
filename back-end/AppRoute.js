@@ -21,30 +21,12 @@ import UpdateLocationRequest from "./dtos/requests/location/UpdateLocationReques
 import UpdatePostRequest from "./dtos/requests/post/UpdatePostRequest.js";
 import UpdateReportRequest from "./dtos/requests/report/UpdateReportRequest.js";
 import UpdateReportActionRequest from "./dtos/requests/report-action/UpdateReportActionRequest.js";
+import UpdatePostAdminRequest from "./dtos/requests/post/UpdatePostAdminRequest.js";
 import validate from "./middledewares/Validate.js";
 import verifyToken from "./middledewares/verifyToken.js";
-import isAdmin from "./middledewares/IsAdmin.js";
 import FriendController from "./controllers/FriendController.js";
 import validateImageExists from "./middledewares/ValidateImageExists.js";
 import FollowController from "./controllers/FollowController.js";
-/*=======
-import AsyncHandler from "./middledewares/AsyncHandler.js"
-import InsertLocationRequest from './dtos/requests/location/InsertLocatioinRequest.js';
-import InsertPostRequest from './dtos/requests/post/InsertPostRequest.js';
-import InsertReportActionRequest from './dtos/requests/report-action/InsertReportActionRequest.js';
-import InsertReportRequest from './dtos/requests/report/InsertReportRequest.js';
-import InsertPostMediaRequest from './dtos/requests/post-media/InsertPostMediaRequest.js';
-import UpdateLocationRequest from './dtos/requests/location/UpdateLocationRequest.js';
-import UpdatePostRequest from './dtos/requests/post/UpdatePostRequest.js';
-import UpdateReportRequest from './dtos/requests/report/UpdateReportRequest.js';
-import UpdateReportActionRequest from './dtos/requests/report-action/UpdateReportActionRequest.js';
-import UpdatePostAdminRequest from './dtos/requests/post/UpdatePostAdminRequest.js';
-import validate  from './middledewares/Validate.js';
-import verifyToken from "./middledewares/verifyToken.js"
-import isAdmin from './middledewares/IsAdmin.js';
-import FriendController from './controllers/FriendController.js';
-import validateImageExists from './middledewares/ValidateImageExists.js';
->>>>>>> phuong*/
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser);
@@ -133,32 +115,21 @@ const AppRoute = (app) => {
   router.get("/posts/users", verifyToken, PostController.getPostUser);
   router.get("/posts/admin", verifyToken, PostController.getPostAdmin);
   router.get("/posts/:id", verifyToken, PostController.getPostById);
-  router.post(
-    "/posts",
+  router.post("/posts",
     validate(InsertPostRequest),
-//<<<<<<< HEAD
     AsyncHandler(PostController.postPost)
   );
   router.put(
     "/posts/:id",
     verifyToken,
-    isAdmin,
     validate(UpdatePostRequest),
-    AsyncHandler(PostController.putPost)
+    AsyncHandler(PostController.putPostUser)
   );
-  router.delete("/posts/:id", PostController.deletePost);
-/*=======
-    AsyncHandler(PostController.postPost));
-  router.put('/posts/users/:id', 
-    verifyToken, 
-    validate(UpdatePostRequest),
-    AsyncHandler(PostController.putPostUser));
   router.put('/posts/admin/:id', 
     verifyToken, 
     validate(UpdatePostAdminRequest),
     AsyncHandler(PostController.putPostAdmin));
-  router.delete('/posts/:id', PostController.deletePost);
->>>>>>> phuong*/
+  router.delete("/posts/:id", PostController.deletePost);
 
   // Post Media
   router.get("/post-medias", PostMediaController.getPostMedia);
