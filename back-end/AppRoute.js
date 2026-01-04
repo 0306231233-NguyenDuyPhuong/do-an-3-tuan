@@ -27,6 +27,8 @@ import isAdmin from "./middledewares/IsAdmin.js";
 import FriendController from "./controllers/FriendController.js";
 import validateImageExists from "./middledewares/ValidateImageExists.js";
 import FollowController from "./controllers/FollowController.js";
+import checkCanComment from "./middledewares/CheckComment.js";
+import CommentController from "./controllers/CommentController.js";
 /*=======
 import AsyncHandler from "./middledewares/AsyncHandler.js"
 import InsertLocationRequest from './dtos/requests/location/InsertLocatioinRequest.js';
@@ -61,6 +63,25 @@ const AppRoute = (app) => {
   router.get("/user/get-profile", verifyToken, UserController.getProfile);
   router.get("/users/:id", verifyToken, UserController.getUserById);
   router.get("/users", verifyToken, UserController.getUsers);
+
+  //Comment
+  router.get(
+    "/comments/:postId",
+    verifyToken,
+    CommentController.getCommentsPost
+  );
+  router.post(
+    "/comment",
+    verifyToken,
+    checkCanComment,
+    CommentController.create
+  );
+  router.patch("/comment", verifyToken, CommentController.updateComment);
+  router.delete(
+    "/comment/:commentId",
+    verifyToken,
+    CommentController.deleteComment
+  );
 
   //Friend
   router.post(
@@ -136,7 +157,7 @@ const AppRoute = (app) => {
   router.post(
     "/posts",
     validate(InsertPostRequest),
-//<<<<<<< HEAD
+    //<<<<<<< HEAD
     AsyncHandler(PostController.postPost)
   );
   router.put(
@@ -147,7 +168,7 @@ const AppRoute = (app) => {
     AsyncHandler(PostController.putPost)
   );
   router.delete("/posts/:id", PostController.deletePost);
-/*=======
+  /*=======
     AsyncHandler(PostController.postPost));
   router.put('/posts/users/:id', 
     verifyToken, 
