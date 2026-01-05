@@ -29,6 +29,9 @@ import validateImageExists from "./middledewares/ValidateImageExists.js";
 import FollowController from "./controllers/FollowController.js";
 import checkCanComment from "./middledewares/CheckComment.js";
 import CommentController from "./controllers/CommentController.js";
+import InteractController from "./controllers/InteractController.js";
+import checkCanShare from "./middledewares/CheckCanShare.js";
+import checkCanLike from "./middledewares/CheckCanLike.js";
 /*=======
 import AsyncHandler from "./middledewares/AsyncHandler.js"
 import InsertLocationRequest from './dtos/requests/location/InsertLocatioinRequest.js';
@@ -63,6 +66,30 @@ const AppRoute = (app) => {
   router.get("/user/get-profile", verifyToken, UserController.getProfile);
   router.get("/users/:id", verifyToken, UserController.getUserById);
   router.get("/users", verifyToken, UserController.getUsers);
+  //INTERACT
+  router.post(
+    "/interact/like",
+    verifyToken,
+    checkCanLike,
+    InteractController.likePost
+  );
+  router.delete(
+    "/interact/like/:postId",
+    verifyToken,
+    InteractController.unlikePost
+  );
+  router.post(
+    "/interact/share",
+    verifyToken,
+    checkCanShare,
+    InteractController.sharePost
+  );
+  router.delete(
+    "/interact/share/:postId",
+    verifyToken,
+    InteractController.unsharePost
+  );
+  router.get("/interact/count/:postId", InteractController.getCount);
 
   //Comment
   router.get(
