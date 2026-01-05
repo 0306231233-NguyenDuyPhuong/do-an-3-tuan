@@ -10,6 +10,7 @@ import PostController from "./controllers/PostController.js";
 import PostMediaController from "./controllers/PostMediaController.js";
 import ReportController from "./controllers/ReportController.js";
 import ReportActionController from "./controllers/ReportActionController.js";
+//<<<<<<< HEAD
 import AsyncHandler from "./middledewares/AsyncHandler.js";
 import InsertLocationRequest from "./dtos/requests/location/InsertLocatioinRequest.js";
 import InsertPostRequest from "./dtos/requests/post/InsertPostRequest.js";
@@ -114,7 +115,8 @@ const AppRoute = (app) => {
   router.get("/posts/users", verifyToken, PostController.getPostUser);
   router.get("/posts/admin", verifyToken, PostController.getPostAdmin);
   router.get("/posts/:id", verifyToken, PostController.getPostById);
-  router.post("/posts",
+  router.post(
+    "/posts",
     validate(InsertPostRequest),
     AsyncHandler(PostController.postPost)
   );
@@ -124,10 +126,12 @@ const AppRoute = (app) => {
     validate(UpdatePostRequest),
     AsyncHandler(PostController.putPostUser)
   );
-  router.put('/posts/admin/:id', 
-    verifyToken, 
+  router.put(
+    "/posts/admin/:id",
+    verifyToken,
     validate(UpdatePostAdminRequest),
-    AsyncHandler(PostController.putPostAdmin));
+    AsyncHandler(PostController.putPostAdmin)
+  );
   router.delete("/posts/:id", PostController.deletePost);
 
   // Post Media
