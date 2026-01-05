@@ -5,10 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     target_id: DataTypes.INTEGER,
     reason: DataTypes.STRING,
     description: DataTypes.TEXT,
-    status: DataTypes.ENUM('pending', 'reviewed', 'resolved', 'rejected'),
-    reviewed_at: DataTypes.DATE
+    status: DataTypes.ENUM('pending', 'reviewed', 'resolved', 'rejected')
   }, {
-    modelName: 'Report',
     tableName: 'reports',
     underscored: true,
     createdAt: 'created_at',
@@ -17,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
 
   Report.associate = function(models) {
     Report.belongsTo(models.User, { foreignKey: 'reporter_id' });
-    Report.hasMany(models.ReportAction, { foreignKey: 'report_id' });
   };
 
   return Report;

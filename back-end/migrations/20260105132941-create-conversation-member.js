@@ -2,15 +2,15 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('likes', {
+    await queryInterface.createTable('conversation_members', {
       id: {
-        allowNull: false,
+        type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        allowNull: false
       },
 
-      post_id: {
+      conversation_id: {
         type: Sequelize.INTEGER,
         allowNull: false
       },
@@ -20,8 +20,7 @@ module.exports = {
         allowNull: false
       },
 
-      created_at: {
-        allowNull: false,
+      joined_at: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
@@ -29,6 +28,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable('likes');
+    await queryInterface.dropTable('conversation_members');
   }
 };

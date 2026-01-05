@@ -2,12 +2,13 @@
 module.exports = (sequelize, DataTypes) => {
   const Location = sequelize.define('Location', {
     name: DataTypes.STRING,
-    address: DataTypes.STRING
+    address: DataTypes.STRING,
+    deleted_at: DataTypes.DATE
   }, {
-    modelName: 'Location',
     tableName: 'locations',
     underscored: true,
-    timestamps: false
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 
   Location.associate = function(models) {
