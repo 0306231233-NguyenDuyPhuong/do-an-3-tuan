@@ -9,11 +9,11 @@ const getPostUser = async (req, res) => {
     const offset = (page - 1) * limit;
     const userId = Number(req.user.userId);
     const userRole = Number(req.user.role);
-    /*if (userRole != 0) {
+    if (userRole != 0) {
       return res.status(403).json({
         message: "User no access rights"
       })
-    }*/
+    }
 
     const friendBlock = await db.Friendship.findAll({
       where: {
@@ -27,7 +27,6 @@ const getPostUser = async (req, res) => {
       attributes: ["friend_id"]
     })
     const blockIds = Object.values(friendBlock).map(item=>item.friend_id)
-
     const [postData, postTotal] = await Promise.all([
       db.Post.findAll({
         subQuery: false,
@@ -53,6 +52,9 @@ const getPostUser = async (req, res) => {
           },
           {
             model: db.PostMedia
+          },
+          {
+            model: db.Location
           }
         ],
         group: ["Post.id", "User.id"]
@@ -75,7 +77,6 @@ const getPostUser = async (req, res) => {
     return res.status(200).json({
       message: "Post",
       total: postTotal,
-      friendShip: friendBlock,
       page,
       limit,
       data: postData
