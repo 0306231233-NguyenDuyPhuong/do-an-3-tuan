@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
-class AdapterChonAnhVideo(
+class AdapterSelectImageAndVideo(
     private val onItemClick: (Uri) -> Unit // Thêm Callback này
-) : ListAdapter<Uri, AdapterChonAnhVideo.MediaVH>(DiffCallback()) {
+) : ListAdapter<Uri, AdapterSelectImageAndVideo.MediaVH>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaVH {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_anh_video, parent, false)
+            .inflate(R.layout.item_image_video, parent, false)
         return MediaVH(view, onItemClick)
     }
 

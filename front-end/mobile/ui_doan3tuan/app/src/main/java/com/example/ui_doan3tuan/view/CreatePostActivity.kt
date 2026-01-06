@@ -1,6 +1,6 @@
 package com.example.ui_doan3tuan.view
 
-import android.net.Uri
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -13,10 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
-import com.example.ui_doan3tuan.adapter.AdapterChonAnhVideo
+import com.example.ui_doan3tuan.adapter.AdapterSelectImageAndVideo
 
-class TaoBaiDangActivity : AppCompatActivity() {
-    private lateinit var adapterChonAnhVideo: AdapterChonAnhVideo
+class CreatePostActivity : AppCompatActivity() {
+    private lateinit var adapterChonAnhVideo: AdapterSelectImageAndVideo
 
 
     private val pickMedia =
@@ -33,9 +33,9 @@ class TaoBaiDangActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_tao_bai_dang)
+        setContentView(R.layout.activity_create_post)
 
-        adapterChonAnhVideo = AdapterChonAnhVideo { uriToDelete ->
+        adapterChonAnhVideo = AdapterSelectImageAndVideo { uriToDelete ->
             // Khi người dùng nhấn vào ảnh, logic này sẽ chạy:
             val newList = adapterChonAnhVideo.currentList.toMutableList()
             newList.remove(uriToDelete)
@@ -58,6 +58,7 @@ class TaoBaiDangActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnDangBai).setOnClickListener {
             val finalImages = adapterChonAnhVideo.currentList
+            startActivity(Intent(this, NewsletterActivity::class.java))
 
             finish()
         }

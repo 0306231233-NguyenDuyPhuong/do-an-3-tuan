@@ -5,10 +5,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
+import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.databinding.ActivityLoginBinding
 import com.example.ui_doan3tuan.model.LoginFormState
 import com.example.ui_doan3tuan.model.LoginState
@@ -28,11 +30,14 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         TokenManager.init(applicationContext)
         if (TokenManager.isLoggedIn()) {
-//            navigateToHome()
+            //navigateToHome()
             return
         }
         setupViews()
         setupObservers()
+        findViewById<Button>(R.id.btnLogin).setOnClickListener {
+            startActivity(Intent(this,NewsletterActivity::class.java))
+        }
     }
     private fun setupViews() {
         setupEmailInput()

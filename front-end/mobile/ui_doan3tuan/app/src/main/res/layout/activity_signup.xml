@@ -39,7 +39,7 @@
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/app_logo"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/logo" />
+                    android:src="@drawable/logo2" />
 
                 <TextView
                     android:id="@+id/tvSignupTitle"
@@ -173,7 +173,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:layout_marginTop="24dp"
-                    android:backgroundTint="@color/card_background"
+                    android:backgroundTint="@color/background_btn"
                     android:text="@string/signup_button"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFFFF"

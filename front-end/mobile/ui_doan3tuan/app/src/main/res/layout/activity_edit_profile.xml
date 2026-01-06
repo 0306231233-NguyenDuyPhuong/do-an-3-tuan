@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".view.ChinhSuaHoSoActivity">
+    tools:context=".view.EditProfileActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -79,12 +79,14 @@
                 android:textColor="@color/white"
                 android:text="Tên" />
 
-            <TextView
-                android:id="@+id/txtTenCSHS"
+            <EditText
+                android:id="@+id/edtTenCSHS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="Nguyễn Tấn Dương" />
+                android:ems="10"
+                android:inputType="text"
+                android:text="Nguyễn Tấn Dương"
+                android:textColor="#E6E2E2" />
 
             <TextView
                 android:id="@+id/textView10"
@@ -94,12 +96,16 @@
                 android:text="Tiểu sử"
                 android:textColor="@color/white" />
 
-            <TextView
-                android:id="@+id/txtTieuSuCSHS"
+            <EditText
+                android:id="@+id/edtTieuSuCSHS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="ngon quá ta" />
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:gravity="top|start"
+                android:scrollbars="vertical"
+                android:text="Trăm năm chỉ có một lần ngàn năm chỉ có một người yêu tôi"
+                android:textColor="#E6DFDF" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -109,12 +115,15 @@
                 android:textColor="@color/white"
                 android:text="Giới tính" />
 
-            <TextView
-                android:id="@+id/txtGioiTinhCSHS"
+            <EditText
+                android:id="@+id/edtGioiTinhCSHS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="Nam" />
+                android:ems="10"
+                android:inputType="text"
+                android:text="Nam"
+                android:textColor="#EDE6E6" />
+
         </LinearLayout>
 
     </LinearLayout>

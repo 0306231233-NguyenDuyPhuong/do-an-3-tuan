@@ -45,13 +45,11 @@
                     android:padding="24dp">
 
                     <ImageView
-                        android:id="@+id/ivLogo"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_gravity="center_horizontal"
-                        android:contentDescription="@string/app_logo"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/logo" />
+                        android:id="@+id/imageView8"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/logo2" />
 
                     <TextView
                         android:id="@+id/tvLoginTitle"
@@ -62,7 +60,15 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="@string/login_title"
                         android:textColor="#FFF5F5F5"
-                        android:textSize="24sp" />
+                        android:textSize="30dp" />
+
+                    <TextView
+                        android:id="@+id/textView13"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Kết nối với bạn bè và thế giới xung quanh."
+                        android:textColor="#EBE8E8" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilEmail"
@@ -79,9 +85,11 @@
                             android:id="@+id/etEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="Email"
                             android:inputType="textEmailAddress"
                             android:minHeight="48dp"
                             android:textColor="#FFF5F5F5"
+                            android:textColorHint="@color/white"
                             android:textSize="14sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,9 +109,11 @@
                             android:id="@+id/etPassword"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="Password"
                             android:inputType="textPassword"
                             android:minHeight="48dp"
                             android:textColor="#FFF5F5F5"
+                            android:textColorHint="@color/white"
                             android:textSize="14sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -112,9 +122,12 @@
                         style="@style/Widget.Material3.Button"
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
+                        android:layout_gravity="center"
                         android:layout_marginTop="24dp"
+                        android:gravity="center"
                         android:text="@string/login_button"
                         android:textAllCaps="false"
+                        android:textSize="20dp"
                         app:cornerRadius="26dp" />
 
                     <TextView

@@ -16,25 +16,26 @@
         android:usesCleartextTraffic="true">
         <activity
 
-            android:name=".view.DanhSachBanBeActivity"
+            android:name=".view.FriendsListActivity"
             android:exported="false" />
         <activity
-            android:name=".view.TroChuyenActivity"
+            android:name=".view.ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".view.HoSoBanBeActivity"
+            android:name=".view.FriendsProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".view.CaiDangActivity"
+            android:name=".view.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ChinhSuaHoSoActivity"
+            android:name=".view.EditProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".view.HoSoNguoiDungActivity"
-            android:exported="false" />
+            android:name=".view.UserProfileActivity"
+            android:exported="false"/>
+
         <activity
-            android:name=".view.TaoBaiDangActivity"
+            android:name=".view.CreatePostActivity"
  />
         <activity
             android:name=".view.SignupActivity"
@@ -42,9 +43,7 @@
         <activity
             android:name=".view.ForgotPasswordActivity"
             android:exported="false" />
-        <activity
-            android:name=".view.MessageActivity"
-            android:exported="false" />
+
         <activity
             android:name=".view.LoginActivity"
             android:exported="false" />
@@ -55,17 +54,20 @@
         <activity
             android:name=".view.WelcomeActivity"
 
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
 
         <activity
-            android:name=".view.BangTinActivity"
-            android:exported="false" />
+            android:name=".view.NewsletterActivity"
+            android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
 
 
     </application>

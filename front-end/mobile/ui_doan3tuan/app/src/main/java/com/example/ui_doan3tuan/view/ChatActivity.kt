@@ -2,35 +2,20 @@ package com.example.ui_doan3tuan.view
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.ui_doan3tuan.R
-import com.example.ui_doan3tuan.adapter.AdapterBangTin
-import com.example.ui_doan3tuan.viewmodel.BangTinViewModel
 
-class BangTinActivity : AppCompatActivity() {
+class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_bang_tin)
+        setContentView(R.layout.activity_chat)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        val viewModel: BangTinViewModel by viewModels()
-        // Lắng nghe khi có dữ liệu mới
-        viewModel.posts.observe(this) { listPosts ->
-            // Cập nhật Adapter của RecyclerView tại đây
-            AdapterBangTin(listPosts)
-        }
-        // Gọi hàm lấy dữ liệu
-        viewModel.getProduct("your_token_here")
-
-
-
     }
 }

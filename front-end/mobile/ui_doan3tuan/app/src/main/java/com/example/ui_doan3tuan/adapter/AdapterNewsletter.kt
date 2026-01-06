@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.model.PostModel
 
-class AdapterBangTin(private var list: List<PostModel>): RecyclerView.Adapter<AdapterBangTin.BangTinViewHolder>() {
+class AdapterNewsletter(private var list: List<PostModel>): RecyclerView.Adapter<AdapterNewsletter.BangTinViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): BangTinViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.item_bangtin, parent, false)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.item_newsletter, parent, false)
         return BangTinViewHolder(view)
     }
 
@@ -22,7 +22,15 @@ class AdapterBangTin(private var list: List<PostModel>): RecyclerView.Adapter<Ad
         holder: BangTinViewHolder,
         position: Int
     ) {
-        TODO("Not yet implemented")
+        holder.txtTen.text = list[position].User.full_name ?:"NGuyên Dương"
+        holder.txtNoiDung.text = list[position].content
+        holder.txtThoiGian.text = list[position].created_at
+        holder.txtSoLuongThich.text = list[position].likeCount.toString()
+        holder.txtSoLuongChiaSe.text = list[position].shareCount.toString()
+        holder.txtSoLuongBinhLuan.text = list[position].commentCount.toString()
+
+
+
     }
 
     override fun getItemCount(): Int {

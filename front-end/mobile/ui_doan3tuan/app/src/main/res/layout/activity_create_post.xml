@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:background="@color/background"
     android:layout_height="match_parent"
-    tools:context=".view.TaoBaiDangActivity">
+    tools:context=".view.CreatePostActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,6 +45,7 @@
                 android:layout_marginLeft="50dp"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:backgroundTint="@color/background_btn"
                 android:text="Đăng" />
 
         </LinearLayout>
@@ -127,6 +128,7 @@
             android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/background_btn"
             android:text="Chọn ảnh/video" />
 
         <androidx.recyclerview.widget.RecyclerView
