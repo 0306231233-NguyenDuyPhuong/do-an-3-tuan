@@ -16,6 +16,8 @@ const Post = () => {
   const getPostAdmin = async (page) => {
     let res = await fetchPostAdmin(page);
     setTotatl(res.total);
+    console.log(">>>>>>>>>POST")
+    console.log(res)
     if (res && res.data) {
       setListPosts(res.data)
     }

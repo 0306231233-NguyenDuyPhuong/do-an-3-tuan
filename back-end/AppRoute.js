@@ -115,6 +115,7 @@ const AppRoute = (app) => {
   router.get("/posts/admin", verifyToken, PostController.getPostAdmin);
   router.get("/posts/:id", verifyToken, PostController.getPostById);
   router.post("/posts",
+    verifyToken,
     validate(InsertPostRequest),
     AsyncHandler(PostController.postPost)
   );

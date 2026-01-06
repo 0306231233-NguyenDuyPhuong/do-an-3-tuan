@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Friendship = sequelize.define('Friendship', {
-    onlyflow: DataTypes.INTEGER,
+    only_follow: DataTypes.INTEGER,
     status: DataTypes.ENUM('pending', 'accepted', 'rejected', 'blocked')
   }, {
     tableName: 'friendships',

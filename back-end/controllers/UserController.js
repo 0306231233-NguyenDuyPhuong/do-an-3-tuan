@@ -50,8 +50,10 @@ const getUsers = async (req, res) => {
     });
 
     return res.json(
-      {message: "Get user success",
-      data:users});
+      {
+        message: "Get user success",
+        data:users
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

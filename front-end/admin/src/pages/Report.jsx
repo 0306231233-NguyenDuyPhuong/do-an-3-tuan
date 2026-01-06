@@ -22,9 +22,9 @@ const Report = () => {
     const getReport = async (page) => {
         let res = await fetchReport(page);
         setTotatl(res.total);
-        console.log(">>>>>>>>>>Report: ", res.data)
+        console.log(">>>>>>>>>>Report: ", res)
         if (res && res.data) {
-            setListReports(res.data)
+            setListReports(res.data.rows)
         }
     }
 
