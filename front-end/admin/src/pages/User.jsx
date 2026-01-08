@@ -7,6 +7,7 @@ import ReactPaginate from 'react-paginate';
 const User = () => {
   const [listUsers, setListUsers] = useState([]);
   let [total, setTotatl] = useState(null);
+  const status = [""]
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability
