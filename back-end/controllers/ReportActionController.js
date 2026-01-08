@@ -47,7 +47,7 @@ const postReportAction = async (req, res) => {
     db.User.findOne({
       where: {
         id: admin_id,
-        role: "admin"
+        role: 1
       }
     })
   ])

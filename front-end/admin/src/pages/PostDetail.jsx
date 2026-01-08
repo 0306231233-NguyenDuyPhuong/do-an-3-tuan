@@ -2,14 +2,17 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { fetchPostById, putStatusPost } from "../services/PostService";
 import { updateStatusReport } from "../services/ReportService";
-import { ArrowCircleLeft, CommandSquare, DirectRight, Like, Like1, Message2 } from "iconsax-react";
+import { ArrowCircleLeft, ArrowLeft, CommandSquare, DirectRight, Like, Like1, Message2 } from "iconsax-react";
 import { ToastContainer, toast } from 'react-toastify';
+import { postReportAction } from "../services/ReportActionService";
 
 const PostDetail = () => {
   const { postId } = useParams();
   const [postDetailData, setPostDetailData] = useState(null);
   const { state } = useLocation();
   const reportId = state?.reportId;
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user?.id;
   console.log(">>>>>>>>>>>Report id: ", reportId)
   const navigate = useNavigate();
 
@@ -34,11 +37,22 @@ const PostDetail = () => {
   const updateStatusPost = async (postId, status) => {
     try {
       await putStatusPost(postId, status);
+
       getPostDetail(postId)
-      await updateStatusReport(reportId, "resolved")
+      await updateStatusReport(reportId, 2);
+      console.log(">>>>>>>Success")
+
+      await postReportAction(
+            reportId,
+            userId,
+            status, 
+            ""
+      ),
+      await updateStatusReport(2)
       toast.success("Update status success!")
     } catch (error) {
-      alert("Update status post faild, error: ", error)
+      alert("Update status post faild, error: ", error);
+      return;
     }
   }
 
@@ -51,7 +65,7 @@ const PostDetail = () => {
   return (
     <>
       <div className="flex flex-col gap-5">
-        <ArrowCircleLeft size="40" color="#6F45E6" onClick={() => navigate(-1)} />
+        <ArrowLeft size="30" color="#000" onClick={() => navigate(-1)} />
         <h2 className="font-bold text-2xl">
           {postDetailData.title}
         </h2>
@@ -72,9 +86,11 @@ const PostDetail = () => {
                 </div>
               </div>
               <div className="mt-5 flex justify-between items-center">
-                <div className={postDetailData.status == "delete" ? "flex justify-center items-center rounded-md h-10 font-bold w-30 bg-red-100" : "flex justify-center items-center rounded-md h-10  w-30 font-bold bg-green-100"}>
-                  <span className={postDetailData.status == "delete" ? "text-red-500" : "text-green-500"}
-                    onClick={() => updateStatusPost(postDetailData.id, postDetailData.status === "delete" ? "approved" : "delete")}>{postDetailData.status}</span>
+                <div className={postDetailData.status == 1 ? "flex justify-center items-center rounded-md h-10 font-bold w-30 bg-red-100" 
+                  : "flex justify-center items-center rounded-md h-10  w-30 font-bold bg-green-100"}>
+                  <span className={postDetailData.status == 1 ? "text-red-500" : "text-green-500"}
+                    onClick={() => updateStatusPost(postDetailData.id, postDetailData.status === 1 ? 0 : 1)}>
+                      {postDetailData.status==1?"Delete":"Approved"}</span>
                 </div>
               </div>
             </div>

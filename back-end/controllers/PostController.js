@@ -218,7 +218,7 @@ const putPostUser = async (req, res) => {
 const putPostAdmin = async (req, res) => {
   const { id } = req.params;
   const role = req.user.role;
-  if (role !== "admin") {
+  if (role !== 1) {
     return res.status(400).json({
       message: 'User not admin'
     })

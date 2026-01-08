@@ -1,6 +1,6 @@
-import { /*useLocation, useNavigate,*/ useParams } from "react-router-dom";
+import { /*useLocation, useNavigate,*/ useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowCircleLeft, CommandSquare, DirectRight, Like, Like1, Message2 } from "iconsax-react";
+import { ArrowCircleLeft, ArrowLeft, CommandSquare, DirectRight, Like, Like1, Message2 } from "iconsax-react";
 import { ToastContainer } from 'react-toastify';
 import { fetchUserById } from "../services/UserService";
 
@@ -8,6 +8,8 @@ const UserDetail = () => {
   const { userId } = useParams();
   const [userDetailData, setUserDetailData] = useState(null);
   const [listPostByUser, setPostByUser] = useState([]);
+  const navigate = useNavigate();
+
   //const {state} = useLocation();
   //const reportId = state?.reportId;
   // const navigate = useNavigate();
@@ -42,6 +44,7 @@ const UserDetail = () => {
 
   return (
     <>
+      <ArrowLeft size="30" color="#000" onClick={() => navigate(-1)} />
       <div className="flex flex-col border-gray-200 shadow-md rounded-md gap-5 mx-30 p-10">
         <div className="flex-1 flex-col min-h-[200px]">
           <div className="flex ">

@@ -1,4 +1,4 @@
-import { Home } from "iconsax-react";
+import { Home ,} from "iconsax-react";
 import { NavLink } from "react-router-dom";
 import avatar from "../images/avatar.png"
 const Sidebar = () =>{
@@ -32,6 +32,7 @@ const Sidebar = () =>{
                         ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
                     }>
                         <div className="flex items-center gap-3">
+                        
                         <Home size="20" color="#000" />
                         <span className="text-xl">Dashboard</span>
                         </div>

@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+<<<<<<< HEAD
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,3 +18,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+=======
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+>>>>>>> 189572c2eaf776e904c413aecbd5271a3dd0a8bb

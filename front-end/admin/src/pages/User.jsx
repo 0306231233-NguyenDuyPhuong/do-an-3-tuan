@@ -7,7 +7,6 @@ import ReactPaginate from 'react-paginate';
 const User = () => {
   const [listUsers, setListUsers] = useState([]);
   let [total, setTotatl] = useState(null);
-  const status = [""]
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability
@@ -131,15 +130,15 @@ const User = () => {
                   </div>
                 </td>
                 <td className="h-15 px-4 py-2 text-center text-2xl text-gray-400">{item.full_name}</td>
-                <td className="h-15 px-4 py-2 text-center text-2xl text-gray-400">{item.role}</td>
+                <td className="h-15 px-4 py-2 text-center text-2xl text-gray-400">{item.role==0?"user":"admin"}</td>
                 <td className="h-15 px-4 py-2 text-center">
                   <div
-                    className={`inline-block px-3 py-1 rounded-md font-bold ${item.status === "delete"
+                    className={`inline-block px-3 py-1 rounded-md font-bold ${item.status === 0
                         ? "bg-red-100 text-red-500 border border-red-300"
                         : "bg-green-100 text-green-500 border border-green-300"
                       }`}
                   >
-                    {item.status}
+                    {item.status==1?"Active":"Inactive"}
                   </div>
                 </td>
                 <td className="h-15 px-4 py-2 text-center">

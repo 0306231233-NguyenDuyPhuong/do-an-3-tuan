@@ -95,7 +95,9 @@ const AppRoute = (app) => {
   );
 
   //Location
-  router.get("/locations", LocationController.getLocation);
+  router.get("/locations", 
+    verifyToken,
+    LocationController.getLocation);
   router.get("/locations/:id", LocationController.getLocationById);
   router.post(
     "/locations",
@@ -105,10 +107,13 @@ const AppRoute = (app) => {
   );
   router.put(
     "/locations/:id",
+    verifyToken,
     validate(UpdateLocationRequest),
     AsyncHandler(LocationController.putLocation)
   );
-  router.delete("/locations/:id", LocationController.deleteLocation);
+  router.delete("/locations/:id", 
+    verifyToken,
+    LocationController.deleteLocation);
 
   // Post
   router.get("/posts/users", verifyToken, PostController.getPostUser);
@@ -119,8 +124,7 @@ const AppRoute = (app) => {
     validate(InsertPostRequest),
     AsyncHandler(PostController.postPost)
   );
-  router.put(
-    "/posts/:id",
+  router.put("/posts/:id",
     verifyToken,
     validate(UpdatePostRequest),
     AsyncHandler(PostController.putPostUser)
@@ -143,38 +147,53 @@ const AppRoute = (app) => {
   router.delete("/post-medias/:id", PostMediaController.deletePostMedia);
 
   // Report
-  router.get("/reports", ReportController.getReport);
-  router.get("/reports/:id", ReportController.getReportById);
+  router.get("/reports", 
+    verifyToken,
+    ReportController.getReport);
+  router.get("/reports/:id", 
+    verifyToken,
+    ReportController.getReportById);
   router.post(
     "/reports",
+    verifyToken,
     validate(InsertReportRequest),
     AsyncHandler(ReportController.postReport)
   );
   router.put(
     "/reports/:id",
+    verifyToken,
     validate(UpdateReportRequest),
     AsyncHandler(ReportController.putReport)
   );
-  router.delete("/reports/:id", ReportController.deleteReport);
+  router.delete("/reports/:id",
+    verifyToken,
+    ReportController.deleteReport);
 
   // Report Action
-  router.get("/report-actions", ReportActionController.getReportAction);
-  router.get("/report-actions/:id", ReportActionController.getReportActionById);
-  router.post(
-    "/report-actions",
+  router.get("/report-actions", 
+    verifyToken,
+    ReportActionController.getReportAction);
+  router.get("/report-actions/:id", 
+    verifyToken,
+    ReportActionController.getReportActionById);
+  router.post("/report-actions",
+    verifyToken,
     validate(InsertReportActionRequest),
     AsyncHandler(ReportActionController.postReportAction)
   );
   router.put(
     "/report-actions/:id",
+    verifyToken,
     validate(UpdateReportActionRequest),
     AsyncHandler(ReportActionController.putReportAction)
   );
 
   // Upload image
-  router.get("/images/:fileName", AsyncHandler(ImageController.viewImage));
+  router.get("/images/:fileName", 
+    AsyncHandler(ImageController.viewImage));
   router.post(
     "/images/upload",
+    verifyToken,
     uploadImage.array("images", 5),
     AsyncHandler(ImageController.uploadImages)
   );
