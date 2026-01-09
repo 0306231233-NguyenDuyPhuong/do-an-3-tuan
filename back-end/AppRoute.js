@@ -133,7 +133,9 @@ const AppRoute = (app) => {
     verifyToken, 
     validate(UpdatePostAdminRequest),
     AsyncHandler(PostController.putPostAdmin));
-  router.delete("/posts/:id", PostController.deletePost);
+  router.delete("/posts/:id", 
+    
+    PostController.deletePost);
 
   // Post Media
   router.get("/post-medias", PostMediaController.getPostMedia);
