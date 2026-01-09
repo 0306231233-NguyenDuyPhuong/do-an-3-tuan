@@ -202,6 +202,7 @@ const refresh = async (req, res) => {
 
     // Lấy user theo userId
     const user = await db.User.findByPk(userId);
+
     if (!user || !user.refresh_token)
       return res.status(403).json({ message: "Refresh token not found" });
 
