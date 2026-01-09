@@ -20,7 +20,6 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var edtMatKhau: EditText
     private lateinit var edtNhapLaiMatKhau: EditText
 
-    // Nút và text
     private lateinit var btnDangKy: Button
     private lateinit var txtQuayLai: TextView
 
@@ -99,7 +98,6 @@ class SignupActivity : AppCompatActivity() {
         btnDangKy.isEnabled = false
     }
 
-    // Xem kết quả từ ViewModel
     private fun xemKetQua() {
         // Xem khi đang loading
         viewModel.isLoading.observe(this) { isLoading ->

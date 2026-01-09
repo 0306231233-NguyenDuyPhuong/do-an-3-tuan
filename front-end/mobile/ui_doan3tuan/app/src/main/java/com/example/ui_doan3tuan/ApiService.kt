@@ -4,6 +4,8 @@ import com.example.ui_doan3tuan.model.*
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.GET
+import retrofit2.http.PATCH
 
 interface ApiService {
     @POST("auth/login")
@@ -11,6 +13,15 @@ interface ApiService {
 
     @POST("auth/register")
     fun register(@Body request: RegisterRequest): Call<RegisterResponse>
+
+    @GET("friends/requests")
+    fun requests(@Body request: User): Call<User>
+
+    @PATCH("friends/requests/accept")
+    fun accept(@Body request: User): Call<User>
+
+    @PATCH("friends/requests/reject")
+    fun reject(@Body request: User): Call<User>
 }
 
 object ApiClient {

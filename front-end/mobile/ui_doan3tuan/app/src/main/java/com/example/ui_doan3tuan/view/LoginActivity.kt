@@ -128,7 +128,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun chuyenManHinhChinh() {
-        val intent = Intent(this, ForgotPasswordActivity::class.java)
+        val intent = Intent(this, NewsletterActivity::class.java)
         startActivity(intent)
         finish()
     }

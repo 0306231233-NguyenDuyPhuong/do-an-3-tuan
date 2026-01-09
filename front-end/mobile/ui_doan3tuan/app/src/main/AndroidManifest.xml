@@ -15,7 +15,9 @@
         android:theme="@style/Theme.Ui_doan3tuan"
         android:usesCleartextTraffic="true">
         <activity
-
+            android:name=".view.FriendsAddListActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.FriendsListActivity"
             android:exported="false" />
         <activity
@@ -32,46 +34,34 @@
             android:exported="false" />
         <activity
             android:name=".view.UserProfileActivity"
-            android:exported="false"/>
-
-        <activity
-            android:name=".view.CreatePostActivity"
- />
+            android:exported="false" />
+        <activity android:name=".view.CreatePostActivity" />
         <activity
             android:name=".view.SignupActivity"
             android:exported="false" />
         <activity
             android:name=".view.ForgotPasswordActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
-
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
             android:name=".view.LoginActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
-
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-
             android:name=".view.NewsletterActivity"
-            android:exported="false"/>
-
-
-
+            android:exported="false" />
         <activity
             android:name=".view.WelcomeActivity"
             android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-
-
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
