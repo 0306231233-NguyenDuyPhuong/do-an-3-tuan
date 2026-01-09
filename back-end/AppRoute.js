@@ -112,7 +112,9 @@ const AppRoute = (app) => {
   router.delete("/locations/:id", LocationController.deleteLocation);
 
   // Post
-  router.get("/posts/users", verifyToken, PostController.getPostUser);
+  router.get("/posts/users", 
+    verifyToken, 
+    PostController.getPostUser);
   router.get("/posts/admin", verifyToken, PostController.getPostAdmin);
   router.get("/posts/:id", verifyToken, PostController.getPostById);
   router.post("/posts",
