@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { Notification, Warning2 } from "iconsax-react";
 import RevenueChart from "../components/BarChart";
 import Calenda from "../components/Calenda";
@@ -7,23 +8,38 @@ import { IoNewspaperOutline } from "react-icons/io5";
 import { RiErrorWarningLine } from "react-icons/ri";
 import UserChart from "../components/LineChart";
 import { useEffect, useState } from "react";
-import {fetchDataChart} from "../services/ChartService"
+import {fetchDataChart, fetchDataCount} from "../services/ChartService"
 import ReportByTypeBar from "../components/BarChart";
 const Home = () => {
   const [chartData, setChartData] = useState([]);
+  const [countData, setCountData] = useState([]);
+
   useEffect(()=>{
     // eslint-disable-next-line react-hooks/immutability
-    getChartData()
+    getChartData(),
+    getCountData()
   }, [])
 
   const getChartData = async ()=>{
     let res = await fetchDataChart()
-    console.log(">>>>>>>>>>>>>>>", res)
     if(res){
       setChartData(res)
     }
   }
+
+  const getCountData = async() =>{
+    let res = await fetchDataCount();
+    if(res){
+      setCountData(res);
+    }
+  }
+
   if (!chartData) {
+    return <div className="flex justify-center items-center h-64">
+      <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+    </div>;
+  }  
+  if (!countData) {
     return <div className="flex justify-center items-center h-64">
       <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
     </div>;
@@ -47,7 +63,7 @@ const Home = () => {
             </div>
             <div className="flex gap-2 items-center justify-between mt-5">
               <div className="flex items-center">
-                <span className="text-5xl font-bold mr-2">129</span>
+                <span className="text-5xl font-bold mr-2">{countData.reports}</span>
               </div>
             </div>
           </div>
@@ -66,7 +82,7 @@ const Home = () => {
             </div>
             <div className="flex gap-2 items-center justify-between mt-5">
               <div className="flex items-center">
-                <span className="text-5xl font-bold mr-2">129</span>
+                <span className="text-5xl font-bold mr-2">{countData.users}</span>
               </div>
             </div>
           </div>
@@ -86,7 +102,7 @@ const Home = () => {
             </div>
             <div className="flex gap-2 items-center justify-between mt-5">
               <div className="flex items-center">
-                <span className="text-5xl font-bold mr-2">129</span>
+                <span className="text-5xl font-bold mr-2">{countData.posts}</span>
               </div>
             </div>
           </div>

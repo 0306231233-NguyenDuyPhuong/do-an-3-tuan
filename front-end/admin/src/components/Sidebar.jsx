@@ -43,15 +43,21 @@ const Sidebar = () =>{
                         </div>
                     </NavLink>
 
-                    <NavLink to="/post" className={({isActive})=>
-                        `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
-                    }>
-                        <div className="flex items-center gap-3">
-                        <LuNewspaper  size="30" color="grey" />
+                    <NavLink
+                    to="/post"
+                    className={({ isActive }) =>
+                        `block rounded-lg px-4 py-2 transition
+                        ${isActive
+                        ? "bg-[rgb(132,93,240)] text-white font-bold"
+                        : "hover:bg-gray-100 text-gray-500"}`
+                    }
+                    >
+                    <div className="flex items-center gap-3">
+                        <LuNewspaper size={30} className="text-current" />
                         <span className="text-xl">Post</span>
-                        </div>
+                    </div>
                     </NavLink>
+
                     <NavLink to="/user" className={({isActive})=>
                         `block rounded-lg px-4 py-2 transition 
                         ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`

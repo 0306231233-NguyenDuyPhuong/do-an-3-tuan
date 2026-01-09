@@ -11,6 +11,16 @@ const fetchDataChart = () =>{
     )
 }
 
+const fetchDataCount = () =>{
+    return axios.get("admin/dashboard/count", 
+        {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
+    )
+}
 export{
-    fetchDataChart
+    fetchDataChart, 
+    fetchDataCount
 }

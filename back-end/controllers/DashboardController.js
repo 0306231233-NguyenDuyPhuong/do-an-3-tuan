@@ -64,6 +64,21 @@ const getChartDashboard = async(req, res)=>{
     }
 }
 
+const getCountDashboard = async(req, res)=>{
+    const [userCount, postCount, reportCount] = await Promise.all([
+        db.User.count(),
+        db.Post.count(),
+        db.Report.count(),
+    ])
+    return res.status(200).json({
+        message: "Get count user, post, report",
+        users: userCount,
+        posts: postCount,
+        reports: reportCount
+    })
+}
+
 export default {
-    getChartDashboard
+    getChartDashboard,
+    getCountDashboard
 }
