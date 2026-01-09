@@ -95,12 +95,7 @@ const AppRoute = (app) => {
     checkCanComment,
     CommentController.create
   );
-  router.patch(
-    "/comment",
-    verifyToken,
-    checkBlocked,
-    CommentController.updateComment
-  );
+  router.patch("/comment", verifyToken, CommentController.updateComment);
   router.delete(
     "/comment/:commentId",
     verifyToken,
