@@ -70,65 +70,96 @@
                         android:text="Kết nối với bạn bè và thế giới xung quanh."
                         android:textColor="#EBE8E8" />
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilEmail"
-                        style="@style/Widget.Material3.TextInputLayout.FilledBox"
+                    <!-- Email Field -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
-                        android:hint="@string/email_phone"
-                        app:boxBackgroundColor="#FF2E3545"
-                        app:errorEnabled="true"
-                        app:hintTextColor="#FF99A3B3">
+                        android:orientation="vertical">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/email_phone"
+                        android:textColor="#FF99A3B3"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="4dp" />
+
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/etEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Email"
-                            android:inputType="textEmailAddress"
-                            android:minHeight="48dp"
-                            android:textColor="#FFF5F5F5"
-                            android:textColorHint="@color/white"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilPassword"
-                        style="@style/Widget.Material3.TextInputLayout.FilledBox"
+                            android:paddingStart="16dp"
+                            android:paddingTop="14dp"
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="14dp"
+                            android:textColor="#FFF5F5F5"
+                            android:textColorHint="#FF99A3B3"
+                            android:textSize="14sp"
+                            android:minHeight="48dp"
+                            android:hint="@string/email_phone"
+                        android:inputType="textEmailAddress|textPersonName" />
+                    </LinearLayout>
+
+                    <!-- Password Field -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:hint="@string/password"
-                        app:boxBackgroundColor="#FF2E3545"
-                        app:endIconMode="password_toggle"
-                        app:errorEnabled="true"
-                        app:hintTextColor="#FF99A3B3">
+                        android:orientation="vertical">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etPassword"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:hint="Password"
-                            android:inputType="textPassword"
-                            android:minHeight="48dp"
-                            android:textColor="#FFF5F5F5"
-                            android:textColorHint="@color/white"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:text="@string/password"
+                        android:textColor="#FF99A3B3"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="4dp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/etPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="16dp"
+                                android:paddingTop="14dp"
+                                android:paddingEnd="48dp"
+                                android:paddingBottom="14dp"
+                                android:textColor="#FFF5F5F5"
+                                android:textColorHint="#FF99A3B3"
+                                android:textSize="14sp"
+                                android:minHeight="48dp"
+                                android:hint="@string/password"
+                            android:inputType="textPassword" />
+
+                            <ImageView
+                                android:id="@+id/ivPasswordToggle"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="16dp"
+                                android:contentDescription="Hiện/ẩn mật khẩu"
+                                android:src="@android:drawable/ic_menu_view" />
+                        </RelativeLayout>
+                    </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnLogin"
-                        style="@style/Widget.Material3.Button"
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
-                        android:layout_gravity="center"
                         android:layout_marginTop="24dp"
-                        android:gravity="center"
-                        android:text="@string/login_button"
-                        android:textAllCaps="false"
-                        android:textSize="20dp"
-                        app:cornerRadius="26dp" />
+                        android:backgroundTint="#FF4C9AFF"
+                    android:gravity="center"
+                    android:text="@string/login_button"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    app:cornerRadius="26dp" />
 
                     <TextView
                         android:id="@+id/tvForgotPassword"
@@ -148,9 +179,9 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="16dp"
                         android:padding="8dp"
-                        android:text="Đăng kí"
-                        android:textColor="#FF4C9AFF"
-                        android:textSize="14sp" />
+                        android:text="@string/signup_button"
+                    android:textColor="#FF4C9AFF"
+                    android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tvTerms"

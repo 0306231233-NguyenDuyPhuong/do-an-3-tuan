@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 import { Home ,} from "iconsax-react";
 import { FaChartBar ,FaRegUser   } from "react-icons/fa";
 import { LuNewspaper } from "react-icons/lu";
 import { BsBookmark } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
+=======
+import { Home } from "iconsax-react";
+>>>>>>> origin/haiui
 import { NavLink } from "react-router-dom";
 import avatar from "../images/avatar.png"
 const Sidebar = () =>{
@@ -36,9 +40,13 @@ const Sidebar = () =>{
                         ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
                     }>
                         <div className="flex items-center gap-3">
+<<<<<<< HEAD
                         
                         <FaChartBar  color="grey" size="30"/>
 
+=======
+                        <Home size="20" color="#000" />
+>>>>>>> origin/haiui
                         <span className="text-xl">Dashboard</span>
                         </div>
                     </NavLink>
