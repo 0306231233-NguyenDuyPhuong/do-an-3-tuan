@@ -1,0 +1,48 @@
+db.Post.findAll({
+      subQuery: false,
+      limit,
+      offset,
+      order: [['created_at', 'DESC']],
+      where: {
+        [Op.and]: [
+          { status: "approved" },
+          {
+            [Op.or]: [
+              { privacy: "private", user_id: userId },
+            ]
+          }
+        ]
+
+        // userId: { [Sequelize.Op.notIn]: blockedIds }
+      },
+      attributes: {
+        include: [
+          [
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
+            "LikeCount",
+          ],
+          [
+            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
+            "CommentCount"
+          ]
+        ]
+      },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "full_name", "avatar"]
+        },
+        {
+          model: db.Like,
+          attributes: []
+        },
+        {
+          model: db.Comment,
+          attributes: []
+        },
+        {
+          model: db.PostMedia,
+        }
+      ],
+      group: ["Post.id", "User.id"]
+    }),

@@ -4,22 +4,24 @@ import { date } from "joi";
 import REPORTSTATUS from "../constants/ReportStatus.js"
 
 const getReport = async (req, res) => {
-  const page = Number(req.query.page) || 1;
-  const limit = 10;
-  const offet = (page-1)*limit;
-  const [reportData, totalReport] = await Promise.all([
-    db.Report.findAll({
-      limit,
-      offet
-    }),
-    db.Report.count()
-  ])
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = 10;
+    const offset = (page-1)*limit;
+    const reportData = await db.Report.findAndCountAll({
+      offset,
+      limit
+    })
   return res.status(200).json({ 
     message: "Get report success", 
-    total: totalReport,
     page, 
     limit,
     data:reportData });
+  } catch (error) {
+    return res.status(400).json({
+      error: error
+    })
+  }
 };
 
 const getReportById = async (req, res) => {

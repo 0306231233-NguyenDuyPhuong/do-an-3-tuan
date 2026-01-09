@@ -1,13 +1,17 @@
 import axios from "../services/customize-axio.s";
 const accessToken = localStorage.getItem("accessToken")
 
-const postReportAction = (data)=>{
+const postReportAction = (
+            report_id,
+            admin_id,
+            action, 
+            note)=>{
     return axios.post(`report-actions`, 
         {
-            report_id: data.report_id,
-            admin_id: data.admin_id,
-            action: data.action, 
-            note: data.note
+            report_id,
+            admin_id,
+            action, 
+            note
         }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`, 

@@ -12,13 +12,15 @@ class InsertLocatioinRequest{
         const schema = Joi.object({
             user_id: Joi.number().integer().min(1).required(),
             content: Joi.string().allow("").optional(),
-            privacy: Joi.string()
-            .valid("public", "friends", "private")
-            .default("public"),
+            privacy: Joi.number()
+            .valid(0, 1)
+            .default(0)
+            .integer(),
             location_id: Joi.number().integer().required(),
-            status: Joi.string()
-            .valid("approved", "delete")
-            .default("approved")
+            status: Joi.number()
+            .integer()
+            .valid(0, 1)
+            .default(1)
         });
         return schema.validate(data);
     }

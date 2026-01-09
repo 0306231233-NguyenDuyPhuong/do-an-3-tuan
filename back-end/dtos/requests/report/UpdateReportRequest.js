@@ -7,8 +7,8 @@ class UpdateReportRequest{
 
     static validate(data){
         const schema = Joi.object({
-            status : Joi.string()
-            .valid("pending", "reviewed", "resolved", "rejected")
+            status : Joi.number().integer()
+            .valid(0, 1, 2, 3)
         });
         return schema.validate(data);
     }

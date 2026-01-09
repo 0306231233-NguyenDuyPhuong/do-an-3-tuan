@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.ENUM('active', 'hidden', 'deleted'),
     deleted_at: DataTypes.DATE
   }, {
-    modelName: 'Comment',
     tableName: 'comments',
     underscored: true,
     createdAt: 'created_at',

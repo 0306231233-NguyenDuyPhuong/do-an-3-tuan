@@ -4,11 +4,10 @@ module.exports = (sequelize, DataTypes) => {
     action: DataTypes.ENUM('hide_content', 'delete_content', 'warn_user', 'ban_user'),
     note: DataTypes.TEXT
   }, {
-    modelName: 'ReportAction',
     tableName: 'report_actions',
     underscored: true,
     createdAt: 'created_at',
-    updatedAt: false
+    updatedAt: 'updated_at'
   });
 
   ReportAction.associate = function(models) {
