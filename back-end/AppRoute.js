@@ -4,6 +4,7 @@ import ImageController from "./controllers/ImageController.js";
 import ValidateImageExists from "./middledewares/ValidateImageExists.js";
 import uploadImage from "./middledewares/ImageUpload.js";
 import UserController from "./controllers/UserController.js";
+import  chartDashboard  from "./controllers/DashboardController.js";
 import AuthController from "./controllers/AuthController.js";
 import LocationController from "./controllers/LocationController.js";
 import PostController from "./controllers/PostController.js";
@@ -26,6 +27,7 @@ import verifyToken from "./middledewares/verifyToken.js";
 import FriendController from "./controllers/FriendController.js";
 import validateImageExists from "./middledewares/ValidateImageExists.js";
 import FollowController from "./controllers/FollowController.js";
+import DashboardController from "./controllers/DashboardController.js";
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser);
@@ -114,11 +116,17 @@ const AppRoute = (app) => {
   router.delete("/locations/:id", 
     verifyToken,
     LocationController.deleteLocation);
-
+  
+  // Chart dashboard
+  router.get("/admin/dashbord/statistics", 
+    verifyToken, 
+    DashboardController.getChartDashboard
+  )
   // Post
   router.get("/posts/users", verifyToken, PostController.getPostUser);
   router.get("/posts/admin", verifyToken, PostController.getPostAdmin);
   router.get("/posts/:id", verifyToken, PostController.getPostById);
+
   router.post("/posts",
     verifyToken,
     validate(InsertPostRequest),
@@ -134,7 +142,6 @@ const AppRoute = (app) => {
     validate(UpdatePostAdminRequest),
     AsyncHandler(PostController.putPostAdmin));
   router.delete("/posts/:id", 
-    
     PostController.deletePost);
 
   // Post Media
