@@ -26,8 +26,13 @@ import validate from "./middledewares/Validate.js";
 import verifyToken from "./middledewares/verifyToken.js";
 import FriendController from "./controllers/FriendController.js";
 import validateImageExists from "./middledewares/ValidateImageExists.js";
-import FollowController from "./controllers/FollowController.js";
 import DashboardController from "./controllers/DashboardController.js";
+import checkCanLike from "./middledewares/CheckCanLike.js";
+import InteractController from "./controllers/InteractController.js";
+import checkCanShare from "./middledewares/CheckCanShare.js";
+import checkCanComment from "./middledewares/CheckComment.js";
+import CommentController from "./controllers/CommentController.js";
+import checkBlocked from "./middledewares/checkBlocked.js";
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser);
@@ -41,14 +46,69 @@ const AppRoute = (app) => {
   router.post("/auth/reset-password", AuthController.resetPassword);
 
   //User
-  router.get("/user/get-profile", verifyToken, UserController.getProfile);
+  router.get(
+    "/user/get-profile",
+    checkBlocked,
+    verifyToken,
+    UserController.getProfile
+  );
   router.get("/users/:id", verifyToken, UserController.getUserById);
   router.get("/users", verifyToken, UserController.getUsers);
+
+  //INTERACT
+  router.post(
+    "/interact/like",
+    verifyToken,
+    checkBlocked,
+    checkCanLike,
+    InteractController.likePost
+  );
+  router.delete(
+    "/interact/like/:postId",
+    verifyToken,
+    checkBlocked,
+    InteractController.unlikePost
+  );
+  router.post(
+    "/interact/share",
+    verifyToken,
+    checkBlocked,
+    checkCanShare,
+    InteractController.sharePost
+  );
+  router.delete(
+    "/interact/share/:postId",
+    verifyToken,
+    checkBlocked,
+    InteractController.unsharePost
+  );
+  //router.get("/interact/count/:postId", InteractController.getCount);
+
+  //Comment
+  router.get(
+    "/comments/:postId",
+    verifyToken,
+    CommentController.getCommentsPost
+  );
+  router.post(
+    "/comment",
+    verifyToken,
+    checkBlocked,
+    checkCanComment,
+    CommentController.create
+  );
+  router.patch("/comment", verifyToken, CommentController.updateComment);
+  router.delete(
+    "/comment/:commentId",
+    verifyToken,
+    CommentController.deleteComment
+  );
 
   //Friend
   router.post(
     "/friends/requests",
     verifyToken,
+    checkBlocked,
     FriendController.sendFriendRequest
   );
   router.get(
@@ -56,44 +116,52 @@ const AppRoute = (app) => {
     verifyToken,
     FriendController.getFriendRequests
   );
+  router.get("/friends", verifyToken, FriendController.getFriends);
   router.patch(
     "/friends/requests/accept",
     verifyToken,
+    checkBlocked,
     FriendController.acceptFriendRequest
   );
   router.patch(
     "/friends/requests/reject",
     verifyToken,
+    checkBlocked,
     FriendController.rejectFriendRequest
   );
-  router.get("/friends", verifyToken, FriendController.getFriends);
   router.post(
     "/friends/requests/cancel",
     verifyToken,
+    checkBlocked,
     FriendController.cancelFriendRequest
   );
-  router.post("/friends/unfriend", verifyToken, FriendController.unFriend);
-  router.patch(
-    "/friends/requests/block",
+  router.post(
+    "/friends/unfriend",
     verifyToken,
-    FriendController.blockFriendRequest
+    checkBlocked,
+    FriendController.unFriend
   );
 
+  router.patch("/friends/unblock", verifyToken, FriendController.unBlockUser);
   router.get(
     "/friend/status/:friendId",
     verifyToken,
     FriendController.isFriend
   );
-
-  //Follow
-  router.post("/follow", verifyToken, FollowController.followUser);
-  router.delete("/follow/unfollow", verifyToken, FollowController.unFollow);
-  router.get("/follows", verifyToken, FollowController.getFollowers);
-  router.get("/follow/following", verifyToken, FollowController.getFollowing);
-  router.get(
-    "/follow/status/:followingId",
+  //FOLLOW
+  router.get("/follow/follower", verifyToken, FriendController.getFollower);
+  router.get("/follow/following", verifyToken, FriendController.getFollowing);
+  router.post(
+    "/follow/follow",
     verifyToken,
-    FollowController.isFollowing
+    checkBlocked,
+    FriendController.follow
+  );
+  router.post(
+    "/follow/unfollow",
+    verifyToken,
+    checkBlocked,
+    FriendController.unFollow
   );
 
   //Location
@@ -140,12 +208,14 @@ const AppRoute = (app) => {
     validate(UpdatePostRequest),
     AsyncHandler(PostController.putPostUser)
   );
-  router.put('/posts/admin/:id', 
-    verifyToken, 
+  router.put(
+    "/posts/admin/:id",
+    verifyToken,
     validate(UpdatePostAdminRequest),
-    AsyncHandler(PostController.putPostAdmin));
-  router.delete("/posts/:id", 
-    PostController.deletePost);
+    AsyncHandler(PostController.putPostAdmin)
+  );
+  router.delete("/posts/:id", PostController.deletePost);
+
 
   // Post Media
   router.get("/post-medias", PostMediaController.getPostMedia);
