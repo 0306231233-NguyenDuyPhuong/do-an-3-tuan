@@ -1,44 +1,49 @@
-'use strict';
-const { Model } = require('sequelize');
+"use strict";
 
 module.exports = (sequelize, DataTypes) => {
-  class Friendship extends Model {
-    static associate(models) {
+  const Friendship = sequelize.define(
+    "Friendship",
+    {
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
 
-      // người gửi lời mời
-      Friendship.belongsTo(models.User, {
-        foreignKey: 'user_id',
-        as: 'sender'
-      });
+      friend_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
 
-      // người nhận lời mời
-      Friendship.belongsTo(models.User, {
-        foreignKey: 'friend_id',
-        as: 'receiver'
-      });
-    }
-  }
+      only_follow: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
 
-  Friendship.init({
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+      status: {
+        type: DataTypes.ENUM("pending", "accepted", "rejected", "blocked"),
+        allowNull: false,
+      },
     },
-    friend_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    status: {
-      type: DataTypes.INTEGER, // ⚠️ nên là INTEGER
-      allowNull: false
+    {
+      tableName: "friendships",
+      underscored: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
-  }, {
-    sequelize,
-    modelName: 'Friendship',
-    tableName: 'friendships',
-    underscored: true,
-    timestamps: false
-  });
+  );
+
+  Friendship.associate = function (models) {
+    Friendship.belongsTo(models.User, {
+      foreignKey: "user_id",
+      as: "sender",
+    });
+
+    Friendship.belongsTo(models.User, {
+      foreignKey: "friend_id",
+      as: "receiver",
+    });
+  };
 
   return Friendship;
 };

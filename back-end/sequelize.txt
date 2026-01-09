@@ -1,6 +1,7 @@
 npm install sequelize sequelize-cli mysql2
 npx sequelize-cli init
 
+social_travel
 =>config.json
 {
   "development": {
@@ -16,41 +17,36 @@ npx sequelize-cli init
 
 npx sequelize-cli db:create
 
-User
-npx sequelize-cli model:generate --name User --attributes u_id:string,email:string,phone:string,password:string,full_name:string,birth_date:date,gender:string,avatar:string,status:string,role:string
+npx sequelize-cli model:generate --name User --attributes email:string,phone:string,password:string,full_name:string,birth_date:date,gender:string,avatar:string,status:integer,role:string
 
-Location
 npx sequelize-cli model:generate --name Location --attributes name:string,address:string
 
-Post
-npx sequelize-cli model:generate --name Post --attributes user_id:integer,content:text,privacy:string,location_id:integer,status:string
+npx sequelize-cli model:generate --name Post --attributes user_id:integer,content:text,privacy:integer,location_id:integer,status:integer,like_count:integer,comment_count:integer,share_count:integer
 
-PostMedia
 npx sequelize-cli model:generate --name PostMedia --attributes post_id:integer,media_url:string,media_type:string,thumbnail_url:string
 
-Friendship
-npx sequelize-cli model:generate --name Friendship --attributes user_id:integer,friend_id:integer,status:string
+npx sequelize-cli model:generate --name Friendship --attributes user_id:integer,friend_id:integer,onlyflow:integer,status:integer
 
-Follow
 npx sequelize-cli model:generate --name Follow --attributes follower_id:integer,following_id:integer,deleted_at:date
 
-Comment
-npx sequelize-cli model:generate --name Comment --attributes post_id:integer,user_id:integer,content:text,status:string,deleted_at:date
+npx sequelize-cli model:generate --name Comment --attributes post_id:integer,user_id:integer,content:text,status:integer
 
-Like
 npx sequelize-cli model:generate --name Like --attributes post_id:integer,user_id:integer
 
-SavedPost
 npx sequelize-cli model:generate --name SavedPost --attributes post_id:integer,user_id:integer
 
-Share
 npx sequelize-cli model:generate --name Share --attributes post_id:integer,user_id:integer
 
-Report
-npx sequelize-cli model:generate --name Report --attributes reporter_id:integer,target_type:string,target_id:integer,reason:string,description:text,status:string,reviewed_at:date
+npx sequelize-cli model:generate --name Report --attributes reporter_id:integer,target_type:string,target_id:integer,reason:string,description:text,status:integer
 
-ReportAction
-npx sequelize-cli model:generate --name ReportAction --attributes report_id:integer,admin_id:integer,action:string,note:text
+npx sequelize-cli model:generate --name ReportAction --attributes report_id:integer,admin_id:integer,action:integer,note:text
+
+npx sequelize-cli model:generate --name Conversation --attributes type:integer,name:string
+
+npx sequelize-cli model:generate --name ConversationMember --attributes conversation_id:integer,user_id:integer
+
+npx sequelize-cli model:generate --name Message --attributes conversation_id:integer,sender_id:integer,content:text,message_type:integer
+
 
 npx sequelize-cli db:migrate
 

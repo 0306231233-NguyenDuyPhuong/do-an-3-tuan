@@ -1,6 +1,8 @@
 import { Op } from "sequelize";
 import db from "../models";
 
+//privacy 0: public, 1: friends, 2: private
+//status 0: deleted, 1: approved
 const checkCanComment = async (req, res, next) => {
   try {
     const { postId } = req.body;
@@ -12,14 +14,14 @@ const checkCanComment = async (req, res, next) => {
     if (!post) return res.status(404).json({ message: "Post not found" });
 
     // Cac truong hop pending,block.... khong duoc comment
-    if (post.status !== "approved")
+    if (post.status !== 1)
       return res.status(403).json({ message: "Post is not approved" });
     //pubic ai cung co the comment
-    if (post.privacy === "public") return next();
+    if (post.privacy === 0) return next();
     //private chi co chu post moi co quyen comment
     const user_id = post.user_id;
     const myId = req.user.userId;
-    if (post.privacy === "private") {
+    if (post.privacy === 2) {
       if (user_id !== myId)
         return res.status(403).json({
           message: "You are not allowed to comment on this private post",
@@ -28,11 +30,11 @@ const checkCanComment = async (req, res, next) => {
     }
 
     // friend thi cho co friendship moi comment duoc
-    if (post.privacy === "friends") {
+    if (post.privacy === 1) {
       if (user_id === myId) return next();
       const isFriend = await db.Friendship.findOne({
         where: {
-          status: 2,
+          status: 1,
           [Op.or]: [
             { user_id: myId, friend_id: user_id },
             { user_id: user_id, friend_id: myId },

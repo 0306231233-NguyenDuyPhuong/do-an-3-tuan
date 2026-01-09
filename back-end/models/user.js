@@ -1,19 +1,14 @@
-'use strict';
+"use strict";
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    'User',
+    "User",
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
-
-      u_id: {
-        type: DataTypes.STRING
-      },
-
       email: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -25,31 +20,31 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       password: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
 
       full_name: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
 
-      birth_date: {
-        type: DataTypes.DATEONLY
+      birth: {
+        type: DataTypes.DATEONLY,
       },
 
       gender: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
 
       avatar: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
 
       status: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
 
       role: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
 
       refresh_token: {
@@ -68,28 +63,25 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'users',
+      tableName: "users",
       underscored: true,
-      timestamps: false
+      timestamps: false,
     }
   );
 
-  // ================= ASSOCIATIONS =================
   User.associate = (models) => {
-
     // User gửi lời mời kết bạn
     User.hasMany(models.Friendship, {
-      foreignKey: 'user_id',
-      as: 'sentFriendships'
+      foreignKey: "user_id",
+      as: "sentFriendships",
     });
 
     // User nhận lời mời kết bạn
     User.hasMany(models.Friendship, {
-      foreignKey: 'friend_id',
-      as: 'receivedFriendships'
+      foreignKey: "friend_id",
+      as: "receivedFriendships",
     });
   };
-  // =================================================
 
   return User;
 };

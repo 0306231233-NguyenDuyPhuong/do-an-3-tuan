@@ -10,7 +10,6 @@ import PostController from "./controllers/PostController.js";
 import PostMediaController from "./controllers/PostMediaController.js";
 import ReportController from "./controllers/ReportController.js";
 import ReportActionController from "./controllers/ReportActionController.js";
-//<<<<<<< HEAD
 import AsyncHandler from "./middledewares/AsyncHandler.js";
 import InsertLocationRequest from "./dtos/requests/location/InsertLocatioinRequest.js";
 import InsertPostRequest from "./dtos/requests/post/InsertPostRequest.js";
@@ -21,35 +20,17 @@ import UpdateLocationRequest from "./dtos/requests/location/UpdateLocationReques
 import UpdatePostRequest from "./dtos/requests/post/UpdatePostRequest.js";
 import UpdateReportRequest from "./dtos/requests/report/UpdateReportRequest.js";
 import UpdateReportActionRequest from "./dtos/requests/report-action/UpdateReportActionRequest.js";
+import UpdatePostAdminRequest from "./dtos/requests/post/UpdatePostAdminRequest.js";
 import validate from "./middledewares/Validate.js";
 import verifyToken from "./middledewares/verifyToken.js";
-import isAdmin from "./middledewares/IsAdmin.js";
 import FriendController from "./controllers/FriendController.js";
 import validateImageExists from "./middledewares/ValidateImageExists.js";
-import FollowController from "./controllers/FollowController.js";
-import checkCanComment from "./middledewares/CheckComment.js";
-import CommentController from "./controllers/CommentController.js";
+import checkCanLike from "./middledewares/CheckCanLike.js";
 import InteractController from "./controllers/InteractController.js";
 import checkCanShare from "./middledewares/CheckCanShare.js";
-import checkCanLike from "./middledewares/CheckCanLike.js";
-/*=======
-import AsyncHandler from "./middledewares/AsyncHandler.js"
-import InsertLocationRequest from './dtos/requests/location/InsertLocatioinRequest.js';
-import InsertPostRequest from './dtos/requests/post/InsertPostRequest.js';
-import InsertReportActionRequest from './dtos/requests/report-action/InsertReportActionRequest.js';
-import InsertReportRequest from './dtos/requests/report/InsertReportRequest.js';
-import InsertPostMediaRequest from './dtos/requests/post-media/InsertPostMediaRequest.js';
-import UpdateLocationRequest from './dtos/requests/location/UpdateLocationRequest.js';
-import UpdatePostRequest from './dtos/requests/post/UpdatePostRequest.js';
-import UpdateReportRequest from './dtos/requests/report/UpdateReportRequest.js';
-import UpdateReportActionRequest from './dtos/requests/report-action/UpdateReportActionRequest.js';
-import UpdatePostAdminRequest from './dtos/requests/post/UpdatePostAdminRequest.js';
-import validate  from './middledewares/Validate.js';
-import verifyToken from "./middledewares/verifyToken.js"
-import isAdmin from './middledewares/IsAdmin.js';
-import FriendController from './controllers/FriendController.js';
-import validateImageExists from './middledewares/ValidateImageExists.js';
->>>>>>> phuong*/
+import checkCanComment from "./middledewares/CheckComment.js";
+import CommentController from "./controllers/CommentController.js";
+import checkBlocked from "./middledewares/checkBlocked.js";
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser);
@@ -63,33 +44,43 @@ const AppRoute = (app) => {
   router.post("/auth/reset-password", AuthController.resetPassword);
 
   //User
-  router.get("/user/get-profile", verifyToken, UserController.getProfile);
+  router.get(
+    "/user/get-profile",
+    checkBlocked,
+    verifyToken,
+    UserController.getProfile
+  );
   router.get("/users/:id", verifyToken, UserController.getUserById);
   router.get("/users", verifyToken, UserController.getUsers);
+
   //INTERACT
   router.post(
     "/interact/like",
     verifyToken,
+    checkBlocked,
     checkCanLike,
     InteractController.likePost
   );
   router.delete(
     "/interact/like/:postId",
     verifyToken,
+    checkBlocked,
     InteractController.unlikePost
   );
   router.post(
     "/interact/share",
     verifyToken,
+    checkBlocked,
     checkCanShare,
     InteractController.sharePost
   );
   router.delete(
     "/interact/share/:postId",
     verifyToken,
+    checkBlocked,
     InteractController.unsharePost
   );
-  router.get("/interact/count/:postId", InteractController.getCount);
+  //router.get("/interact/count/:postId", InteractController.getCount);
 
   //Comment
   router.get(
@@ -100,10 +91,16 @@ const AppRoute = (app) => {
   router.post(
     "/comment",
     verifyToken,
+    checkBlocked,
     checkCanComment,
     CommentController.create
   );
-  router.patch("/comment", verifyToken, CommentController.updateComment);
+  router.patch(
+    "/comment",
+    verifyToken,
+    checkBlocked,
+    CommentController.updateComment
+  );
   router.delete(
     "/comment/:commentId",
     verifyToken,
@@ -114,6 +111,7 @@ const AppRoute = (app) => {
   router.post(
     "/friends/requests",
     verifyToken,
+    checkBlocked,
     FriendController.sendFriendRequest
   );
   router.get(
@@ -121,44 +119,52 @@ const AppRoute = (app) => {
     verifyToken,
     FriendController.getFriendRequests
   );
+  router.get("/friends", verifyToken, FriendController.getFriends);
   router.patch(
     "/friends/requests/accept",
     verifyToken,
+    checkBlocked,
     FriendController.acceptFriendRequest
   );
   router.patch(
     "/friends/requests/reject",
     verifyToken,
+    checkBlocked,
     FriendController.rejectFriendRequest
   );
-  router.get("/friends", verifyToken, FriendController.getFriends);
   router.post(
     "/friends/requests/cancel",
     verifyToken,
+    checkBlocked,
     FriendController.cancelFriendRequest
   );
-  router.post("/friends/unfriend", verifyToken, FriendController.unFriend);
-  router.patch(
-    "/friends/requests/block",
+  router.post(
+    "/friends/unfriend",
     verifyToken,
-    FriendController.blockFriendRequest
+    checkBlocked,
+    FriendController.unFriend
   );
 
+  router.patch("/friends/unblock", verifyToken, FriendController.unBlockUser);
   router.get(
     "/friend/status/:friendId",
     verifyToken,
     FriendController.isFriend
   );
-
-  //Follow
-  router.post("/follow", verifyToken, FollowController.followUser);
-  router.delete("/follow/unfollow", verifyToken, FollowController.unFollow);
-  router.get("/follows", verifyToken, FollowController.getFollowers);
-  router.get("/follow/following", verifyToken, FollowController.getFollowing);
-  router.get(
-    "/follow/status/:followingId",
+  //FOLLOW
+  router.get("/follow/follower", verifyToken, FriendController.getFollower);
+  router.get("/follow/following", verifyToken, FriendController.getFollowing);
+  router.post(
+    "/follow/follow",
     verifyToken,
-    FollowController.isFollowing
+    checkBlocked,
+    FriendController.follow
+  );
+  router.post(
+    "/follow/unfollow",
+    verifyToken,
+    checkBlocked,
+    FriendController.unFollow
   );
 
   //Location
@@ -184,29 +190,21 @@ const AppRoute = (app) => {
   router.post(
     "/posts",
     validate(InsertPostRequest),
-    //<<<<<<< HEAD
     AsyncHandler(PostController.postPost)
   );
   router.put(
     "/posts/:id",
     verifyToken,
-    isAdmin,
     validate(UpdatePostRequest),
-    AsyncHandler(PostController.putPost)
+    AsyncHandler(PostController.putPostUser)
+  );
+  router.put(
+    "/posts/admin/:id",
+    verifyToken,
+    validate(UpdatePostAdminRequest),
+    AsyncHandler(PostController.putPostAdmin)
   );
   router.delete("/posts/:id", PostController.deletePost);
-  /*=======
-    AsyncHandler(PostController.postPost));
-  router.put('/posts/users/:id', 
-    verifyToken, 
-    validate(UpdatePostRequest),
-    AsyncHandler(PostController.putPostUser));
-  router.put('/posts/admin/:id', 
-    verifyToken, 
-    validate(UpdatePostAdminRequest),
-    AsyncHandler(PostController.putPostAdmin));
-  router.delete('/posts/:id', PostController.deletePost);
->>>>>>> phuong*/
 
   // Post Media
   router.get("/post-medias", PostMediaController.getPostMedia);

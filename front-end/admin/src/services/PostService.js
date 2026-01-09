@@ -16,8 +16,8 @@ const fetchPostById = (id) =>{
     })
 }
 
-const updateStatusPost = (id, newStatus) =>{
-    return axios.put(`posts/${id}`,
+const putStatusPost = (id, newStatus) =>{
+    return axios.put(`posts/admin/${id}`,
         {status: newStatus},
         {
             headers:{
@@ -29,5 +29,5 @@ const updateStatusPost = (id, newStatus) =>{
 export {
     fetchPostAdmin,
     fetchPostById,
-    updateStatusPost
+    putStatusPost
 }
