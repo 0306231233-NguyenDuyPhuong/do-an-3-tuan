@@ -1,7 +1,4 @@
 <resources>
-<<<<<<< HEAD
-    <string name="app_name">ui_doan3tuan</string>
-=======
 
     <string name="app_name">Kết nối không giới hạn</string>
 
@@ -59,5 +56,4 @@
     <string name="success_signup">Đăng ký thành công!</string>
     <string name="success_reset_password">Đã gửi email đặt lại mật khẩu!</string>
 >>>>>>> ff02e63305737272251d47464efecf6e4446797f
->>>>>>> 189572c2eaf776e904c413aecbd5271a3dd0a8bb
 </resources>

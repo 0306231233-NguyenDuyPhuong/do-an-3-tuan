@@ -17,7 +17,7 @@ const handleLogin = async () => {
     localStorage.setItem("accessToken", res.data.accessToken);
     localStorage.setItem("user",
       JSON.stringify(res.data.user))
-    if(res.data.user.role == 1){
+    if(res.data.user.role == "admin"){
       navigate("/");
     } else{
       alert("Tài khoản không có quyền truy cập");
