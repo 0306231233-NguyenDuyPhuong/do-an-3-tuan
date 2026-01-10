@@ -7,7 +7,7 @@ module.exports = {
 
       user_id: { type: Sequelize.INTEGER, allowNull: false },
       friend_id: { type: Sequelize.INTEGER, allowNull: false },
-      onlyflow: { type: Sequelize.INTEGER, defaultValue: 0 },
+      only_follow: { type: Sequelize.INTEGER, defaultValue: 0 },
 
       status: { type: Sequelize.INTEGER, defaultValue: 0 }, // 0=pending,1=accepted,2=rejected,3=blocked
 

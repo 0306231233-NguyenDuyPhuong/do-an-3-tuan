@@ -1,0 +1,36 @@
+package com.example.ui_doan3tuan.model
+data class LoginRequest(
+    val username: String,
+    val password: String
+)
+
+data class RegisterRequest(
+    val username: String,
+    val password: String,
+    val rePassword: String,
+    val fullname: String
+)
+
+data class LoginResponse(
+    val message: String,
+    val accessToken: String,
+    val refreshToken: String,
+    val user: User
+)
+
+data class RegisterResponse(
+    val message: String,
+    val user: User
+)
+
+data class User(
+    val id: Int,
+    val email: String?,
+    val phone: String?,
+    val full_name: String,
+    val role: String
+)
+
+data class ErrorResponse(
+    val message: String
+)

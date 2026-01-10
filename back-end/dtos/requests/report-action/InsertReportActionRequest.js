@@ -12,8 +12,8 @@ class InsertReportActionRequest{
         const schema = Joi.object({
             report_id : Joi.number().integer().required(),
             admin_id : Joi.number().integer().required(),
-            action: Joi.string()
-            .valid('hide_content', 'delete_content', 'warn_user', 'ban_user')
+            action: Joi.number().integer()
+            .valid(0, 1, 2, 3)
             .required(),
             note: Joi.string().allow("").required(),
         });

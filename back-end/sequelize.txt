@@ -1,5 +1,7 @@
-npm install sequelize sequelize-cli mysql2
-npx sequelize-cli init
+lệnh setup database mới
+
+npx sequelize-cli db:migrate
+
 
 social_travel
 =>config.json

@@ -7,8 +7,8 @@ class UpdatePostAdminRequest{
 
     static validate(data){
         const schema = Joi.object({
-            status  : Joi.string()
-            .valid("delete", "approved")
+            status  : Joi.number().integer()
+            .valid(0, 1)
             .required()
         })
         return schema.validate(data)

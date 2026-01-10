@@ -15,7 +15,7 @@ module.exports = {
 
       status: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 1 }, // 0=inactive,1=active,2=banned
       gender: { type: Sequelize.BOOLEAN },
-      birth: { type: Sequelize.STRING },
+      birth_date: { type: Sequelize.STRING },
       full_name: { type: Sequelize.TEXT },
 
       created_at: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },

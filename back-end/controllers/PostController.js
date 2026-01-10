@@ -3,126 +3,111 @@ import db from "../models/index.js";
 import { Sequelize, where, Op } from "sequelize";
 
 const getPostUser = async (req, res) => {
-  const page = Number(req.query.page) || 1;
-  const limit = 10;
-  const offset = (page - 1) * limit;
-  const userId = req.user.userId;
-  //const blockedIds = userId.map((item)=>item.id);
-  const [postData, postTotal] = await Promise.all([
-    db.Post.findAll({
-      subQuery: false,
-      limit,
-      offset,
-      order: [['created_at', 'DESC']],
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
+    const userId = Number(req.user.userId);
+    const userRole = Number(req.user.role);
+    if (userRole != 0) {
+      return res.status(403).json({
+        message: "User no access rights"
+      })
+    }
+
+    const friendBlock = await db.Friendship.findAll({
       where: {
-        [Op.and]: [
-          { status: "approved" },
+        user_id: userId,
+        [Op.and]:[
           {
-            [Op.or]: [
-              { privacy: "private", user_id: userId },
-            ]
+            status:3
           }
         ]
-
-        // userId: { [Sequelize.Op.notIn]: blockedIds }
       },
-      attributes: {
-        include: [
-          [
-            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
-            "LikeCount",
-          ],
-          [
-            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
-            "CommentCount"
-          ]
-        ]
-      },
-      include: [
-        {
-          model: db.User,
-          attributes: ["id", "full_name", "avatar"]
-        },
-        {
-          model: db.Like,
-          attributes: []
-        },
-        {
-          model: db.Comment,
-          attributes: []
-        },
-        {
-          model: db.PostMedia,
-        }
-      ],
-      group: ["Post.id", "User.id"]
-    }),
-    db.Post.count({
-      where: {
-        [Op.and]: [
-          { status: "approved" },
-          {
-            [Op.or]: [
-              { privacy: "public" },
-              { privacy: "private", user_id: userId },
-            ]
-          }
-        ]
-
-      },
+      attributes: ["friend_id"]
     })
-  ])
-  return res.status(200).json({
-    message: "Post",
-    total: postTotal,
-    page,
-    limit,
-    data: postData
-  });
+    const blockIds = Object.values(friendBlock).map(item=>item.friend_id)
+    const [postData, postTotal] = await Promise.all([
+      db.Post.findAll({
+        subQuery: false,
+        limit,
+        offset,
+        order: [['created_at', 'DESC']],
+        where: {
+          id: {[Op.notIn]: blockIds},
+          [Op.and]: [
+            { status: 0 },
+            {
+              [Op.or]: [
+                { privacy: 0 },
+                { privacy: 1, user_id: userId }
+              ]
+            },
+          ]
+        },
+        include: [
+          {
+            model: db.User,
+            attributes: ["id", "full_name", "avatar"]
+          },
+          {
+            model: db.PostMedia
+          },
+          {
+            model: db.Location
+          }
+        ],
+        group: ["Post.id", "User.id"]
+      }),
+      db.Post.count({
+        where: {
+          [Op.and]: [
+            { status: 0 },
+            {
+              [Op.or]: [
+                { privacy: 0 },
+                { privacy: 1, user_id: userId }
+              ]
+            }
+          ]
+        }
+      })
+    ]);
+
+    return res.status(200).json({
+      message: "Post",
+      total: postTotal,
+      page,
+      limit,
+      data: postData
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: error
+    })
+  }
 };
 
 const getPostAdmin = async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;
-
+  const userRole = Number(req.user.role);
+  if (userRole != 1) {
+    return res.status(403).json({
+      message: "User no access rights"
+    })
+  }
   const [postData, totalPost] = await Promise.all([
     db.Post.findAll({
       subQuery: false,
       limit,
       offset,
-      attributes: {
-        include: [
-          [
-            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
-            "LikeCount",
-          ],
-          [
-            Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
-            "CommentCount"
-          ],
-          /* [
-             Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Shares.id")))
-           ]*/
-        ]
-      },
       include: [
         {
           model: db.User,
           attributes: ["id", "full_name", "avatar"]
         },
-        {
-          model: db.Like,
-          attributes: [],
-        },
-        {
-          model: db.Comment,
-          attributes: [],
-        },
-        /*{
-          model: db.Share,
-          attributes:[]
-        },*/
         {
           model: db.PostMedia,
           separate: true
@@ -153,21 +138,6 @@ const getPostById = async (req, res) => {
     where: {
       id
     },
-    attributes: {
-      include: [
-        [
-          Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
-          "LikeCount"
-        ],
-        [
-          Sequelize.fn(
-            "COUNT",
-            Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))
-          ),
-          "CommentCount"
-        ]
-      ]
-    },
     include: [
       {
         model: db.User,
@@ -178,14 +148,6 @@ const getPostById = async (req, res) => {
       },
       {
         model: db.PostMedia,
-      },
-      {
-        model: db.Like,
-        attributes: []
-      },
-      {
-        model: db.Comment,
-        attributes: []
       }
     ],
     group: ["Post.id", "User.id", "Location.id", "PostMedia.id"]
@@ -256,7 +218,7 @@ const putPostUser = async (req, res) => {
 const putPostAdmin = async (req, res) => {
   const { id } = req.params;
   const role = req.user.role;
-  if (role !== "admin") {
+  if (role !== 1) {
     return res.status(400).json({
       message: 'User not admin'
     })

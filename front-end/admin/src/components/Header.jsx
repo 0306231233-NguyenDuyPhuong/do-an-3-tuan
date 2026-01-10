@@ -1,12 +1,15 @@
 import { EmojiNormal, Notification, SearchNormal, Share } from "iconsax-react";
+import { IoShareSocialOutline } from "react-icons/io5";
+import { LuMessageCircleMore, LuLayoutDashboard } from "react-icons/lu";
+
 const Header = () => {
     return (
         <>
             <div className="flex flex-col h-20">
                 <div className="flex justify-between items-center px-10">
                     <div className="flex items-center gap-2">
-                        <Notification size="25" color="#000" />
-                        <div className="text-2xl">Darshboard</div>
+                        <LuLayoutDashboard size="25" color="#000" />
+                        <div className="text-2xl font-bold">Darshboard</div>
                     </div>
                     <div className="flex items-center">
                         <div className="w-50 h-13 border rounded-xl border-gray-300
@@ -22,10 +25,10 @@ const Header = () => {
                             <Notification size="25" color="#000" />
                         </div>
                         <div className="w-12 h-12 border rounded-md p-3 border-gray-200 shadow-md mr-4">
-                            <EmojiNormal size="25" color="#000" />
+                            <LuMessageCircleMore  size="25" color="#000" />
                         </div>
                         <div className="w-12 h-12 border rounded-md p-3 border-gray-200 shadow-md mr-4">
-                            <Share size="25" color="#000" />
+                            <IoShareSocialOutline  size="25" color="#000" />
                         </div>
                     </div>
                 </div>

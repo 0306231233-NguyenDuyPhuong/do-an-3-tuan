@@ -1,4 +1,12 @@
+<<<<<<< HEAD
+import { Home ,} from "iconsax-react";
+import { FaChartBar ,FaRegUser   } from "react-icons/fa";
+import { LuNewspaper } from "react-icons/lu";
+import { BsBookmark } from "react-icons/bs";
+import { FiLogOut } from "react-icons/fi";
+=======
 import { Home } from "iconsax-react";
+>>>>>>> origin/haiui
 import { NavLink } from "react-router-dom";
 import avatar from "../images/avatar.png"
 const Sidebar = () =>{
@@ -32,45 +40,49 @@ const Sidebar = () =>{
                         ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
                     }>
                         <div className="flex items-center gap-3">
+<<<<<<< HEAD
+                        
+                        <FaChartBar  color="grey" size="30"/>
+
+=======
                         <Home size="20" color="#000" />
+>>>>>>> origin/haiui
                         <span className="text-xl">Dashboard</span>
                         </div>
                     </NavLink>
 
-                    <NavLink to="/post" className={({isActive})=>
-                        `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
-                    }>
-                        <div className="flex items-center gap-3">
-                        <Home size="20" color="#000" />
+                    <NavLink
+                    to="/post"
+                    className={({ isActive }) =>
+                        `block rounded-lg px-4 py-2 transition
+                        ${isActive
+                        ? "bg-[rgb(132,93,240)] text-white font-bold"
+                        : "hover:bg-gray-100 text-gray-500"}`
+                    }
+                    >
+                    <div className="flex items-center gap-3">
+                        <LuNewspaper size={30} className="text-current" />
                         <span className="text-xl">Post</span>
-                        </div>
+                    </div>
                     </NavLink>
+
                     <NavLink to="/user" className={({isActive})=>
                         `block rounded-lg px-4 py-2 transition 
                         ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
                     }>
                         <div className="flex items-center gap-3">
-                        <Home size="20" color="#000" />
+                        <FaRegUser size="30" color="grey" />
                         <span className="text-xl">User</span>
                         </div>
                     </NavLink>
 
-                    <NavLink to="/comment" className={({isActive})=>
-                        `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
-                    }>
-                        <div className="flex items-center gap-3">
-                        <Home size="20" color="#000" />
-                        <span className="text-xl">Comment</span>
-                        </div>
-                    </NavLink>
+
                     <NavLink to="/report" className={({isActive})=>
                         `block rounded-lg px-4 py-2 transition 
                         ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
                     }>
                         <div className="flex items-center gap-3">
-                        <Home size="20" color="#000" />
+                        <BsBookmark size="30" color="grey" />
                         <span className="text-xl">Report</span>
                         </div>
                     </NavLink>
@@ -79,7 +91,7 @@ const Sidebar = () =>{
                         ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
                     }>
                         <div className="flex items-center gap-3">
-                        <Home size="20" color="#000" />
+                        <FiLogOut  size="30" color="grey" />
                         <span className="text-xl">Logout</span>
                         </div>
                     </NavLink>

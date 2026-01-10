@@ -50,8 +50,10 @@ const getUsers = async (req, res) => {
     });
 
     return res.json(
-      {message: "Get user success",
-      data:users});
+      {
+        message: "Get user success",
+        data:users
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -68,7 +70,6 @@ const getUserById = async (req, res) => {
         where: {
           id
         },
-       
         attributes: ["id", "full_name", "email", "phone", "avatar", "status"]
       }),
 
@@ -86,48 +87,25 @@ const getUserById = async (req, res) => {
                   ]
                 }
               ]
-      
-              // userId: { [Sequelize.Op.notIn]: blockedIds }
-            },
-            attributes: {
-              include: [
-                [
-                  Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Likes.id"))),
-                  "LikeCount",
-                ],
-                [
-                  Sequelize.fn("COUNT", Sequelize.fn("DISTINCT", Sequelize.col("Comments.id"))),
-                  "CommentCount"
-                ]
-              ]
-            },
+              },
             include: [
               {
                 model: db.User,
                 attributes: ["id", "full_name", "avatar"]
               },
               {
-                model: db.Like,
-                attributes: []
-              },
-              {
-                model: db.Comment,
-                attributes: []
-              },
-              {
                 model: db.PostMedia,
               }
             ],
-            group: ["Post.id", "User.id"]
           }),
           db.Post.count({
                 where: {
                   [Op.and]: [
-                    { status: "approved" },
+                    { status: 1},
                     {
                       [Op.or]: [
-                        { privacy: "public" },
-                        { privacy: "private", user_id: id },
+                        { privacy: 0 },
+                        { privacy: 2, user_id: id },
                       ]
                     }
                   ]
