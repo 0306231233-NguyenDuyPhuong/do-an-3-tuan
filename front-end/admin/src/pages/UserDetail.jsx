@@ -9,6 +9,16 @@ const UserDetail = () => {
   const [userDetailData, setUserDetailData] = useState(null);
   const [listPostByUser, setPostByUser] = useState([]);
   const navigate = useNavigate();
+  const privacyMap = {
+    0: "public",
+    1: "friends",
+    2: "private"
+  }
+
+  const statusMap = {
+    1: "delete",
+    0: "approved"
+  }
 
   //const {state} = useLocation();
   //const reportId = state?.reportId;
@@ -28,8 +38,6 @@ const UserDetail = () => {
       if (res) {
         setUserDetailData(res.user);
         setPostByUser(res.post)
-        console.log(">>>>>USER Data: ", userDetailData)
-        console.log(">>>>>USER Data: ", listPostByUser)
       }
     } catch (error) {
       console.error(error);
@@ -43,102 +51,112 @@ const UserDetail = () => {
   }
 
   return (
-    <>
-      <ArrowLeft size="30" color="#000" onClick={() => navigate(-1)} />
-      <div className="flex flex-col border-gray-200 shadow-md rounded-md gap-5 mx-30 p-10">
-        <div className="flex-1 flex-col min-h-[200px]">
-          <div className="flex ">
-            <div className="flex justify-between w-full items-center">
-              <div className="flex gap-5 items-center">
-                <img
-                  className="size-20 rounded-full border-gray-100"
-                  src={`http://localhost:8989/api/images/${userDetailData.avatar}`}
-                />
-                <span className="text-2xl font-bold">{userDetailData.full_name}</span>
-              </div>
-              <div className="h-10 w-30 border border-green-500 bg-green-100 items-center flex justify-center rounded-md">
-                <span className="text-green-500 text-xl font-bold">{userDetailData.status}</span>
-              </div>
-            </div>
-          </div>
+  <>
+    <ArrowLeft
+      size={28}
+      className="mb-4 cursor-pointer"
+      onClick={() => navigate(-1)}
+    />
+
+    <div className="max-w-4xl mx-auto p-6 flex flex-col gap-6 shadow-md rounded-md">
+
+      {/* USER INFO */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <img
+            className="w-16 h-16 rounded-full object-cover"
+            src={`http://localhost:8989/api/images/${userDetailData.avatar}`}
+          />
+          <span className="text-xl font-semibold">
+            {userDetailData.full_name}
+          </span>
         </div>
-        <div className="">
-          {listPostByUser.map((item, index) => (
-            <div key={`post-${index}`} className="border my-10 p-5 border-gray-100 rounded-md">
-              <div>
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-5 items-center">
-                    <img
-                      className="size-20 rounded-full border-gray-100"
-                      src={`http://localhost:8989/api/images/${item.User.avatar}`}
-                    />
-                    <span className="text-2xl font-bold">{item.User.full_name}</span>
-                  </div>
-                  <div className="h-10 w-30 border border-green-500 bg-green-100 items-center flex justify-center rounded-md">
-                    <span className="text-green-500 text-xl font-bold">{item.status}</span>
-                  </div>
-                </div>
-              </div>
 
-              <div className="h-5 w-15 my-5 border border-green-500 bg-green-100 items-center flex justify-center rounded-md">
-                <span className="text-green-500 font-bold">{item.privacy}</span>
-              </div>
+        <span className="px-4 py-1 rounded-md bg-green-100 text-green-600 font-semibold">
+          {userDetailData.status}
+        </span>
+      </div>
 
-
-              <div>
-                <span className="text-gray-500 text-2xl font-bold">
-                  {item.content}
+      {/* POSTS */}
+      <div className="flex flex-col gap-6">
+        {listPostByUser.map((item, index) => (
+          <div
+            key={`post-${index}`}
+            className="border border-gray-200 rounded-lg p-5"
+          >
+            {/* POST HEADER */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img
+                  className="w-12 h-12 rounded-full object-cover"
+                  src={`http://localhost:8989/api/images/${item.User.avatar}`}
+                />
+                <span className="font-semibold">
+                  {item.User.full_name}
                 </span>
               </div>
 
-              <div className="flex space-x-2 mt-2">
-                {item.PostMedia?.length > 0 ? (
-                  item.PostMedia.map((media) =>
-                    media.media_url ? (
+              <span className="px-3 py-1 rounded bg-green-100 text-green-600 text-sm font-medium">
+                {statusMap[item.status]}
+              </span>
+            </div>
+
+            {/* PRIVACY */}
+            <div className="inline-block mt-3 px-3 py-1 rounded bg-green-100 text-green-600 text-sm font-medium">
+              {privacyMap[item.privacy]}
+            </div>
+
+            {/* CONTENT */}
+            <p className="mt-3 text-gray-700 font-bold">
+              {item.content}
+            </p>
+
+            {/* MEDIA */}
+            {item.PostMedia?.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                {item.PostMedia.map(
+                  media =>
+                    media.media_url && (
                       <img
                         key={media.id}
                         src={`http://localhost:8989/api/images/${media.media_url}`}
-                        alt={`media-${media.id}`}
-                        className="w-150 h-150 object-cover rounded flex-shrink-0"
+                        className="w-full h-48 object-cover rounded"
                       />
-                    ) : null
-                  )
-                ) : (
-                  <span>Không có ảnh</span>
+                    )
                 )}
               </div>
+            ) : (
+              <p className="mt-3 text-sm text-gray-400">Không có ảnh</p>
+            )}
 
-              <div className="flex justify-between mt-5 flex gap-5 mt-20">
-                <div className="flex gap-2 items-center">
-                  <Like1 size="30" color="#000" />
-                  <span>{item.LikeCount}</span>
-                </div>
-                <div className="flex gap-2 items-center">
-                  <Message2 size="30" color="#000" />
-                  <span>{item.CommentCount}</span>
-
-                </div>
-                <DirectRight size="30" color="#000" />
+            {/* ACTIONS */}
+            <div className="flex justify-around items-center mt-5 pt-4 border-t">
+              <div className="flex items-center gap-2">
+                <Like1 size={24} />
+                <span>{item.LikeCount}</span>
               </div>
+
+              <div className="flex items-center gap-2">
+                <Message2 size={24} />
+                <span>{item.CommentCount}</span>
+              </div>
+
+              <DirectRight size={24} />
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
+    </div>
 
+    <ToastContainer
+      position="top-left"
+      autoClose={5000}
+      pauseOnHover
+      draggable
+    />
+  </>
+);
 
-      <ToastContainer
-        position="top-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-    </>
-  );
 };
 
 export default UserDetail;

@@ -36,7 +36,7 @@ const getPostUser = async (req, res) => {
         where: {
           id: {[Op.notIn]: blockIds},
           [Op.and]: [
-            { status: 0 },
+            { status: 1 }, // sửa =0 -> 1
             {
               [Op.or]: [
                 { privacy: 0 },
@@ -62,7 +62,7 @@ const getPostUser = async (req, res) => {
       db.Post.count({
         where: {
           [Op.and]: [
-            { status: 0 },
+            { status: 1 },//sửa status=0
             {
               [Op.or]: [
                 { privacy: 0 },

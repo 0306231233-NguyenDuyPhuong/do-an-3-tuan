@@ -8,10 +8,10 @@ const Report = () => {
     const [ listReport, setListReports] = useState([]);
     let [total, setTotatl] = useState(null);
     const statusClasses = {
-    0: "bg-yellow-100 text-yellow-500 border border-yellow-300",
-    1: "bg-blue-100 text-blue-500 border border-blue-300",
-    2: "bg-green-100 text-green-500 border border-green-300",
-    3: "bg-red-100 text-red-500 border border-red-300",
+    pending: "bg-yellow-100 text-yellow-500 border border-yellow-300",
+    reviewed: "bg-blue-100 text-blue-500 border border-blue-300",
+    resolved: "bg-green-100 text-green-500 border border-green-300",
+    rejected: "bg-red-100 text-red-500 border border-red-300",
     };
 
     useEffect(() => {
@@ -22,19 +22,18 @@ const Report = () => {
     const getReport = async (page) => {
         let res = await fetchReport(page);
         setTotatl(res.total);
-        console.log(">>>>>>>>>>Report: ", res)
+        console.log(">>>>>>>>>>Report: ", res.data)
         if (res && res.data) {
-            setListReports(res.data.rows)
+            setListReports(res.data)
         }
     }
 
     const updateStatus = async(id) =>{
         try {
-            await updateStatusReport(id, 1);
+            await updateStatusReport(id, "reviewed");
             getReport();
         } catch (error) {
-            alert("Update status error: ", error);
-            <NavLink to={"/report"}/>
+            alert("Update status error: ", error)
         }
     }
 

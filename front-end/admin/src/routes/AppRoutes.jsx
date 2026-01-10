@@ -9,7 +9,6 @@ import Report from "../pages/Report";
 import Logout from "../pages/Logout";
 import PostDetail from "../pages/PostDetail";
 import ProtectedRoute from "./ProtectedRoute";
-import UserDetail from "../pages/UserDetail";
 
 const AppRoutes = () => {
   return (
@@ -26,7 +25,6 @@ const AppRoutes = () => {
         <Route index element={<Home />} />
         <Route path="post" element = {<Post/>}/>
         <Route path="post/:postId" element={< PostDetail/>} />
-        <Route path="user/:userId" element={< UserDetail/>} />
         <Route path="user" element={<User />} />
         <Route path="comment" element={<Comment />} />
         <Route path="report" element={<Report />} />

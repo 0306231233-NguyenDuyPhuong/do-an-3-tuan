@@ -3,41 +3,25 @@ import {
   Bar,
   XAxis,
   YAxis,
+  CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
+  ResponsiveContainer
 } from "recharts";
 
-const data = [
-  { name: "Jan", revenue: 1200 },
-  { name: "Feb", revenue: 1900 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Jan", revenue: 1200 },
-  { name: "Feb", revenue: 1900 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-  { name: "Mar", revenue: 3000 },
-];
+function ReportByTypeBar({ data }) {
+  if (!data || data.length === 0) return <p>No data</p>;
 
-export default function Chart() {
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
-        <XAxis dataKey="name" />
-        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="target_type" />
+        <YAxis allowDecimals={false} />
         <Tooltip />
-        <Bar dataKey="revenue"      fill="#6F45E6"
-      radius={[6, 6, 0, 0]}
-      activeBar={{ fill: "#5B34D6" }}
-   />
+        <Bar dataKey="count" fill="#6F45E6" />
       </BarChart>
     </ResponsiveContainer>
   );
 }
+
+export default ReportByTypeBar;

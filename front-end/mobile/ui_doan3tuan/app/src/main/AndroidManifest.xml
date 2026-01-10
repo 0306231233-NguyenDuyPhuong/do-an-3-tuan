@@ -2,11 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-<<<<<<< HEAD
-=======
     <uses-permission android:name="android.permission.INTERNET" />
 
->>>>>>> 189572c2eaf776e904c413aecbd5271a3dd0a8bb
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,22 +12,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-<<<<<<< HEAD
-        android:theme="@style/Theme.Ui_doan3tuan">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-=======
         android:theme="@style/Theme.Ui_doan3tuan"
         android:usesCleartextTraffic="true">
         <activity
-
+            android:name=".view.FriendsAddListActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.FriendsListActivity"
             android:exported="false" />
         <activity
@@ -47,35 +34,25 @@
             android:exported="false" />
         <activity
             android:name=".view.UserProfileActivity"
-            android:exported="false"/>
-
-        <activity
-            android:name=".view.CreatePostActivity"
- />
+            android:exported="false" />
+        <activity android:name=".view.CreatePostActivity" />
         <activity
             android:name=".view.SignupActivity"
             android:exported="false" />
         <activity
             android:name=".view.ForgotPasswordActivity"
-            android:exported="false" />
-
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
             android:name=".view.LoginActivity"
-            android:exported="false" />
-
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".view.WelcomeActivity"
-
-            android:exported="false"/>
-
-
-
-        <activity
             android:name=".view.NewsletterActivity"
-            android:exported="true">
+            android:exported="true" >
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
@@ -83,9 +60,11 @@
         </intent-filter>
     </activity>
 
+        <activity
+            android:name=".view.WelcomeActivity"
+            android:exported="true"/>
 
 
->>>>>>> 189572c2eaf776e904c413aecbd5271a3dd0a8bb
     </application>
 
 </manifest>

@@ -29,7 +29,7 @@ class AdapterNewsletter(private var list: List<PostModel>,val onClick:(PostModel
         holder: BangTinViewHolder,
         position: Int
     ) {
-        val ngayDang = Instant.parse(list[position].created_at)
+        val ngayDang = Instant.parse(list[position].createdAt)
         val ngayHienTai = Instant.now()
         var khoangCach = Duration.between(ngayDang, ngayHienTai)
         val hienThiThoiGian = when{

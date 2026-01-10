@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<<<<<<< HEAD
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-=======
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
@@ -85,5 +81,4 @@
     <color name="ripple_color">#1AFFFFFF</color>
     <color name="selection_color">#333D4556</color>
 
->>>>>>> 189572c2eaf776e904c413aecbd5271a3dd0a8bb
 </resources>
