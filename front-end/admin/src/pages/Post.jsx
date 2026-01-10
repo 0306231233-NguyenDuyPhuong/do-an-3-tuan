@@ -7,7 +7,10 @@ import ReactPaginate from 'react-paginate';
 const Post = () => {
     const [listPosts, setListPosts] = useState([]);
     let [total, setTotatl] = useState(null);
-
+    const statusPost = {
+      0: "delete", 
+      1: "approved"
+    }
     useEffect(() => {
         // eslint-disable-next-line react-hooks/immutability
         getPostAdmin(1)
@@ -124,12 +127,12 @@ const Post = () => {
                 <td className="h-15 px-4 py-2 text-center">
                     <div
                     className={`inline-block px-3 py-1 rounded-md font-bold ${
-                        item.status === "delete"
+                        item.status === 0
                         ? "bg-red-100 text-red-500 border border-red-300"
                         : "bg-green-100 text-green-500 border border-green-300"
                     }`}
                     >
-                    {item.status}
+                    {statusPost[item.status]}
                     </div>
                 </td>
                 <td className="h-15 px-4 py-2 text-center">

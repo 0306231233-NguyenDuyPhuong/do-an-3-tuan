@@ -57,7 +57,7 @@ const getCommentsPost = async (req, res) => {
     if (!postId)
       return res.status(400).json({ message: "Post id is required" });
 
-    const comments = await db.Comment.findAll({
+    const comments = await db.Comment.findAndCountAll({
       where: {
         post_id: postId,
         status: 1,

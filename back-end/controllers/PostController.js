@@ -1,20 +1,21 @@
 import { stat } from "@babel/core/lib/gensync-utils/fs.js";
 import db from "../models/index.js";
 import { Sequelize, where, Op } from "sequelize";
+import { required } from "joi";
 
 const getPostUser = async (req, res) => {
   try {
+    const {search} = req.query;
     const page = Number(req.query.page) || 1;
     const limit = 10;
     const offset = (page - 1) * limit;
     const userId = Number(req.user.userId);
     const userRole = Number(req.user.role);
-    if (userRole != 0) {
-      return res.status(403).json({
-        message: "User no access rights"
+    if(userRole != 0){
+      return res.status(404).json({
+        message: "User not role user"
       })
     }
-
     const friendBlock = await db.Friendship.findAll({
       where: {
         user_id: userId,
@@ -37,13 +38,16 @@ const getPostUser = async (req, res) => {
           id: {[Op.notIn]: blockIds},
           [Op.and]: [
             { status: 0 },
+            search && {
+              content: {[Op.like]: `%${search}%`}
+            },
             {
               [Op.or]: [
                 { privacy: 0 },
                 { privacy: 1, user_id: userId }
               ]
             },
-          ]
+          ].filter(Boolean), 
         },
         include: [
           {
@@ -89,20 +93,57 @@ const getPostUser = async (req, res) => {
 };
 
 const getPostAdmin = async (req, res) => {
+  const {search, sort, status, user_id, date} = req.query;
   const page = Number(req.query.page) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;
   const userRole = Number(req.user.role);
-  if (userRole != 1) {
+  
+  let order = [["created_at", "DESC"]]
+  if(sort === "trending"){
+    order = [[
+      db.sequelize.literal(`
+        (
+        like_count*1 +
+        comment_count *2 +
+        share_count *3
+        )`),
+        "DESC"
+    ]]
+  }
+  const wherePost = 
+  {
+    ...(search && {
+    content: { [Op.like]: `%${search}%`}
+    }),
+    ...(status !== undefined && {
+      status: Number(status)
+    }), 
+    ...(user_id !== undefined && {
+      user_id: Number(user_id)
+    }), 
+    ...(date !== undefined && {
+      created_at: {
+        [Op.between]:[
+          `${date} 00:00:00`,
+          `${date} 23:59:59`
+        ]
+      }
+    })
+  }
+  /*if (userRole != 1) {
     return res.status(403).json({
       message: "User no access rights"
     })
-  }
+  }*/
+
   const [postData, totalPost] = await Promise.all([
     db.Post.findAll({
       subQuery: false,
       limit,
       offset,
+      order,
+      where: wherePost,
       include: [
         {
           model: db.User,
@@ -111,6 +152,11 @@ const getPostAdmin = async (req, res) => {
         {
           model: db.PostMedia,
           separate: true
+        }, 
+        {
+          model: db.Location,
+          /*where:whereLoation, 
+          required: !!search*/
         }
       ],
       group: ["Post.id", "User.id"]
