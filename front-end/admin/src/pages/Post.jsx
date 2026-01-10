@@ -3,7 +3,8 @@ import { fetchPostAdmin } from "../services/PostService";
 import { Eye, Warning2 , Notification} from "iconsax-react";
 import { NavLink, Outlet } from "react-router-dom";
 import ReactPaginate from 'react-paginate';
-
+import { CiSearch } from "react-icons/ci";
+import Calenda from "../components/Calenda"
 const Post = () => {
     const [listPosts, setListPosts] = useState([]);
     let [total, setTotatl] = useState(null);
@@ -11,18 +12,21 @@ const Post = () => {
       0: "delete", 
       1: "approved"
     }
+    const [sort, setSort] = useState("");
+    const [search, setSearch] = useState("");
     useEffect(() => {
         // eslint-disable-next-line react-hooks/immutability
         getPostAdmin(1)
     }, []);
 
-    const getPostAdmin = async (page) => {
-        let res = await fetchPostAdmin(page);
+    const getPostAdmin = async (page = 1, search="", location="", sort = "") => {
+        let res = await fetchPostAdmin(page, search.trim(), location.trim(), sort.trim());
         setTotatl(res.total);
         if (res && res.data) {
             setListPosts(res.data)
         }
     }
+
     const handlePageClick = (event) =>{
       console.log(">>> seleted: ",event)
       getPostAdmin(+event.selected+1);
@@ -98,6 +102,51 @@ const Post = () => {
                     </div>
                   </div>
                 </div>
+
+
+        <div className="flex my-10 border border-gray-100 rounded-md 
+        p-5 gap-10 justify-center items-center">
+          
+          <div className="flex flex-3 items-center justify-start
+          border-gray-300 rounded-2xl h-20 border gap-5 p-5 shadow-md">
+            <div>
+              <CiSearch size={30}/>
+            </div>
+            <div className="">
+              <input className="flex h-10 w-200 flex-1 outline-none text-2xl" 
+              placeholder="Search post" type="text" name="search"
+              value={search}
+              onChange={(e)=>setSearch(e.target.value)}
+              onKeyDown={(e)=>{
+                if(e.key === "Enter"){
+                  console.log(">>>>>>>>>ENTER: ", search)
+                  getPostAdmin(1, search, search)
+                  console.log(">>>>>>>>>>", listPosts)
+                }
+              }}
+              />
+            </div>
+          </div>
+          
+          <div className="flex flex-1 items-center justify-center">
+            <div className="flex
+            rounded-md border border-gray-300 shadow-md">
+              <select className="outline-none 
+              my-5
+              text-2xl font-bold" 
+              value={sort}
+              onChange={(e)=>{
+                const value = e.target.value;
+                setSort(value);
+                getPostAdmin(1, search, search, value)
+              }}
+              >
+              <option value="">date</option>
+              <option value="trending">Trending</option>
+            </select>
+          </div>
+            </div>
+        </div>
 
         <div className="flex border p-6 border-gray-200 rounded-2xl shadow-md overflow-x-auto mt-10">
         <table className="min-w-full border-collapse">

@@ -16,4 +16,3 @@ const MyCalendar = () => {
 };
 
 export default MyCalendar;
-3

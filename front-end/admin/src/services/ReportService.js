@@ -1,8 +1,8 @@
 import axios from "../services/customize-axio.s";
 const accessToken = localStorage.getItem("accessToken")
 
-const fetchReport = (page) =>{
-    return axios.get(`reports?page=${page}`, {
+const fetchReport = (page, report_type) =>{
+    return axios.get(`reports?page=${page}&report_type=${report_type}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`
         }

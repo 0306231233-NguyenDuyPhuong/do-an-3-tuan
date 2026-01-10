@@ -38,14 +38,21 @@ const getProfile = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
+    const {search, userId, role} = req.query;
     const currentUserId = req.user.userId; 
-
+    const whereUser = {
+      ...(search&& {
+        full_name: {[Op.like]: `%${search}%`}
+      }),
+      ...(userId !== undefined && {
+        id: userId
+      }),
+      ...(role !== undefined && {
+        role: role
+      })
+    }
     const users = await db.User.findAll({
-      where: {
-        id: {
-          [Op.ne]: currentUserId, 
-        },
-      },
+      where: whereUser,
       attributes: ["id", "full_name", "avatar", "status", "role"], 
     });
 

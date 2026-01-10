@@ -2,53 +2,106 @@ import { stat } from "@babel/core/lib/gensync-utils/fs.js";
 import db from "../models/index.js";
 import { Sequelize, where, Op } from "sequelize";
 import { required } from "joi";
-
 const getPostUser = async (req, res) => {
   try {
-    const {search} = req.query;
+    const {
+      search,
+      sort,
+      status,
+      user_id,
+      date,
+      dateStart,
+      dateEnd,
+      location
+    } = req.query;
+
     const page = Number(req.query.page) || 1;
     const limit = 10;
     const offset = (page - 1) * limit;
     const userId = Number(req.user.userId);
     const userRole = Number(req.user.role);
-    if(userRole != 0){
-      return res.status(404).json({
-        message: "User not role user"
-      })
+
+    if (userRole !== 0) {
+      return res.status(403).json({ message: "User not role user" });
     }
+
+    let order = [["created_at", "DESC"]];
+    if (sort === "trending") {
+      order = [[
+        db.sequelize.literal(`
+          (like_count*1 + comment_count*2 + share_count*3)
+        `),
+        "DESC"
+      ]];
+    }
+
+    const wherePost = {
+      status: 0,
+      ...(search && {
+        content: { [Op.like]: `%${search}%` }
+      }),
+
+      ...(status !== undefined && {
+        status: Number(status)
+      }),
+
+      ...(user_id !== undefined && {
+        user_id: Number(user_id)
+      }),
+
+      ...(date && {
+        created_at: {
+          [Op.between]: [
+            `${date} 00:00:00`,
+            `${date} 23:59:59`
+          ]
+        }
+      }),
+
+      ...(dateStart && dateEnd && {
+        created_at: {
+          [Op.between]: [
+            `${dateStart} 00:00:00`,
+            `${dateEnd} 23:59:59`
+          ]
+        }
+      }),
+
+      [Op.or]: [
+        { privacy: 0 },
+        { privacy: 1, user_id: userId }
+      ]
+    };
+
     const friendBlock = await db.Friendship.findAll({
       where: {
         user_id: userId,
-        [Op.and]:[
-          {
-            status:3
-          }
-        ]
+        status: 3
       },
       attributes: ["friend_id"]
-    })
-    const blockIds = Object.values(friendBlock).map(item=>item.friend_id)
+    });
+
+    const blockIds = friendBlock.map(item => item.friend_id);
+
+    if (blockIds.length) {
+      wherePost.id = { [Op.notIn]: blockIds };
+    }
+
+    const whereLocation = {
+      ...(location && {
+        [Op.or]: [
+          { name: { [Op.like]: `%${location}%` } },
+          { address: { [Op.like]: `%${location}%` } }
+        ]
+      })
+    };
+
     const [postData, postTotal] = await Promise.all([
       db.Post.findAll({
-        subQuery: false,
         limit,
         offset,
-        order: [['created_at', 'DESC']],
-        where: {
-          id: {[Op.notIn]: blockIds},
-          [Op.and]: [
-            { status: 0 },
-            search && {
-              content: {[Op.like]: `%${search}%`}
-            },
-            {
-              [Op.or]: [
-                { privacy: 0 },
-                { privacy: 1, user_id: userId }
-              ]
-            },
-          ].filter(Boolean), 
-        },
+        order,
+        where: wherePost,
         include: [
           {
             model: db.User,
@@ -58,23 +111,24 @@ const getPostUser = async (req, res) => {
             model: db.PostMedia
           },
           {
-            model: db.Location
+            model: db.Location,
+            where: whereLocation,
+            required: !!location
           }
         ],
-        group: ["Post.id", "User.id"]
+        distinct: true
       }),
+
       db.Post.count({
-        where: {
-          [Op.and]: [
-            { status: 0 },
-            {
-              [Op.or]: [
-                { privacy: 0 },
-                { privacy: 1, user_id: userId }
-              ]
-            }
-          ]
-        }
+        where: wherePost,
+        include: [
+          {
+            model: db.Location,
+            where: whereLocation,
+            required: !!location
+          }
+        ],
+        distinct: true
       })
     ]);
 
@@ -85,22 +139,26 @@ const getPostUser = async (req, res) => {
       limit,
       data: postData
     });
+
   } catch (error) {
-    return res.status(500).json({
-      error: error
-    })
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
+
 const getPostAdmin = async (req, res) => {
-  const {search, sort, status, user_id, date} = req.query;
+  const { search, sort, 
+     status, user_id,
+     date, dateStart, 
+     dateEnd, location } = req.query;
   const page = Number(req.query.page) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;
   const userRole = Number(req.user.role);
-  
+  let whereLoation = {};
   let order = [["created_at", "DESC"]]
-  if(sort === "trending"){
+  if (sort === "trending") {
     order = [[
       db.sequelize.literal(`
         (
@@ -108,27 +166,45 @@ const getPostAdmin = async (req, res) => {
         comment_count *2 +
         share_count *3
         )`),
-        "DESC"
+      "DESC"
     ]]
   }
-  const wherePost = 
+  whereLoation = {
+    ...(location && {
+      [Op.or]: [
+        { name: { [Op.like]: `%${location}%` } },
+        { address: { [Op.like]: `%${location}%` } },
+      ]
+    }
+    )
+  }
+  const wherePost =
   {
     ...(search && {
-    content: { [Op.like]: `%${search}%`}
+      content: { [Op.like]: `%${search}%` }
     }),
     ...(status !== undefined && {
       status: Number(status)
-    }), 
+    }),
     ...(user_id !== undefined && {
       user_id: Number(user_id)
-    }), 
+    }),
     ...(date !== undefined && {
       created_at: {
-        [Op.between]:[
+        [Op.between]: [
           `${date} 00:00:00`,
           `${date} 23:59:59`
         ]
       }
+    }),
+    ...(dateStart !== undefined && dateEnd !== undefined && {
+      created_at: {
+        [Op.between]: [
+          `${dateStart} 00:00:00`,
+          `${dateEnd} 23:59:59`
+        ]
+      },
+
     })
   }
   /*if (userRole != 1) {
@@ -152,11 +228,11 @@ const getPostAdmin = async (req, res) => {
         {
           model: db.PostMedia,
           separate: true
-        }, 
+        },
         {
           model: db.Location,
-          /*where:whereLoation, 
-          required: !!search*/
+          where: whereLoation,
+          required: !!location
         }
       ],
       group: ["Post.id", "User.id"]

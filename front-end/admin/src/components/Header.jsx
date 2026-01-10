@@ -25,10 +25,10 @@ const Header = () => {
                             <Notification size="25" color="#000" />
                         </div>
                         <div className="w-12 h-12 border rounded-md p-3 border-gray-200 shadow-md mr-4">
-                            <LuMessageCircleMore  size="25" color="#000" />
+                            <LuMessageCircleMore size="25" color="#000" />
                         </div>
                         <div className="w-12 h-12 border rounded-md p-3 border-gray-200 shadow-md mr-4">
-                            <IoShareSocialOutline  size="25" color="#000" />
+                            <IoShareSocialOutline size="25" color="#000" />
                         </div>
                     </div>
                 </div>

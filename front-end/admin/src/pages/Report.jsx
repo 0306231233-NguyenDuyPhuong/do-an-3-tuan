@@ -3,12 +3,13 @@ import { fetchReport, updateStatusReport } from "../services/ReportService";
 import { Eye, Warning2, Notification } from "iconsax-react";
 import { NavLink, Outlet } from "react-router-dom";
 import ReactPaginate from "react-paginate";
+import { CiSearch } from "react-icons/ci";
 
 const Report = () => {
   const [listReport, setListReports] = useState([]);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [reportType, setReportType] = useState("")
   // map status number -> text
   const statusMap = {
     1: "pending",
@@ -29,7 +30,6 @@ const Report = () => {
     getReport(1);
   }, []);
 
-  // ✅ FIX THEO RESPONSE API
   const getReport = async (page = 1) => {
     const res = await fetchReport(page);
 
@@ -41,7 +41,7 @@ const Report = () => {
   const updateStatus = async (id) => {
     try {
       await updateStatusReport(id, "reviewed");
-      getReport(currentPage); // ✅ reload đúng page
+      getReport(currentPage); 
     } catch (error) {
       alert("Update status error", error);
     }
@@ -51,16 +51,14 @@ const Report = () => {
     getReport(event.selected + 1);
   };
 
-  // loading / empty
   if (!Array.isArray(listReport)) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      {/* ===== SUMMARY ===== */}
       <div className="flex gap-5">
-        <div className="flex-1 bg-white rounded-xl border p-10 shadow-md">
+        <div className="flex-1 bg-white rounded-xl border border-gray-100  p-10 shadow-md">
           <div className="flex justify-between items-center">
             <div className="flex gap-4 items-center">
               <div className="size-10 border rounded-md p-1">
@@ -77,8 +75,41 @@ const Report = () => {
         </div>
       </div>
 
-      {/* ===== TABLE ===== */}
-      <div className="flex border p-6 rounded-2xl shadow-md mt-10 overflow-x-auto">
+<div className="flex gap-5 items-center mt-10">
+  {/* Search box */}
+  <div className="flex items-center gap-3 border border-gray-300 rounded-2xl h-20 p-4 shadow-md flex-1">
+    <CiSearch size={30} />
+    <input
+      type="text"
+      name="search"
+      placeholder="Search post"
+      className="flex-1 outline-none text-2xl h-10"
+    />
+  </div>
+
+  {/* Filter select */}
+  <div className="flex flex-1 items-center justify-center">
+    <div className="border border-gray-300 rounded-md shadow-md px-3 py-2">
+      <select
+        className="outline-none text-2xl font-bold"
+        value={reportType}
+        onChange={(e)=>{
+          const reportType = Number(e.target.value);
+          setReportType(reportType);
+          getReport(reportType)
+        }}
+      >
+        <option value="0">pending</option>
+        <option value="1">reviewed</option>
+        <option value="2">resolved</option>
+        <option value="3">rejected</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+
+      <div className="flex border border-gray-100 p-6 rounded-2xl shadow-md mt-10 overflow-x-auto">
         <table className="min-w-full">
           <thead className="bg-gray-100">
             <tr>

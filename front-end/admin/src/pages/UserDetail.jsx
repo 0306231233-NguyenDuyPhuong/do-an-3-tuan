@@ -34,10 +34,10 @@ const UserDetail = () => {
   const getUserDetail = async (userId) => {
     try {
       const res = await fetchUserById(userId);
-      console.log(res)
+      console.log(">>>>>>>>>>>>>>>>",res)
       if (res) {
-        setUserDetailData(res.user);
-        setPostByUser(res.post)
+        setUserDetailData(res.data.user);
+        setPostByUser(res.data.post)
       }
     } catch (error) {
       console.error(error);

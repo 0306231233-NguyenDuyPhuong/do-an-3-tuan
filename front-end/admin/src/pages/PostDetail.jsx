@@ -43,7 +43,6 @@ const PostDetail = () => {
   const getComment = async(postId) =>{
     try {
       const res = await fetchCommentData(postId);
-      console.log(">>>>>>>>>>>COMMENT", res)
       if(res && res.data){
         setCommentsList(res.data.rows)
         setTotalComment(res.data.count)
@@ -70,9 +69,6 @@ const PostDetail = () => {
   if(!commentsList){
     return <div>Loading...</div>; 
   }
-  /*if(!totalComment){
-    return <div>Loading...</div>; 
-  }*/
 
   return (
     <>
@@ -117,17 +113,19 @@ const PostDetail = () => {
             
           </div>
 
-          <div className="flex justify-between mt-5 flex gap-5 mt-20">
+          <div className="flex  mt-5 flex gap-10 mt-20">
             <div className="flex gap-2 items-center">
               <Like1 size="30" color="#000"/>
-              <span>{postDetailData.LikeCount}</span>
+              <span>{postDetailData.like_count}</span>
             </div>
             <div className="flex gap-2 items-center">
                <Message2 size="30" color="#000"/>
-              <span>{postDetailData.CommentCount}</span>
-
+              <span>{postDetailData.comment_count}</span>
             </div>
-            <DirectRight size="30" color="#000"/>
+            <div className="flex gap-2 items-center">
+               <DirectRight size="30" color="#000"/>
+              <span>{postDetailData.share_count}</span>
+            </div>
           </div>
         </div>
 
