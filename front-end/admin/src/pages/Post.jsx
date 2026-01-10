@@ -119,9 +119,7 @@ const Post = () => {
               onChange={(e)=>setSearch(e.target.value)}
               onKeyDown={(e)=>{
                 if(e.key === "Enter"){
-                  console.log(">>>>>>>>>ENTER: ", search)
                   getPostAdmin(1, search, search)
-                  console.log(">>>>>>>>>>", listPosts)
                 }
               }}
               />

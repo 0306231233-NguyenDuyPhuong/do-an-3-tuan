@@ -6,7 +6,7 @@ import { stat } from "@babel/core/lib/gensync-utils/fs.js";
 
 const getReport = async (req, res) => {
   try {
-    const {report_type, status} = req.query;
+    const {report_type, status, report_id} = req.query;
     const page = Number(req.query.page) || 1;
     const limit = 10;
     const offset = (page-1)*limit;
@@ -16,7 +16,10 @@ const getReport = async (req, res) => {
       }),
       ...(status !== undefined && 
         {status: Number(status)}
-      )
+      ),
+      ...(report_id !== undefined && {
+        id: Number(report_id)
+      })
     }
     const reportData = await db.Report.findAndCountAll({
       offset,
@@ -27,7 +30,8 @@ const getReport = async (req, res) => {
     message: "Get report success", 
     page, 
     limit,
-    data:reportData });
+    data:reportData 
+  });
   } catch (error) {
     return res.status(400).json({
       error: error
