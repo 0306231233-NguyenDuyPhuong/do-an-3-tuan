@@ -70,4 +70,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.code.gson:gson:2.10.1")
+    // Buttom Bar
+    implementation("com.google.android.material:material:1.9.0")
 }

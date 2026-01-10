@@ -1,54 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0b141a"
-    android:orientation="vertical">
+    android:background="#0b141a">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:paddingHorizontal="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_above="@+id/bottom_navigation">
 
-        <ImageView
-            android:id="@+id/imgThoatLF"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/back"
-            app:tint="@color/white" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Danh sách bạn bè"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:id="@+id/imgThoatLF"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/back"
+                app:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Danh sách bạn bè"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/outline_person_add_24"
+                app:tint="#0084ff" />
+        </RelativeLayout>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_search"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="10dp"
+            android:hint="Tìm kiếm bạn bè..."
+            android:paddingHorizontal="15dp"
             android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/outline_person_add_24"
-            app:tint="#0084ff" />
-    </RelativeLayout>
+            android:textColorHint="#4dffffff" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_margin="16dp"
-        android:background="@drawable/bg_search"
-        android:drawableStart="@drawable/search_icon"
-        android:drawablePadding="10dp"
-        android:hint="Tìm kiếm bạn bè..."
-        android:paddingHorizontal="15dp"
-        android:textColor="@android:color/white"
-        android:textColorHint="#4dffffff" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFriends"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFriends"
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#1E1E1E"
+        app:itemIconTint="@color/selector_bottom_nav"
+        app:itemTextColor="@color/selector_bottom_nav"
+        app:menu="@menu/menu_bottom_nav"
+        app:labelVisibilityMode="labeled"/>
+
+</RelativeLayout>
