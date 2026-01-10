@@ -36,7 +36,7 @@ const getPostUser = async (req, res) => {
     }
 
     const wherePost = {
-      status: 0,
+      status: 1,
       ...(search && {
         content: { [Op.like]: `%${search}%` }
       }),
