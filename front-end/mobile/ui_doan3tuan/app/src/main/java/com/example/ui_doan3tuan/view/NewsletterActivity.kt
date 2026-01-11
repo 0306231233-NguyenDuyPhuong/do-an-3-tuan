@@ -22,7 +22,7 @@ import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODAyMTg0NiwiZXhwIjoxNzY4MDI1NDQ2fQ.EP08znYmSDUKPBwa9C1HFGjTuVizrxF4FwUImH14tD8"
+val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODA2MDYyMCwiZXhwIjoxNzY4MDY0MjIwfQ.rVCfdjFr6bwt-vbuoBAOPqs2iTShE9-p8sm4Oxv9wmY"
 class NewsletterActivity : AppCompatActivity() {
 
     private val viewModel: NewsletterViewModel by viewModels()
@@ -36,7 +36,6 @@ class NewsletterActivity : AppCompatActivity() {
         bottomNav.selectedItemId = R.id.nav_home
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                // CASE 1: Đang ở Home -> Bấm Home -> KHÔNG LÀM GÌ CẢ
                 R.id.nav_home -> {
                     return@setOnItemSelectedListener true
                 }
@@ -45,12 +44,14 @@ class NewsletterActivity : AppCompatActivity() {
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     startActivity(intent)
                     overridePendingTransition(0, 0)
-                    return@setOnItemSelectedListener true
+                    return@setOnItemSelectedListener false
                 }
                 R.id.nav_add -> {
                     val intent = Intent(this, CreatePostActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     startActivity(intent)
-                    return@setOnItemSelectedListener true
+                    overridePendingTransition(0, 0)
+                    return@setOnItemSelectedListener false
                 }
                 R.id.nav_notification -> {
 //                    // Bạn nhớ tạo Activity Thông Báo nhé, ví dụ: ThongBaoActivity
@@ -58,14 +59,14 @@ class NewsletterActivity : AppCompatActivity() {
 //                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
 //                    startActivity(intent)
 //                    overridePendingTransition(0, 0)
-//                    return@setOnItemSelectedListener true
+//                    return@setOnItemSelectedListener false
                 }
                 R.id.nav_profile -> {
                     val intent = Intent(this, UserProfileActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     startActivity(intent)
                     overridePendingTransition(0, 0)
-                    return@setOnItemSelectedListener true
+                    return@setOnItemSelectedListener false
                 }
             }
             false

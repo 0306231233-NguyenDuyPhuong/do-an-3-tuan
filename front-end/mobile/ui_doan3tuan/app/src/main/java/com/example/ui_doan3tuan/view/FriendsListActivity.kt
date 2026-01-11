@@ -33,16 +33,17 @@ class FriendsListActivity : AppCompatActivity() {
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     startActivity(intent)
                     overridePendingTransition(0, 0)
-                    return@setOnItemSelectedListener true
+                    return@setOnItemSelectedListener false
                 }
                 R.id.nav_friend -> {
-
                     return@setOnItemSelectedListener true
                 }
                 R.id.nav_add -> {
                     val intent = Intent(this, CreatePostActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     startActivity(intent)
-                    return@setOnItemSelectedListener true
+                    overridePendingTransition(0, 0)
+                    return@setOnItemSelectedListener false
                 }
                 R.id.nav_notification -> {
 //                    // Bạn nhớ tạo Activity Thông Báo nhé, ví dụ: ThongBaoActivity
@@ -58,7 +59,7 @@ class FriendsListActivity : AppCompatActivity() {
                     startActivity(intent)
                     overridePendingTransition(0, 0)
 
-                    return@setOnItemSelectedListener true
+                    return@setOnItemSelectedListener false
                 }
             }
             false

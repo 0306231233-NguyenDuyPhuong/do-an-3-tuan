@@ -77,6 +77,11 @@ class AdapterNewsletter(private var list: List<PostModel>,val onClick:(PostModel
         holder.imgBinhLuan.setOnClickListener {
             onClick(list[position])
         }
+        val fullUrl ="http://10.0.2.2:8989/api/images/${list[position].User.avatar}"
+        holder.imgDaiDien.load(fullUrl){
+            crossfade(true)
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -95,6 +100,7 @@ class AdapterNewsletter(private var list: List<PostModel>,val onClick:(PostModel
         var imgChiaSe = itemView.findViewById<ImageView>(R.id.imgChiaSe)
         var revHienBaiDang = itemView.findViewById<RecyclerView>(R.id.revHienBaiDang)
         var imgDaiDien = itemView.findViewById<ImageView>(R.id.imgAnhDaiDien_Home)
+        var imgReport = itemView.findViewById<ImageView>(R.id.imgReport)
 
 
 
