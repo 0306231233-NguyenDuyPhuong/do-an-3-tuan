@@ -9,34 +9,35 @@ import com.example.ui_doan3tuan.model.CommentModel
 import com.example.ui_doan3tuan.model.ListCommentModel
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.PostResponse
-import com.example.ui_doan3tuan.model.UserModel
+import com.example.ui_doan3tuan.model.PostResponseID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
-class NewsletterViewModel : ViewModel() {
+class UserProfileViewModel: ViewModel() {
     private val client = OkHttpClient()
-    private val json: Json = Json { ignoreUnknownKeys = true
+    private val json: Json = Json {
+        ignoreUnknownKeys = true
         isLenient = true
-        encodeDefaults = true }
+        encodeDefaults = true
+    }
 
 
-    private val _posts = MutableLiveData<List<PostModel>>()
-    val posts: LiveData<List<PostModel>> get() = _posts
+    private val _postsId = MutableLiveData<PostModel>()
+    val postsId: LiveData<PostModel> get() = _postsId
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
-    fun getPost(token:String) {
+    fun getPostID(token: String, id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
-                    .url("http://10.0.2.2:8989/api/posts/users")
+                    .url("http://10.0.2.2:8989/api/posts/$id")
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
@@ -52,10 +53,10 @@ class NewsletterViewModel : ViewModel() {
                     }
 
                     val jsonBody = resp.body?.string().orEmpty()
-                    val response = json.decodeFromString<PostResponse>(jsonBody)
+                    val response = json.decodeFromString<PostResponseID>(jsonBody)
                     val list = response.data
                     Log.d("test1", "$list")
-                    _posts.postValue(list)
+                    _postsId.postValue(list)
                 }
 
             } catch (e: Exception) {
@@ -64,8 +65,9 @@ class NewsletterViewModel : ViewModel() {
             }
         }
     }
+
     // Trong NewsletterViewModel
-    fun sendComment(postId: Int, content: String,token: String) {
+    fun sendComment(postId: Int, content: String, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val commentBody = JSONObject()
@@ -93,10 +95,6 @@ class NewsletterViewModel : ViewModel() {
 
     private val _comments = MutableLiveData<List<CommentModel>>()
     val comments: LiveData<List<CommentModel>> get() = _comments
-    private var currentCommentList = mutableListOf<CommentModel>()
-
-
-
     fun getCommentsByPostId(postId: Int, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -105,11 +103,11 @@ class NewsletterViewModel : ViewModel() {
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
-                client.newCall(request).execute().use {
-                    resp->
+                client.newCall(request).execute().use { resp ->
                     if (resp.isSuccessful) {
                         val jsonString = resp.body?.string()
-                        val listComment = json.decodeFromString<ListCommentModel>(jsonString ?: "[]")
+                        val listComment =
+                            json.decodeFromString<ListCommentModel>(jsonString ?: "[]")
                         Log.d("Test", "$listComment")
                         Log.d("Test", "$postId")
                         _comments.postValue(listComment.data)
@@ -117,10 +115,10 @@ class NewsletterViewModel : ViewModel() {
                 }
 
 
-          } catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-
 }
+

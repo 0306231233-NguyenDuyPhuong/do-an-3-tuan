@@ -27,6 +27,12 @@ data class PostResponse(
     val message: String,
     val data: List<PostModel> // Nếu JSON trả về 1 object thì để PostModel, nếu trả về danh sách thì để List<PostModel>
 )
+@Serializable
+data class PostResponseID(
+    val message: String,
+    val data:PostModel // Nếu JSON trả về 1 object thì để PostModel, nếu trả về danh sách thì để List<PostModel>
+)
+
 
 @Serializable
 data class CommentRequest(

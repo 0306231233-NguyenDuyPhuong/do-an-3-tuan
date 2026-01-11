@@ -16,7 +16,7 @@ import java.time.ZoneId
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 
-class AdapterNewsletter(private var list: List<PostModel>,val onClick:(PostModel)-> Unit): RecyclerView.Adapter<AdapterNewsletter.BangTinViewHolder>() {
+class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(PostModel)-> Unit,val onReportClick:(PostModel)-> Unit): RecyclerView.Adapter<AdapterNewsletter.BangTinViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -75,7 +75,10 @@ class AdapterNewsletter(private var list: List<PostModel>,val onClick:(PostModel
 
         }
         holder.imgBinhLuan.setOnClickListener {
-            onClick(list[position])
+            onCommentClick(list[position])
+        }
+        holder.imgReport.setOnClickListener {
+            onReportClick(list[position])
         }
         val fullUrl ="http://10.0.2.2:8989/api/images/${list[position].User.avatar}"
         holder.imgDaiDien.load(fullUrl){

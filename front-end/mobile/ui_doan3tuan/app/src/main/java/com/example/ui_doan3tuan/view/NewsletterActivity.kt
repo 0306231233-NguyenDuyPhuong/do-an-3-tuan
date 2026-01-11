@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -22,7 +23,9 @@ import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODA2MDYyMCwiZXhwIjoxNzY4MDY0MjIwfQ.rVCfdjFr6bwt-vbuoBAOPqs2iTShE9-p8sm4Oxv9wmY"
+val token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODE0MzI3OSwiZXhwIjoxNzY4MTQ2ODc5fQ.qDUtvPMHD7KEsZDAPEZbcSKmLZ0uVuHOJosEzwvNLwY"
+
 class NewsletterActivity : AppCompatActivity() {
 
     private val viewModel: NewsletterViewModel by viewModels()
@@ -39,6 +42,7 @@ class NewsletterActivity : AppCompatActivity() {
                 R.id.nav_home -> {
                     return@setOnItemSelectedListener true
                 }
+
                 R.id.nav_friend -> {
                     val intent = Intent(this, FriendsListActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -46,6 +50,7 @@ class NewsletterActivity : AppCompatActivity() {
                     overridePendingTransition(0, 0)
                     return@setOnItemSelectedListener false
                 }
+
                 R.id.nav_add -> {
                     val intent = Intent(this, CreatePostActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -53,6 +58,7 @@ class NewsletterActivity : AppCompatActivity() {
                     overridePendingTransition(0, 0)
                     return@setOnItemSelectedListener false
                 }
+
                 R.id.nav_notification -> {
 //                    // Bạn nhớ tạo Activity Thông Báo nhé, ví dụ: ThongBaoActivity
 //                    val intent = Intent(this, ThongBaoActivity::class.java)
@@ -61,6 +67,7 @@ class NewsletterActivity : AppCompatActivity() {
 //                    overridePendingTransition(0, 0)
 //                    return@setOnItemSelectedListener false
                 }
+
                 R.id.nav_profile -> {
                     val intent = Intent(this, UserProfileActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -75,29 +82,49 @@ class NewsletterActivity : AppCompatActivity() {
         val revHienBaiDang = findViewById<RecyclerView>(R.id.revHienBaiDang)
 
         revHienBaiDang.layoutManager = LinearLayoutManager(this)
-        adapterNewsletter = AdapterNewsletter(mutableListOf()){
-        }
+        adapterNewsletter = AdapterNewsletter(
+            mutableListOf(),
+            onCommentClick = { post ->
+                showCommentDialog(post)
+
+            },
+
+            onReportClick = { post ->
+                showReportDialog(post)
+            }
+        )
+
         revHienBaiDang.adapter = adapterNewsletter
         viewModel.posts.observe(this) { listPosts ->
             if (listPosts != null) {
-                val newAdapter = AdapterNewsletter(listPosts){post ->
-                    showCommentDialog(post)
-                }
+                val newAdapter = AdapterNewsletter(
+                    listPosts,
+                    onCommentClick = { post ->
+                        showCommentDialog(post)
+                    },
+
+                    onReportClick = { post ->
+                        showReportDialog(post)
+                    })
                 revHienBaiDang.adapter = newAdapter
             }
         }
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
 //        val token = sharedPref.getString("access_token", null)
         if (token != null) {
-            viewModel.getProduct(token)
+            viewModel.getPost(token)
         } else {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
-
-
-
+    }
+    private fun showReportDialog(post: PostModel) {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_report, null)
+        val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
+        dialog.setContentView(view)
+        dialog.show()
     }
     private fun showCommentDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
@@ -114,28 +141,25 @@ class NewsletterActivity : AppCompatActivity() {
         viewModel.comments.observe(this) { listComments ->
             if (!listComments.isNullOrEmpty()) {
                 commentAdapter.updateData(listComments)
-//                rcvComments.scrollToPosition(listComments.size - 1)
-            }else{
+                rcvComments.scrollToPosition(listComments.size - 1)
+            } else {
                 Log.d("test", "Rỗng")
                 commentAdapter.updateData(listComments)
-//                rcvComments.scrollToPosition(listComments.size - 1)
+                rcvComments.scrollToPosition(listComments.size - 1)
             }
         }
-        viewModel.getCommentsByPostId(post.id,token)
-
+        viewModel.getCommentsByPostId(post.id, token)
         btnSend.setOnClickListener {
             val content = edtComment.text.toString()
             if (content.isNotBlank()) {
                 viewModel.sendComment(post.id, content, token)
                 edtComment.setText("")
-                viewModel.getCommentsByPostId(post.id,token)
+                viewModel.getCommentsByPostId(post.id, token)
             }
         }
-
-//        dialog.setOnDismissListener {
-//            viewModel.comments.removeObservers(this)
-//        }
-
+        dialog.setOnDismissListener {
+            viewModel.comments.removeObservers(this)
+        }
         dialog.setContentView(view)
         dialog.show()
     }
