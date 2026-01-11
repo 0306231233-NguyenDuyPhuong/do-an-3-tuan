@@ -84,7 +84,7 @@ const getPostUser = async (req, res) => {
     const blockIds = friendBlock.map(item => item.friend_id);
 
     if (blockIds.length) {
-      wherePost.id = { [Op.notIn]: blockIds };
+      wherePost.user_id = { [Op.notIn]: blockIds };
     }
 
     const whereLocation = {
@@ -149,13 +149,17 @@ const getPostUser = async (req, res) => {
 
 const getPostAdmin = async (req, res) => {
   const { search, sort, 
-     status, user_id,
-     date, dateStart, 
+     status, date, dateStart, 
      dateEnd, location } = req.query;
   const page = Number(req.query.page) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;
   const userRole = Number(req.user.role);
+    /*if (userRole != 1) {
+    return res.status(403).json({
+      message: "User no access rights"
+    })
+  }*/
   let whereLoation = {};
   let order = [["created_at", "DESC"]]
   if (sort === "trending") {
@@ -168,6 +172,16 @@ const getPostAdmin = async (req, res) => {
         )`),
       "DESC"
     ]]
+  } else{
+    if(status == 1){
+          order = [[
+          "status"
+    ]]
+    } else{
+      order = [[
+          "status", "DESC"
+    ]]
+    }
   }
   whereLoation = {
     ...(location && {
@@ -178,16 +192,20 @@ const getPostAdmin = async (req, res) => {
     }
     )
   }
+
   const wherePost =
   {
     ...(search && {
-      content: { [Op.like]: `%${search}%` }
+      [Op.or]:[
+      {content: { [Op.like]: `%${search}%` }},
+      {id: { [Op.like]: `%${search}%` }},
+      { '$User.full_name$': { [Op.like]: `%${search}%` } },
+      { '$Location.name$': { [Op.like]: `%${search}%` } },
+      { '$Location.address$': { [Op.like]: `%${search}%` } },
+      ]
     }),
     ...(status !== undefined && {
       status: Number(status)
-    }),
-    ...(user_id !== undefined && {
-      user_id: Number(user_id)
     }),
     ...(date !== undefined && {
       created_at: {
@@ -207,11 +225,6 @@ const getPostAdmin = async (req, res) => {
 
     })
   }
-  /*if (userRole != 1) {
-    return res.status(403).json({
-      message: "User no access rights"
-    })
-  }*/
 
   const [postData, totalPost] = await Promise.all([
     db.Post.findAll({
@@ -223,7 +236,7 @@ const getPostAdmin = async (req, res) => {
       include: [
         {
           model: db.User,
-          attributes: ["id", "full_name", "avatar"]
+          attributes: ["id", "full_name", "avatar"],
         },
         {
           model: db.PostMedia,

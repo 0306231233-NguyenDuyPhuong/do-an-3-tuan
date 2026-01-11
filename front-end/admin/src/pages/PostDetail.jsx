@@ -101,17 +101,28 @@ const PostDetail = () => {
           </div>
           </div>
 
-        <div className="my-5">
-            <span className="text-xl font-bold text-gray-500">{postDetailData.content}</span>
-        </div>
-          <div className="min-h-[100px] grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {postDetailData.PostMedia.map((img)=>(
-                <img 
-                className="flex flex-1"
-            src={`http://localhost:8989/api/images/${img.media_url}`}/>
-            ))}
+        <div className="flex gap-5 my-5 items-center">
+            <span className="text-xl font-bold
+             text-gray-500">{postDetailData.content}</span>
+             <div className="flex flex-col border border-blue-100 rounded-md p-2 bg-blue-200">
+            <span className="text-xs
+             text-blue-500 font-bold">{postDetailData.Location.name}</span>
+            <span className="text-xs
+             text-blue-500">{postDetailData.Location.address}</span>
+             </div>
             
-          </div>
+        </div>
+         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {postDetailData.PostMedia.map((img) => (
+            <img
+              key={img.id}
+              className="w-full h-full object-cover rounded-lg"
+              src={`http://localhost:8989/api/images/${img.media_url}`}
+              alt=""
+            />
+          ))}
+        </div>
+
 
           <div className="flex  mt-5 flex gap-10 mt-20">
             <div className="flex gap-2 items-center">

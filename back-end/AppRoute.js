@@ -53,6 +53,7 @@ const AppRoute = (app) => {
     UserController.getProfile
   );
   router.get("/users/:id", verifyToken, UserController.getUserById);
+  router.get("/admin/users/:id", verifyToken, UserController.getAdminUserById);
   router.get("/users", verifyToken, UserController.getUsers);
 
   //INTERACT
