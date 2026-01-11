@@ -2,7 +2,7 @@
 
 
     <style name="Base.Theme.Ui_doan3tuan"
-        parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Có thể custom màu ở đây -->
     </style>
 

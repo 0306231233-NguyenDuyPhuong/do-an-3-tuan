@@ -200,6 +200,136 @@ class AuthRepository {
             }
         }
     }
+
+    suspend fun forgotPassword(username: String): Result<ForgotPasswordResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                // 1. Tạo request body
+                val jsonBody = JSONObject().apply {
+                    put("username", username)
+                }
+
+                val requestBody = jsonBody.toString()
+                    .toRequestBody("application/json".toMediaTypeOrNull())
+
+                // 2. Tạo request
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/auth/forgot-password")
+                    .post(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+
+                // 3. Thực hiện request
+                client.newCall(request).execute().use { response ->
+                    val responseBody = response.body?.string() ?: ""
+
+                    when (response.code) {
+                        200 -> {
+                            val json = JSONObject(responseBody)
+                            val forgotPasswordResponse = ForgotPasswordResponse(
+                                message = json.getString("message"),
+                                token = json.getString("token")
+                            )
+                            Result.success(forgotPasswordResponse)
+                        }
+
+                        400 -> {
+                            val json = try {
+                                JSONObject(responseBody)
+                            } catch (e: Exception) {
+                                null
+                            }
+                            val errorMessage = json?.optString("message") ?: "Username is required"
+                            Result.failure(ApiException(errorMessage, 400))
+                        }
+
+                        404 -> {
+                            val json = try {
+                                JSONObject(responseBody)
+                            } catch (e: Exception) {
+                                null
+                            }
+                            val errorMessage = json?.optString("message") ?: "User not found"
+                            Result.failure(ApiException(errorMessage, 404))
+                        }
+
+                        500 -> Result.failure(
+                            ApiException("Internal server error", 500)
+                        )
+
+                        else -> Result.failure(
+                            ApiException("Forgot password failed: ${response.code}", response.code)
+                        )
+                    }
+                }
+            } catch (e: IOException) {
+                Result.failure(ApiException("Network error: ${e.message}", 0))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    suspend fun resetPassword(token: String, password: String): Result<ResetPasswordResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                // 1. Tạo request body
+                val jsonBody = JSONObject().apply {
+                    put("token", token)
+                    put("password", password)
+                }
+
+                val requestBody = jsonBody.toString()
+                    .toRequestBody("application/json".toMediaTypeOrNull())
+
+                // 2. Tạo request
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/auth/reset-password")
+                    .post(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+
+                // 3. Thực hiện request
+                client.newCall(request).execute().use { response ->
+                    val responseBody = response.body?.string() ?: ""
+
+                    when (response.code) {
+                        200 -> {
+                            val json = JSONObject(responseBody)
+                            val resetPasswordResponse = ResetPasswordResponse(
+                                message = json.getString("message")
+                            )
+                            Result.success(resetPasswordResponse)
+                        }
+
+                        400 -> {
+                            val json = try {
+                                JSONObject(responseBody)
+                            } catch (e: Exception) {
+                                null
+                            }
+                            val errorMessage = json?.optString("message") ?: "Invalid or expired token"
+                            Result.failure(ApiException(errorMessage, 400))
+                        }
+
+                        500 -> Result.failure(
+                            ApiException("Internal server error", 500)
+                        )
+
+                        else -> Result.failure(
+                            ApiException("Reset password failed: ${response.code}", response.code)
+                        )
+                    }
+                }
+            } catch (e: IOException) {
+                Result.failure(ApiException("Network error: ${e.message}", 0))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
 }
 
 // TOKEN MANAGER

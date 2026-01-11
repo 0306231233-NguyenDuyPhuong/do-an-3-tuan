@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="80b8fe5b-6085-4bea-b59b-0824b5c644cc" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../NEW NOFITICATION/app/src/main/java/com/example/nitification/MainActivity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../NEW NOFITICATION/app/src/main/java/com/example/nitification/notification.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../NEW NOFITICATION/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../NEW NOFITICATION/app/src/main/res/layout/activity_notification.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/build.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/proguard-rules.pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/androidTest/java/com/example/ontap/ExampleInstrumentedTest.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/java/com/example/ontap/Login_page.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/java/com/example/ontap/MainActivity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/java/com/example/ontap/ui/theme/Color.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/java/com/example/ontap/ui/theme/Theme.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/java/com/example/ontap/ui/theme/Type.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/drawable/ic_launcher_foreground.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/layout/activity_login_page.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-hdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-mdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/values/themes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/xml/backup_rules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/main/res/xml/data_extraction_rules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/app/src/test/java/com/example/ontap/ExampleUnitTest.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../On_tap/gradle/libs.versions.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/build.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/proguard-rules.pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/androidTest/java/com/example/receiver/ExampleInstrumentedTest.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/java/com/example/receiver/MainActivity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/java/com/example/receiver/ui/theme/Color.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/java/com/example/receiver/ui/theme/Theme.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/java/com/example/receiver/ui/theme/Type.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/drawable/ic_launcher_foreground.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-hdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-mdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/values/themes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/xml/backup_rules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/main/res/xml/data_extraction_rules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/app/src/test/java/com/example/receiver/ExampleUnitTest.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Receiver/gradle/libs.versions.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo_nitification/app/src/main/java/com/example/myapplication/MainActivity2.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo_nitification/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/config/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/config/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/controllers/AuthController.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/controllers/AuthController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/models/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/models/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../New folder/code.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../New folder/code.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="387NpG0ABWVPF6uJ8gDVN0731Hs" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "device.mirroring"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.example.ui_doan3tuan.model" />
+    </key>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="80b8fe5b-6085-4bea-b59b-0824b5c644cc" name="Changes" comment="" />
+      <created>1768146832894</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1768146832894</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="play_dynamic_filters_status">
+    <option name="appIdToCheckInfo">
+      <map>
+        <entry key="com.example.ui_doan3tuan">
+          <value>
+            <CheckInfo lastCheckTimestamp="1768147107518" />
+          </value>
+        </entry>
+        <entry key="com.example.ui_doan3tuan.test">
+          <value>
+            <CheckInfo lastCheckTimestamp="1768147107518" />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

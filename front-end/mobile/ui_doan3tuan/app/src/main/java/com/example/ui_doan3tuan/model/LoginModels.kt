@@ -48,3 +48,43 @@ data class LoginFormState(
     val usernameError: String? = null,
     val passwordError: String? = null
 )
+
+// Forgot Password Models
+data class ForgotPasswordRequest(
+    @SerializedName("username")
+    val username: String
+)
+
+data class ForgotPasswordResponse(
+    @SerializedName("message")
+    val message: String,
+    @SerializedName("token")
+    val token: String
+)
+
+sealed class ForgotPasswordState {
+    object Idle : ForgotPasswordState()
+    object Loading : ForgotPasswordState()
+    data class Success(val response: ForgotPasswordResponse) : ForgotPasswordState()
+    data class Error(val message: String, val code: Int? = null) : ForgotPasswordState()
+}
+
+// Reset Password Models
+data class ResetPasswordRequest(
+    @SerializedName("token")
+    val token: String,
+    @SerializedName("password")
+    val password: String
+)
+
+data class ResetPasswordResponse(
+    @SerializedName("message")
+    val message: String
+)
+
+sealed class ResetPasswordState {
+    object Idle : ResetPasswordState()
+    object Loading : ResetPasswordState()
+    data class Success(val response: ResetPasswordResponse) : ResetPasswordState()
+    data class Error(val message: String, val code: Int? = null) : ResetPasswordState()
+}

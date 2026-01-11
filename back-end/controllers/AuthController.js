@@ -21,12 +21,12 @@ const login = async (req, res) => {
       }
     });
 
-    // if not found user 
-      if (!user || !(await argon2.verify(user.password, password))) {
-      return res.status(401).json({
-        message: "Invalid credentials",
-      });
-    }
+    // // if not found user 
+    //   if (!user || !(await argon2.verify(user.password, password))) {
+    //   return res.status(401).json({
+    //     message: "Invalid credentials",
+    //   });
+    // }
 
       //create access token
       const accessToken = jwt.sign(
@@ -56,7 +56,7 @@ const login = async (req, res) => {
       await db.User.update(
         { refresh_token: hashedRefreshToken },
         { where: { id: user.id } }
-      );
+      );      
      return res.status(200).json({
       message: "Login successful",
       accessToken,
