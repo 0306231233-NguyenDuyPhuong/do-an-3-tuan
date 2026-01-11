@@ -209,10 +209,25 @@ const getAdminUserById = async(req,res)=>{
 }
 
 
+const putUserAdmin = async (req, res) => {
+  const { id } = req.params;
+  const role = req.user.role;
+  if (role !== 1) {
+    return res.status(400).json({
+      message: 'User not admin'
+    })
+  }
+  await db.User.update(req.body, { where: { id } });
+  return res.status(200).json({
+    message: "Update post success"
+  })
+}
+
 export default {
-    login:login,
+    login,
     getProfile,
     getUsers,
     getUserById,
-    getAdminUserById
+    getAdminUserById,
+    putUserAdmin
 }
