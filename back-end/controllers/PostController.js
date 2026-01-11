@@ -1,19 +1,9 @@
 import { stat } from "@babel/core/lib/gensync-utils/fs.js";
 import db from "../models/index.js";
 import { Sequelize, where, Op } from "sequelize";
-import { required } from "joi";
 const getPostUser = async (req, res) => {
   try {
-    const {
-      search,
-      sort,
-      status,
-      user_id,
-      date,
-      dateStart,
-      dateEnd,
-      location
-    } = req.query;
+    const { search, sort, date, dateStart, dateEnd } = req.query;
 
     const page = Number(req.query.page) || 1;
     const limit = 10;
@@ -35,63 +25,42 @@ const getPostUser = async (req, res) => {
       ]];
     }
 
-    const wherePost = {
-      status: 1,
-      ...(search && {
-        content: { [Op.like]: `%${search}%` }
-      }),
-
-      ...(status !== undefined && {
-        status: Number(status)
-      }),
-
-      ...(user_id !== undefined && {
-        user_id: Number(user_id)
-      }),
-
-      ...(date && {
-        created_at: {
-          [Op.between]: [
-            `${date} 00:00:00`,
-            `${date} 23:59:59`
-          ]
-        }
-      }),
-
-      ...(dateStart && dateEnd && {
-        created_at: {
-          [Op.between]: [
-            `${dateStart} 00:00:00`,
-            `${dateEnd} 23:59:59`
-          ]
-        }
-      }),
-
-      [Op.or]: [
-        { privacy: 0 },
-        { privacy: 1, user_id: userId }
-      ]
-    };
-
     const friendBlock = await db.Friendship.findAll({
-      where: {
-        user_id: userId,
-        status: 3
-      },
+      where: { user_id: userId, status: 3 },
       attributes: ["friend_id"]
     });
+    const blockIds = friendBlock.map(i => i.friend_id);
 
-    const blockIds = friendBlock.map(item => item.friend_id);
-
-    if (blockIds.length) {
-      wherePost.user_id = { [Op.notIn]: blockIds };
+    let createdAtFilter = {};
+    if (date) {
+      createdAtFilter = {
+        [Op.between]: [`${date} 00:00:00`, `${date} 23:59:59`]
+      };
+    } else if (dateStart && dateEnd) {
+      createdAtFilter = {
+        [Op.between]: [`${dateStart} 00:00:00`, `${dateEnd} 23:59:59`]
+      };
     }
 
-    const whereLocation = {
-      ...(location && {
+    const wherePost = {
+      status: 1,
+      privacy: { [Op.ne]: 2 }, 
+
+      ...(blockIds.length && {
+        user_id: { [Op.notIn]: blockIds }
+      }),
+
+      ...(Object.keys(createdAtFilter).length && {
+        created_at: createdAtFilter
+      }),
+
+      ...(search && {
         [Op.or]: [
-          { name: { [Op.like]: `%${location}%` } },
-          { address: { [Op.like]: `%${location}%` } }
+          { content: { [Op.like]: `%${search}%` } },
+          ...(Number(search) ? [{ id: Number(search) }] : []),
+          { '$User.full_name$': { [Op.like]: `%${search}%` } },
+          { '$Location.name$': { [Op.like]: `%${search}%` } },
+          { '$Location.address$': { [Op.like]: `%${search}%` } },
         ]
       })
     };
@@ -101,20 +70,12 @@ const getPostUser = async (req, res) => {
         limit,
         offset,
         order,
+        subQuery: false,
         where: wherePost,
         include: [
-          {
-            model: db.User,
-            attributes: ["id", "full_name", "avatar"]
-          },
-          {
-            model: db.PostMedia
-          },
-          {
-            model: db.Location,
-            where: whereLocation,
-            required: !!location
-          }
+          { model: db.User, attributes: ["id", "full_name", "avatar"], required: false },
+          { model: db.PostMedia },
+          { model: db.Location, required: false }
         ],
         distinct: true
       }),
@@ -122,11 +83,8 @@ const getPostUser = async (req, res) => {
       db.Post.count({
         where: wherePost,
         include: [
-          {
-            model: db.Location,
-            where: whereLocation,
-            required: !!location
-          }
+          { model: db.User, attributes: [], required: false },
+          { model: db.Location, attributes: [], required: false }
         ],
         distinct: true
       })
@@ -142,24 +100,25 @@ const getPostUser = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 
+
 const getPostAdmin = async (req, res) => {
-  const { search, sort, 
-     status, date, dateStart, 
-     dateEnd, location } = req.query;
+  const { search, sort,
+    status, date, dateStart,
+    dateEnd, location } = req.query;
   const page = Number(req.query.page) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;
   const userRole = Number(req.user.role);
-    /*if (userRole != 1) {
+  if (userRole != 1) {
     return res.status(403).json({
       message: "User no access rights"
     })
-  }*/
+  }
   let whereLoation = {};
   let order = [["created_at", "DESC"]]
   if (sort === "trending") {
@@ -172,36 +131,27 @@ const getPostAdmin = async (req, res) => {
         )`),
       "DESC"
     ]]
-  } else{
-    if(status == 1){
-          order = [[
-          "status"
-    ]]
-    } else{
+  } else {
+    if (status == 1) {
       order = [[
-          "status", "DESC"
-    ]]
+        "status"
+      ]]
+    } else {
+      order = [[
+        "status", "DESC"
+      ]]
     }
-  }
-  whereLoation = {
-    ...(location && {
-      [Op.or]: [
-        { name: { [Op.like]: `%${location}%` } },
-        { address: { [Op.like]: `%${location}%` } },
-      ]
-    }
-    )
   }
 
   const wherePost =
   {
     ...(search && {
-      [Op.or]:[
-      {content: { [Op.like]: `%${search}%` }},
-      {id: { [Op.like]: `%${search}%` }},
-      { '$User.full_name$': { [Op.like]: `%${search}%` } },
-      { '$Location.name$': { [Op.like]: `%${search}%` } },
-      { '$Location.address$': { [Op.like]: `%${search}%` } },
+      [Op.or]: [
+        { content: { [Op.like]: `%${search}%` } },
+        { id: { [Op.like]: `%${search}%` } },
+        { '$User.full_name$': { [Op.like]: `%${search}%` } },
+        { '$Location.name$': { [Op.like]: `%${search}%` } },
+        { '$Location.address$': { [Op.like]: `%${search}%` } },
       ]
     }),
     ...(status !== undefined && {
