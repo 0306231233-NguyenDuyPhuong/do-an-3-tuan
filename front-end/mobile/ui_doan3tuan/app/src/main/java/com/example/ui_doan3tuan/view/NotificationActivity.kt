@@ -2,7 +2,6 @@ package com.example.ui_doan3tuan.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,20 +9,15 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.ui_doan3tuan.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class FriendsListActivity : AppCompatActivity() {
+class NotificationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_friends_list)
-
-        findViewById<ImageView>(R.id.imgThoatLF).setOnClickListener {
-            finish()
-        }
+        setContentView(R.layout.activity_notification)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.nav_friend
+        bottomNav.selectedItemId = R.id.nav_notification
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                // CASE 1: Đang ở Home -> Bấm Home -> KHÔNG LÀM GÌ CẢ
                 R.id.nav_home -> {
                     val intent = Intent(this, NewsletterActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -32,7 +26,11 @@ class FriendsListActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener false
                 }
                 R.id.nav_friend -> {
-                    return@setOnItemSelectedListener true
+                    val intent = Intent(this, FriendsListActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    return@setOnItemSelectedListener false
                 }
                 R.id.nav_add -> {
                     val intent = Intent(this, CreatePostActivity::class.java)
@@ -42,11 +40,7 @@ class FriendsListActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener false
                 }
                 R.id.nav_notification -> {
-                    val intent = Intent(this, NotificationActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    return@setOnItemSelectedListener false
+                    return@setOnItemSelectedListener true
                 }
                 R.id.nav_profile -> {
                     val intent = Intent(this, UserProfileActivity::class.java)

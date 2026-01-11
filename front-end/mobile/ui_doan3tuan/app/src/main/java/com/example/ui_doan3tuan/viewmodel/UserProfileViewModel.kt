@@ -37,14 +37,13 @@ class UserProfileViewModel: ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
-                    .url("http://10.0.2.2:8989/api/posts/$id")
+                    .url("http://10.0.2.2:8989/api/users/$id")
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
 
                 client.newCall(req).execute().use { resp ->
                     if (!resp.isSuccessful) {
-                        // Xử lý lỗi nếu token sai hoặc hết hạn (Lỗi 401/403)
                         Log.e("API_ERROR", "Lỗi: ${resp.code}")
                         if (resp.code == 401) {
                             _error.postValue("Phiên đăng nhập hết hạn, vui lòng login lại.")
@@ -66,7 +65,6 @@ class UserProfileViewModel: ViewModel() {
         }
     }
 
-    // Trong NewsletterViewModel
     fun sendComment(postId: Int, content: String, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -83,7 +81,7 @@ class UserProfileViewModel: ViewModel() {
                     .build()
                 val response = client.newCall(request).execute()
                 if (response.isSuccessful) {
-
+                    getCommentsByPostId(postId,token)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

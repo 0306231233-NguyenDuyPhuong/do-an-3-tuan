@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ui_doan3tuan.model.CommentModel
 import com.example.ui_doan3tuan.model.ListCommentModel
+import com.example.ui_doan3tuan.model.ListFriends
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.PostResponse
+import com.example.ui_doan3tuan.model.UserInformation
 import com.example.ui_doan3tuan.model.UserModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,7 +66,6 @@ class NewsletterViewModel : ViewModel() {
             }
         }
     }
-    // Trong NewsletterViewModel
     fun sendComment(postId: Int, content: String,token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -81,7 +82,7 @@ class NewsletterViewModel : ViewModel() {
                     .build()
                 val response = client.newCall(request).execute()
                 if (response.isSuccessful) {
-
+                    getCommentsByPostId(postId,token)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -93,10 +94,6 @@ class NewsletterViewModel : ViewModel() {
 
     private val _comments = MutableLiveData<List<CommentModel>>()
     val comments: LiveData<List<CommentModel>> get() = _comments
-    private var currentCommentList = mutableListOf<CommentModel>()
-
-
-
     fun getCommentsByPostId(postId: Int, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -121,6 +118,30 @@ class NewsletterViewModel : ViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+    private val _listFriends = MutableLiveData<List<UserModel>>()
+    val friends: LiveData<List<UserModel>> get() = _listFriends
+    fun getListfriends(token:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/friends")
+                    .addHeader("Authorization", "Bearer $token")
+                    .get()
+                    .build()
+                client.newCall(request).execute().use {
+                        resp->
+                    if (resp.isSuccessful) {
+                        val jsonString = resp.body?.string()
+                        val listFriends = json.decodeFromString<ListFriends>(jsonString ?: "[]")
+                        _listFriends.postValue(listFriends.data)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
     }
 
 }

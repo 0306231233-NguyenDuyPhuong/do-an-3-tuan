@@ -22,35 +22,13 @@ data class PostModel(
     var PostMedia: List<PostMediaModel>
 
 )
-@Serializable
-data class PostResponse(
-    val message: String,
-    val data: List<PostModel> // Nếu JSON trả về 1 object thì để PostModel, nếu trả về danh sách thì để List<PostModel>
-)
-@Serializable
-data class PostResponseID(
-    val message: String,
-    val data:PostModel // Nếu JSON trả về 1 object thì để PostModel, nếu trả về danh sách thì để List<PostModel>
-)
 
+//
+//
+//@Serializable
+//data class CommentRequest(
+//    val post_id: Int,
+//    val content: String
+//    // user_id thường lấy từ token hoặc session, nếu API cần thì thêm vào
+//)
 
-@Serializable
-data class CommentRequest(
-    val post_id: Int,
-    val content: String
-    // user_id thường lấy từ token hoặc session, nếu API cần thì thêm vào
-)
-@Serializable
-data class CommentModel(
-    val id: Int,
-    val post_id: Int,
-    val user_id: Int,
-    val content: String,
-    val status: Int,
-    val created_at: String,
-    val User: UserModel
-)
-@Serializable
-data class ListCommentModel(
-    var data:List<CommentModel>
-)

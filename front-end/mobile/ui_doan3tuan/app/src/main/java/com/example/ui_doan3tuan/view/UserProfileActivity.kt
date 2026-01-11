@@ -27,7 +27,7 @@ import kotlin.getValue
 
 class UserProfileActivity : AppCompatActivity() {
     private val viewModel: UserProfileViewModel by viewModels()
-
+    private lateinit var adapterNewsletter: AdapterNewsletter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -68,12 +68,11 @@ class UserProfileActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener false
                 }
                 R.id.nav_notification -> {
-//                    // Bạn nhớ tạo Activity Thông Báo nhé, ví dụ: ThongBaoActivity
-//                    val intent = Intent(this, ThongBaoActivity::class.java)
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-//                    startActivity(intent)
-//                    overridePendingTransition(0, 0)
-//                    return@setOnItemSelectedListener false
+                    val intent = Intent(this, NotificationActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    return@setOnItemSelectedListener false
                 }
                 R.id.nav_profile -> {
                     return@setOnItemSelectedListener true
@@ -83,29 +82,15 @@ class UserProfileActivity : AppCompatActivity() {
         }
         val revDSBaiDang = findViewById<RecyclerView>(R.id.revDSBaiDang)
         revDSBaiDang.layoutManager = LinearLayoutManager(this)
-        revDSBaiDang.adapter = AdapterNewsletter(
+        adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
-            onCommentClick = { post ->
-                showCommentDialog(post)
-
-            },
-
-            onReportClick = { post ->
-                showReportDialog(post)
-            }
+            onCommentClick = { post -> showCommentDialog(post) },
+            onReportClick = { post -> showReportDialog(post) }
         )
+        revDSBaiDang.adapter = adapterNewsletter
         viewModel.postsId.observe(this) { listPosts ->
             if (listPosts != null) {
-                val newAdapter = AdapterNewsletter(
-                    listOf(listPosts),
-                    onCommentClick = { post ->
-                        showCommentDialog(post)
-                    },
-
-                    onReportClick = { post ->
-                        showReportDialog(post)
-                    })
-                revDSBaiDang.adapter = newAdapter
+                adapterNewsletter.updateData(listOf(listPosts))
             }
         }
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)

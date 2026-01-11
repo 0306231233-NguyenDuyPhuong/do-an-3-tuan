@@ -80,10 +80,10 @@ const getUserById = async (req, res) => {
             order: [['created_at', 'DESC']],
             where: {
               [Op.and]: [
-                { status: "approved" },
+                { status: 1 },
                 {
                   [Op.or]: [
-                    { privacy: "private", user_id: id },
+                    { privacy: 2, user_id: id },
                   ]
                 }
               ]
@@ -105,7 +105,7 @@ const getUserById = async (req, res) => {
                     {
                       [Op.or]: [
                         { privacy: 0 },
-                        { privacy: 2, user_id: id },
+                        {  user_id: id },
                       ]
                     }
                   ]

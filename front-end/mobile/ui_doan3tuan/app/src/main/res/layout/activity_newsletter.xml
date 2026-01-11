@@ -57,9 +57,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/revDSBanBe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
