@@ -57,7 +57,7 @@ const getPostUser = async (req, res) => {
             model: db.Location
           }
         ],
-        group: ["Post.id", "User.id"]
+       
       }),
       db.Post.count({
         where: {
