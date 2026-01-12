@@ -114,6 +114,6 @@ class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(Po
     }
     fun updateData(newList: List<PostModel>) {
         this.list = newList
-        notifyDataSetChanged() // Báo cho Recycler vẽ lại
+        notifyDataSetChanged()
     }
 }

@@ -1,8 +1,8 @@
 import { /*useLocation, useNavigate,*/ useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ArrowCircleLeft, ArrowLeft, CommandSquare, DirectRight, Like, Like1, Message2 } from "iconsax-react";
-import { ToastContainer } from 'react-toastify';
-import { fetchUserById } from "../services/UserService";
+import { ToastContainer, toast } from 'react-toastify';
+import { fetchUserById, putStatusUser } from "../services/UserService";
 
 const UserDetail = () => {
   const { userId } = useParams();
@@ -16,8 +16,8 @@ const UserDetail = () => {
   }
 
   const statusMap = {
-    1: "delete",
-    0: "approved"
+    1: "active",
+    2: "banned"
   }
 
   //const {state} = useLocation();
@@ -34,15 +34,22 @@ const UserDetail = () => {
   const getUserDetail = async (userId) => {
     try {
       const res = await fetchUserById(userId);
-      console.log(res)
+      console.log(">>>>>>>>>>>>>>>>",res)
       if (res) {
-        setUserDetailData(res.user);
-        setPostByUser(res.post)
+        setUserDetailData(res.data.user);
+        setPostByUser(res.data.post)
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+  const updateStautusUser = async(id, status) =>{
+    console.log(">>>>>>>>", id, status)
+    await putStatusUser(id, status)
+    await getUserDetail(userId)
+    toast.success("Update status success!")
+  }
   if (!userDetailData || !listPostByUser) {
     return <div className="flex justify-center items-center h-64">
       <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
@@ -52,14 +59,9 @@ const UserDetail = () => {
 
   return (
   <>
-    <ArrowLeft
-      size={28}
-      className="mb-4 cursor-pointer"
-      onClick={() => navigate(-1)}
-    />
 
     <div className="max-w-4xl mx-auto p-6 flex flex-col gap-6 shadow-md rounded-md">
-
+      <ArrowLeft size="30" color="black" onClick={()=>navigate(-1)}/>
       {/* USER INFO */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -72,8 +74,13 @@ const UserDetail = () => {
           </span>
         </div>
 
-        <span className="px-4 py-1 rounded-md bg-green-100 text-green-600 font-semibold">
-          {userDetailData.status}
+        <span className= {userDetailData.status === 1?"px-4 py-1 rounded-md bg-green-100 text-green-600 font-semibold":"px-4 py-1 rounded-md bg-yellow-100 text-yellow-600 font-semibold"}
+        onClick={()=>{
+          const status = userDetailData.status==1?2:1;
+          updateStautusUser(userId, status)
+        }}
+        >
+          {statusMap[userDetailData.status]}
         </span>
       </div>
 

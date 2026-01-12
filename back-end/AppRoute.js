@@ -53,7 +53,12 @@ const AppRoute = (app) => {
     UserController.getProfile
   );
   router.get("/users/:id", verifyToken, UserController.getUserById);
+  router.get("/admin/users/:id", verifyToken, UserController.getAdminUserById);
   router.get("/users", verifyToken, UserController.getUsers);
+  router.put("/admin/user/:id",
+    verifyToken, 
+    UserController.putUserAdmin
+  )
 
   //INTERACT
   router.post(
@@ -90,6 +95,11 @@ const AppRoute = (app) => {
     verifyToken,
     CommentController.getCommentsPost
   );
+  router.get(
+    "/comments/admin/:postId",
+    verifyToken,
+    CommentController.getCommentsAdmin
+  );
   router.post(
     "/comment",
     verifyToken,
@@ -98,6 +108,10 @@ const AppRoute = (app) => {
     CommentController.create
   );
   router.patch("/comment", verifyToken, CommentController.updateComment);
+  router.put("/comment/admin/:id", 
+    verifyToken,
+    CommentController.putCommentAdmin
+  )
   router.delete(
     "/comment/:commentId",
     verifyToken,

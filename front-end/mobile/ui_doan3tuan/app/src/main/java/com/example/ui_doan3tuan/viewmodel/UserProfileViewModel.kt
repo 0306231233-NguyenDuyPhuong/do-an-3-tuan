@@ -28,8 +28,8 @@ class UserProfileViewModel: ViewModel() {
     }
 
 
-    private val _postsId = MutableLiveData<PostModel>()
-    val postsId: LiveData<PostModel> get() = _postsId
+    private val _postsId = MutableLiveData<List<PostModel>>()
+    val postsId: LiveData<List<PostModel>> get() = _postsId
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
@@ -37,7 +37,7 @@ class UserProfileViewModel: ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
-                    .url("http://10.0.2.2:8989/api/users/$id")
+                    .url("http://10.0.2.2:8989/api/users/1")
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
@@ -50,12 +50,11 @@ class UserProfileViewModel: ViewModel() {
                             return@use
                         }
                     }
-
                     val jsonBody = resp.body?.string().orEmpty()
                     val response = json.decodeFromString<PostResponseID>(jsonBody)
-                    val list = response.data
-                    Log.d("test1", "$list")
-                    _postsId.postValue(list)
+                    val listPostId = response.post
+                    Log.d("listPostId", "$listPostId")
+                    _postsId.postValue(listPostId)
                 }
 
             } catch (e: Exception) {

@@ -25,7 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 val token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODE0NzE0MiwiZXhwIjoxNzY4MTUwNzQyfQ.0tjAiUU0scX85INhQ6ajkcRDNG8QcqwffW64OhPzlSY"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODE3NDk0MiwiZXhwIjoxNzY4MTc4NTQyfQ.7jF-wT8bJhpGlMnM9imv16PhIKkGojVQLaIhhNRaJs8"
 class NewsletterActivity : AppCompatActivity() {
 
     private val viewModel: NewsletterViewModel by viewModels()

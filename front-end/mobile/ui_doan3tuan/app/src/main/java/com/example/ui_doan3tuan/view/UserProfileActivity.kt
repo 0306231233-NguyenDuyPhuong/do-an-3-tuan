@@ -88,9 +88,9 @@ class UserProfileActivity : AppCompatActivity() {
             onReportClick = { post -> showReportDialog(post) }
         )
         revDSBaiDang.adapter = adapterNewsletter
-        viewModel.postsId.observe(this) { listPosts ->
-            if (listPosts != null) {
-                adapterNewsletter.updateData(listOf(listPosts))
+        viewModel.postsId.observe(this) { listPostsId ->
+            if (listPostsId != null) {
+                adapterNewsletter.updateData(listPostsId)
             }
         }
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)

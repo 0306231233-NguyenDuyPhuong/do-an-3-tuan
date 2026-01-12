@@ -57,10 +57,35 @@ const getCommentsPost = async (req, res) => {
     if (!postId)
       return res.status(400).json({ message: "Post id is required" });
 
-    const comments = await db.Comment.findAll({
+    const comments = await db.Comment.findAndCountAll({
       where: {
         post_id: postId,
         status: 1,
+      },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "full_name", "avatar"],
+        },
+      ],
+      order: [["created_at", "ASC"]],
+    });
+    return res.status(200).json({ data: comments });
+  } catch (error) {
+    console.error("get comments error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getCommentsAdmin = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    if (!postId)
+      return res.status(400).json({ message: "Post id is required" });
+
+    const comments = await db.Comment.findAndCountAll({
+      where: {
+        post_id: postId,
       },
       include: [
         {
@@ -100,9 +125,26 @@ const updateComment = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const putCommentAdmin = async (req, res) => {
+  const { id } = req.params;
+  const role = req.user.role;
+  if (role !== 1) {
+    return res.status(400).json({
+      message: 'User not admin'
+    })
+  }
+  await db.Comment.update(req.body, { where: { id } });
+  return res.status(200).json({
+    message: "Update post success"
+  })
+}
+
 export default {
   create,
   deleteComment,
   getCommentsPost,
   updateComment,
+  putCommentAdmin,
+  getCommentsAdmin
 };

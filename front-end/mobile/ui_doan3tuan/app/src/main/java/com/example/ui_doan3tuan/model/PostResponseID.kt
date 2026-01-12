@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PostResponseID(
     val message: String,
-    val data:PostModel
+    val user: UserModel,
+    val post:List<PostModel>
 )
