@@ -44,7 +44,8 @@ const getReportById = async (req, res) => {
 };
 
 const postReport = async (req, res) => {
-  const { reporter_id, target_id, target_type, reason, description } = req.body;
+  try {
+    const { reporter_id, target_id, target_type, reason, description } = req.body;
   let targetCheck;
   if(target_type == "user"){
     targetCheck = await db.User.findOne({
@@ -76,6 +77,11 @@ const postReport = async (req, res) => {
         message: "Insert report success",
         data: reportData 
    });
+  }
+  } catch (error) {
+   return res.status(500).json({
+    error: error
+   }) 
   }
 };
 
