@@ -11,13 +11,13 @@ const getReport = async (req, res) => {
     const limit = 10;
     const offset = (page-1)*limit;
     const whereReport = {
-      ...(report_type!==undefined && {
+      ...(report_type&& {
         target_type:report_type
       }),
       ...(status !== undefined && 
         {status: Number(status)}
       ),
-      ...(report_id !== undefined && {
+      ...(report_id && {
         id: Number(report_id)
       })
     }
