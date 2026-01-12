@@ -1,9 +1,13 @@
 import db from "../models/index";
-import { Op } from "sequelize";
-import crypto from "crypto";
+import { Op, where } from "sequelize";
+import crypto, { verify } from "crypto";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
+import createTransporter from "../config/mailer.js";
+import dotenv from "dotenv";
 
+dotenv.config();
+//0: inactive, 1: active, 2: banned
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -25,6 +29,10 @@ const login = async (req, res) => {
         message: "Invalid credentials",
       });
     }
+    if (!user.is_verified)
+      return res.status(403).json({
+        message: "Account not verified",
+      });
 
     //create access token
     const accessToken = jwt.sign(
@@ -148,23 +156,40 @@ const register = async (req, res) => {
     //  Hash password
     const hashedPassword = await argon2.hash(password);
 
+    const tokenMail = crypto.randomBytes(32).toString("hex");
     //  Create user
-
-    const u_id = crypto.randomUUID();
-
     const newUser = await db.User.create({
-      u_id,
       email: isEmail ? username : null,
       phone: isPhone ? username : null,
       password: hashedPassword,
       fullname: fullname || "user default",
-      status: "active",
+      status: 1,
       role: "user",
+      is_verified: false,
+      verify_token: isEmail ? tokenMail : null,
+      verify_token_expire: isEmail ? Date.now() + 15 * 60 * 1000 : null,
     });
 
+    if (isEmail) {
+      // send mail
+      const verifyLink = `http://localhost:8989/api/auth/verify?token=${tokenMail}`;
+      const transporter = createTransporter();
+      await transporter.sendMail({
+        from: `"mannopro" <${process.env.EMAIL_USER}>`,
+        to: username,
+        subject: "Verify Account",
+        html: `
+      <h3>Chào bạn</h3>
+     <p>Vui lòng xác thực tài khoản:</p>
+      <a href="${verifyLink}">Xác thực</a>
+      `,
+      });
+    }
     //  Response
     return res.status(201).json({
-      message: "Register successfully",
+      message: isEmail
+        ? "Register successfully. Please verify email before login"
+        : "Register successfully",
       user: {
         id: newUser.id,
         email: newUser.email,
@@ -262,53 +287,50 @@ const forgotPassword = async (req, res) => {
   if (!username)
     return res.status(400).json({ message: "Username is required" });
   //find user in database
+  const isEmail = username.includes("@");
+
+  const whereCondition = isEmail ? { email: username } : { phone: username };
   const user = await db.User.findOne({
-    where: {
-      [Op.or]: [{ email: username }, { phone: username }],
-    },
+    where: whereCondition,
   });
   // if not found user
   if (!user) return res.status(404).json({ message: "User not found" });
 
-  const resetToken = crypto.randomBytes(16).toString("hex");
+  const resetToken = crypto.randomBytes(32).toString("hex");
   const expire = Date.now() + 15 * 60 * 1000;
 
   await db.User.update(
     { reset_token: resetToken, reset_token_expire: expire },
     { where: { id: user.id } }
   );
+  if (isEmail) {
+    const resetLink = `http://localhost:8989/api/auth/reset-password?token=${resetToken}`;
 
-  // trả token trực tiếp (thay vì gửi email)
-  return res
-    .status(200)
-    .json({ message: "Token generated", token: resetToken });
+    const transporter = createTransporter();
+    await transporter.sendMail({
+      to: username,
+      subject: "Reset Password",
+      html: `
+     <h3>Đặt lại mật khẩu</h3>
+        <p>Link có hiệu lực trong 15 phút</p>
+        <a href="${resetLink}">Đặt lại mật khẩu</a>
+    `,
+    });
+  } else {
+    return res
+      .status(200)
+      .json({ message: "User only resetpassword by email now" });
+  }
+
+  return res.status(200).json({
+    message: "If email exists, reset link has been sent",
+  });
 };
 
 const resetPassword = async (req, res) => {
-  const { token, password } = req.body;
-  if (!token || !password)
+  const { token } = req.query;
+  if (!token)
     return res.status(400).json({ message: "Token & new password required" });
-
-  // Password strength check
-  if (password.length < 8) {
-    return res.status(400).json({
-      message: "Password must be at least 8 characters long",
-    });
-  }
-
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
-
-  if (!passwordRegex.test(password)) {
-    return res.status(400).json({
-      message:
-        "Password must include uppercase, lowercase, number and special character",
-    });
-  }
-  if (password.length > 32) {
-    return res.status(400).json({
-      message: "Password too long",
-    });
-  }
 
   const user = await db.User.findOne({
     where: { reset_token: token, reset_token_expire: { [Op.gt]: Date.now() } },
@@ -316,6 +338,7 @@ const resetPassword = async (req, res) => {
   if (!user)
     return res.status(400).json({ message: "Invalid or expired token" });
 
+  const password = crypto.randomBytes(6).toString("hex");
   const hashedPassword = await argon2.hash(password);
 
   await db.User.update(
@@ -323,7 +346,90 @@ const resetPassword = async (req, res) => {
     { where: { id: user.id } }
   );
 
-  return res.status(200).json({ message: "Password updated successfully" });
+  const transporter = createTransporter();
+  await transporter.sendMail({
+    to: user.email,
+    subject: "Your new password",
+    html: `
+     <h3>Mật khẩu mới của bạn</h3>
+        <p>Mật khẩu tạm thời:</p>
+        <b>${password}</b>
+        <p>Vui lòng đăng nhập và đổi mật khẩu ngay</p>
+    `,
+  });
+
+  return res
+    .status(200)
+    .json({ message: "New password has been sent to your email" });
+};
+
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+    const user = await db.User.findOne({
+      where: {
+        verify_token: token,
+        verify_token_expire: { [Op.gt]: Date.now() },
+      },
+    });
+    if (!user)
+      return res.status(400).json({ message: "Token invalid or expired" });
+    if (user.is_verified)
+      return res.status(200).json({ message: "Account already verified" });
+    user.is_verified = true;
+    user.verify_token = null;
+    user.verify_token_expire = null;
+    await user.save();
+    return res.status(200).json({ message: "Verify email successfully" });
+  } catch (error) {
+    console.error("VERIFY ERROR:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+const resendEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const user = await db.User.findOne({
+      where: { email },
+    });
+    if (!user) return res.status(404).json({ message: "User is not found" });
+
+    if (user.is_verified)
+      return res.status(400).json({ message: "Account already verify" });
+    const newToken = crypto.randomBytes(32).toString("hex");
+    const expireTime = Date.now() + 15 * 60 * 1000;
+
+    user.verify_token = newToken;
+    user.verify_token_expire = expireTime;
+    await user.save();
+
+    //resend
+    const verifyLink = `http://localhost:8989/api/auth/verify?token=${newToken}`;
+    const transporter = createTransporter();
+    await transporter.sendMail({
+      from: `"mannopro" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Resend Verify Account",
+      html: `
+      <h3>Chào bạn</h3>
+     <p>Vui lòng xác thực tài khoản:</p>
+      <a href="${verifyLink}">Xác thực</a>
+      `,
+    });
+    return res
+      .status(200)
+      .json({ message: "Verifycation email has been resent" });
+  } catch (error) {
+    console.error("RESEND VERIFY ERROR:", error);
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 };
 
 const getUser = async (req, res) => {};
@@ -336,4 +442,6 @@ export default {
   forgotPassword,
   resetPassword,
   getUser,
+  verifyEmail,
+  resendEmail,
 };

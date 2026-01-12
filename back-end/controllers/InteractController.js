@@ -25,6 +25,8 @@ const likePost = async (req, res) => {
     });
 
     // tang like trong post
+    post.like_count += 1;
+    await post.save();
     return res.status(201).json({ message: "Liked post successfully" });
   } catch (error) {
     console.error("create like error:", error);
@@ -51,6 +53,8 @@ const unlikePost = async (req, res) => {
     });
     if (!liked) return res.status(409).json({ message: "Post not liked yet" });
 
+    post.like_count -= 1;
+    await post.save();
     await liked.destroy({});
 
     // tang like trong post
@@ -87,6 +91,8 @@ const sharePost = async (req, res) => {
       post_id: postId,
       user_id: currentUserId,
     });
+    post.share_count += 1;
+    await post.save();
     return res.status(201).json({ message: "Shared post successfully" });
   } catch (error) {
     console.error(" share post error:", error);
@@ -117,6 +123,8 @@ const unsharePost = async (req, res) => {
     }
     // unshare post
     await shared.destroy();
+    post.share_count -= 1;
+    await post.save();
     return res.status(200).json({ message: "Unshared post successfully" });
   } catch (error) {
     console.error(" share post error:", error);

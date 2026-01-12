@@ -18,6 +18,8 @@ const create = async (req, res) => {
       content: content,
       status: 1,
     });
+    postExists.comment_count += 1;
+    await postExists.save();
     return res
       .status(201)
       .json({ message: "Comment created successfully", data: comment });
@@ -35,7 +37,6 @@ const deleteComment = async (req, res) => {
       include: [{ model: db.Post }],
     });
     if (!comment) return res.sendStatus(404);
-
     if (comment.status === 2)
       return res.status(400).json({ message: "Comment already deleted" });
     //khong la chu post cung khong la chu comment
