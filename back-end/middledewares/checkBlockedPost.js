@@ -1,32 +1,28 @@
 import { Op } from "sequelize";
 
-const checkBlocked = async (req, res, next) => {
+const db = require("../models");
+
+const checkBlockedPost = async (req, res, next) => {
   try {
-    const body = req.body || {};
+    const targetId = req.body.postId;
     const myId = req.user.userId;
-    const targetId =
-      body.from ||
-      body.to ||
-      body.userId ||
-      body.otherId ||
-      body.friendId ||
-      body.followingId ||
-      req.params.userId ||
-      req.params.otherId ||
-      req.params.friendId;
-
+    console.log({ targetId, myId });
     if (!targetId) return next();
-    if (Number(myId) === Number(targetId))
-      return res.status(400).json({ message: "Invalid friend block" });
 
+    const post = await db.Post.findByPk(targetId);
+    if (!post) return res.status(404).json({ message: "Post does not found" });
+
+    const userId = post.user_id;
+    if (Number(myId) === Number(userId))
+      return res.status(400).json({ message: "Invalid friend block" });
     const userExists = await db.User.findByPk(targetId);
     if (!userExists)
       return res.status(404).json({ message: "User does not exist" });
     const blockedUser = await db.Friendship.findOne({
       where: {
         [Op.or]: [
-          { user_id: myId, friend_id: targetId },
-          { user_id: targetId, friend_id: myId },
+          { user_id: myId, friend_id: userId },
+          { user_id: userId, friend_id: myId },
         ],
         status: 3,
       },
@@ -37,9 +33,8 @@ const checkBlocked = async (req, res, next) => {
         .status(403)
         .json({ message: "Interaction blocked between users" });
   } catch (error) {
-    console.error("check blocked  error:", error);
+    console.error("check blockedPost  error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
-export default checkBlocked;
+export default checkBlockedPost;

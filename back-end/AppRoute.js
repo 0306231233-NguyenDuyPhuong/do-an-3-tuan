@@ -34,17 +34,20 @@ import checkCanShare from "./middledewares/CheckCanShare.js";
 import checkCanComment from "./middledewares/CheckComment.js";
 import CommentController from "./controllers/CommentController.js";
 import checkBlocked from "./middledewares/checkBlocked.js";
+import checkBlockedPost from "./middledewares/checkBlockedPost.js";
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser);
   //Auth
-  router.get("/user/login", AuthController.login);
   router.post("/auth/login", AuthController.login);
   router.post("/auth/register", AuthController.register);
+  router.get("/auth/verify", AuthController.verifyEmail);
+  router.post("/auth/resend", AuthController.resendEmail);
+
   router.post("/auth/refresh", AuthController.refresh);
   router.post("/auth/logout", AuthController.logout);
   router.post("/auth/forgot-password", AuthController.forgotPassword);
-  router.post("/auth/reset-password", AuthController.resetPassword);
+  router.get("/auth/reset-password", AuthController.resetPassword);
 
   //User
   router.get(
@@ -54,33 +57,39 @@ const AppRoute = (app) => {
     UserController.getProfile
   );
   router.get("/users/:id", verifyToken, UserController.getUserById);
+  router.get("/admin/users/:id", verifyToken, UserController.getAdminUserById);
   router.get("/users", verifyToken, UserController.getUsers);
+  router.patch("/user/update", verifyToken, UserController.update);
+  router.put("/admin/user/:id",
+    verifyToken, 
+    UserController.putUserAdmin
+  )
 
   //INTERACT
   router.post(
     "/interact/like",
     verifyToken,
-    checkBlocked,
+    checkBlockedPost,
     checkCanLike,
     InteractController.likePost
   );
   router.delete(
-    "/interact/like/:postId",
+    "/interact/like",
     verifyToken,
-    checkBlocked,
+    checkBlockedPost,
     InteractController.unlikePost
   );
   router.post(
     "/interact/share",
     verifyToken,
-    checkBlocked,
+    checkBlockedPost,
     checkCanShare,
     InteractController.sharePost
   );
   router.delete(
-    "/interact/share/:postId",
+    "/interact/share",
     verifyToken,
-    checkBlocked,
+    checkBlockedPost,
     InteractController.unsharePost
   );
   //router.get("/interact/count/:postId", InteractController.getCount);
@@ -91,6 +100,11 @@ const AppRoute = (app) => {
     verifyToken,
     CommentController.getCommentsPost
   );
+  router.get(
+    "/comments/admin/:postId",
+    verifyToken,
+    CommentController.getCommentsAdmin
+  );
   router.post(
     "/comment",
     verifyToken,
@@ -99,6 +113,10 @@ const AppRoute = (app) => {
     CommentController.create
   );
   router.patch("/comment", verifyToken, CommentController.updateComment);
+  router.put("/comment/admin/:id", 
+    verifyToken,
+    CommentController.putCommentAdmin
+  )
   router.delete(
     "/comment/:commentId",
     verifyToken,
