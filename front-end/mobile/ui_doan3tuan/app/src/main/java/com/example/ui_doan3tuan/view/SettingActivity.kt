@@ -25,7 +25,6 @@ class SettingActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btnDangXuat).setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
-//            finish()
         }
 
     }

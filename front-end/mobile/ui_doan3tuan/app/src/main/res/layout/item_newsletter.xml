@@ -20,20 +20,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgAnhDaiDien_Home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_margin="5dp"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/CircleImage"
                 app:srcCompat="@drawable/profile" />
 
-
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:layout_marginLeft="10dp"
                 android:orientation="vertical">
 
@@ -41,12 +43,8 @@
                     android:id="@+id/txtName_BaiDang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:gravity="start"
                     android:text="Tấn Dương"
+                    android:textColor="@color/white"
                     android:textSize="20dp"
                     android:textStyle="bold" />
 
@@ -54,11 +52,17 @@
                     android:id="@+id/txtHour_BaiDang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:text="1 hour ago" />
+                    android:text="1 hour ago"
+                    android:textColor="@color/white" />
             </LinearLayout>
 
+            <ImageView
+                android:id="@+id/imgReport"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                app:srcCompat="@drawable/more"
+                app:tint="@color/white" />
 
         </LinearLayout>
 
@@ -71,11 +75,10 @@
             android:textColor="@color/white"
             android:text="Nội dung" />
 
-        <ImageView
-            android:id="@+id/imgBaiDang"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/revHienBaiDang"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <LinearLayout
             android:layout_width="match_parent"

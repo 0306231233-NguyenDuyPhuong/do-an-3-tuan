@@ -8,5 +8,5 @@ data class UserModel(
     var id:Int,
     var full_name:String?,
     var avatar:String?,
-    var status:Int
 )
+

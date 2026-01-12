@@ -22,7 +22,6 @@ class CreatePostActivity : AppCompatActivity() {
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
             if (uris.isNotEmpty()) {
-                // Lấy danh sách đang có, gộp với danh sách mới và loại bỏ trùng lặp (distinct)
                 val currentList = adapterChonAnhVideo.currentList
                 val updatedList = (currentList + uris).distinct()
 
@@ -36,7 +35,6 @@ class CreatePostActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_post)
 
         adapterChonAnhVideo = AdapterSelectImageAndVideo { uriToDelete ->
-            // Khi người dùng nhấn vào ảnh, logic này sẽ chạy:
             val newList = adapterChonAnhVideo.currentList.toMutableList()
             newList.remove(uriToDelete)
             adapterChonAnhVideo.submitList(newList)

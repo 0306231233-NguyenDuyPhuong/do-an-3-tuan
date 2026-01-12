@@ -1,0 +1,63 @@
+<resources>
+<<<<<<< HEAD
+    <string name="app_name">ui_doan3tuan</string>
+=======
+
+    <string name="app_name">Kết nối không giới hạn</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Kết nối không giới hạn</string>
+    <string name="welcome_subtitle">Trải nghiệm kết nối mượt mà và không giới hạn với ứng dụng của chúng tôi</string>
+    <string name="create_account">Tạo tài khoản mới</string>
+    <string name="login">Đăng nhập</string>
+    <string name="welcome_image">Hình ảnh chào mừng</string>
+    <string name="email">Email</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Xin chào!</string>
+    <string name="email_phone">Email/Số điện thoại</string>
+    <string name="password">Mật khẩu</string>
+    <string name="login_button">Đăng nhập</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="app_logo">Logo ứng dụng</string>
+
+    <!-- Signup Screen -->
+    <string name="signup_title">Tạo tài khoản</string>
+    <string name="full_name">Họ tên đăng nhập</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="signup_button">Đăng ký</string>
+    <string name="back_to_login">Quay lại đăng nhập</string>
+
+    <!-- Forgot Password Screen -->
+    <string name="forgot_password_title">Quên mật khẩu</string>
+    <string name="forgot_password_subtitle">Nhập email hoặc số điện thoại của bạn để đặt lại mật khẩu</string>
+    <string name="reset_password_button">Đặt lại mật khẩu</string>
+    <!-- Reset Password Screen -->
+    <string name="reset_password_title">Đặt lại mật khẩu</string>
+    <string name="reset_password_subtitle">Nhập mã xác nhận và mật khẩu mới</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="confirm_new_password">Xác nhận mật khẩu mới</string>
+    <string name="reset_password_submit">Đặt lại mật khẩu</string>
+    <string name="signup_complete_title">Xác nhận tài khoản</string>
+    <string name="signup_complete_subtitle">Nhập mã xác nhận đã được gửi đến email của bạn</string>
+    <string name="verification_code">Mã xác nhận</string>
+    <string name="resend_code">Gửi lại mã</string>
+
+    <!-- Terms and Privacy -->
+    <string name="terms_privacy">Bằng cách tiếp tục, bạn đồng ý với <a href="#">Điều khoản</a> và <a href="#">Chính sách bảo mật</a></string>
+    <string name="terms_privacy_signup">Bằng cách đăng ký, bạn đồng ý với <a href="#">Điều khoản</a> và <a href="#">Chính sách bảo mật</a></string>
+
+    <!-- Error Messages -->
+    <string name="error_empty_email">Vui lòng nhập email hoặc số điện thoại</string>
+    <string name="error_empty_password">Vui lòng nhập mật khẩu</string>
+    <string name="error_empty_name">Vui lòng nhập họ tên</string>
+    <string name="error_password_mismatch">Mật khẩu xác nhận không khớp</string>
+    <string name="error_password_length">Mật khẩu phải có ít nhất 6 ký tự</string>
+
+    <!-- Success Messages -->
+    <string name="success_login">Đăng nhập thành công!</string>
+    <string name="success_signup">Đăng ký thành công!</string>
+    <string name="success_reset_password">Đã gửi email đặt lại mật khẩu!</string>
+>>>>>>> ff02e63305737272251d47464efecf6e4446797f
+>>>>>>> 189572c2eaf776e904c413aecbd5271a3dd0a8bb
+</resources>

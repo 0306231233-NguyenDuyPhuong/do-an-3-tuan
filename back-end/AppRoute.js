@@ -215,7 +215,9 @@ const AppRoute = (app) => {
   ),
     router.get("/admin/dashboard/count", DashboardController.getCountDashboard);
   // Post
-  router.get("/posts/users", verifyToken, PostController.getPostUser);
+  router.get("/posts/users", 
+    verifyToken, 
+    PostController.getPostUser);
   router.get("/posts/admin", verifyToken, PostController.getPostAdmin);
   router.get("/posts/:id", verifyToken, PostController.getPostById);
 

@@ -24,7 +24,6 @@ class LoginViewModel : ViewModel() {
                           userData: User) -> Unit,
               onError: (error: String) -> Unit) {
 
-
         if (username.isEmpty() || password.isEmpty()) {
             onError("Vui lòng nhập đầy đủ thông tin")
             return
@@ -46,9 +45,7 @@ class LoginViewModel : ViewModel() {
                     200 -> {
                         val data = response.body()
                         if (data != null) {
-
                             saveLoginData(data)
-
                             onSuccess(data.accessToken, data.refreshToken, data.user)
                         } else {
                             onError("Không nhận được dữ liệu từ server")
@@ -75,15 +72,15 @@ class LoginViewModel : ViewModel() {
 
         // Lưu tokens với thời gian
         editor.putString("access_token", response.accessToken)
-        editor.putLong("access_token_time", currentTime)  // Thời gian tạo
+        editor.putLong("access_token_time", currentTime)
 
         editor.putString("refresh_token", response.refreshToken)
         editor.putLong("refresh_token_time", currentTime)
 
-
         editor.putInt("user_id", response.user.id)
         editor.putString("user_role", response.user.role)
         editor.putString("full_name", response.user.full_name)
+        editor.apply()
 
         if (response.user.email != null) {
             editor.putString("email", response.user.email)
@@ -92,13 +89,18 @@ class LoginViewModel : ViewModel() {
             editor.putString("phone", response.user.phone)
         }
 
+        // Lưu trạng thái đã đăng nhập
+        editor.putBoolean("is_logged_in", true)
+        editor.putLong("last_login_time", currentTime)
+
+        editor.apply()
     }
 
+    // KIỂM TRA TOKEN CÒN HIỆU LỰC
     fun isTokenValid(): Boolean {
-
         val accessTime = sharedPref.getLong("access_token_time", 0)
         if (accessTime != 0L) {
-            val minutes = (System.currentTimeMillis() - accessTime) /( 60*1000)
+            val minutes = (System.currentTimeMillis() - accessTime) / (60 * 1000)
             if (minutes < 10) return true  // Access token còn hiệu lực
         }
 
@@ -106,8 +108,17 @@ class LoginViewModel : ViewModel() {
         val refreshTime = sharedPref.getLong("refresh_token_time", 0)
         if (refreshTime == 0L) return false
 
-        val days = (System.currentTimeMillis() - refreshTime) / (24 * 60 * 60*1000)
+        val days = (System.currentTimeMillis() - refreshTime) / (24 * 60 * 60 * 1000)
         return days < 7
     }
+
+    fun isLoggedIn(): Boolean {
+        // Kiểm tra có token không
+        val hasToken = sharedPref.getString("access_token", null) != null
+        val isLoggedInFlag = sharedPref.getBoolean("is_logged_in", false)
+
+        return hasToken && isLoggedInFlag
+    }
+
 
 }

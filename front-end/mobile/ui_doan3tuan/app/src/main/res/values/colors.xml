@@ -9,6 +9,8 @@
     <color name="blue_light">#FFBBDEFB</color>
     <color name="background">#101922</color>
     <color name="blue">#87CEEB</color>
+    <color name="red">#FF0000</color>
+
     <!-- ==================== SYSTEM COLORS ==================== -->
     <color name="transparent">#00000000</color>
     <!-- ==================== GRAY SCALE ==================== -->

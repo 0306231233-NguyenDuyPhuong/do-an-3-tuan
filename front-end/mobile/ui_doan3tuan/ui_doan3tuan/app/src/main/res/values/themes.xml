@@ -1,0 +1,29 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+<<<<<<< HEAD
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Ui_doan3tuan" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.Ui_doan3tuan" parent="Base.Theme.Ui_doan3tuan" />
+</resources>
+=======
+
+
+    <style name="Base.Theme.Ui_doan3tuan"
+        parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Có thể custom màu ở đây -->
+    </style>
+
+    <style name="Theme.Ui_doan3tuan"
+        parent="Base.Theme.Ui_doan3tuan" />
+    <style name="CircleImage">
+        <item name="cornerSize">50%</item>
+    </style>
+    <style name="BigRoundedCorner">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+</resources>
+>>>>>>> 189572c2eaf776e904c413aecbd5271a3dd0a8bb
