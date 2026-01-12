@@ -15,7 +15,7 @@ class AdapterFriends(private val listFriend:List<UserModel>): RecyclerView.Adapt
         parent: ViewGroup,
         viewType: Int
     ): FriendsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend_newsletter, parent, false)
         return FriendsViewHolder(view)
     }
 

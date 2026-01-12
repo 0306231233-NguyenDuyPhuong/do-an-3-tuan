@@ -14,6 +14,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
@@ -33,7 +34,9 @@ class NewsletterActivity : AppCompatActivity() {
     private val viewModel: NewsletterViewModel by viewModels()
     private lateinit var adapterNewsletter: AdapterNewsletter
     private lateinit var adapterFriends: AdapterFriends
-
+    var isLoading = false
+    var isLastPage = false
+    var currentPage = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -122,6 +125,31 @@ class NewsletterActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        loadData(1)
+        val nestedScrollView = findViewById<NestedScrollView>(R.id.myNestedScrollView)
+
+        if (nestedScrollView != null) {
+            nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
+                    if (!isLoading && !isLastPage) {
+                        loadMoreItems()
+                    }
+                }
+            })
+        }
+
+    }
+    private fun loadData(page: Int) {
+        token?.let {
+            viewModel.getPost(it)
+        }
+    }
+    // Logic tính toán trang tiếp theo
+    private fun loadMoreItems() {
+        isLoading = true
+        currentPage++
+        Toast.makeText(this, "Đang tải trang $currentPage...", Toast.LENGTH_SHORT).show()
+        loadData(currentPage)
     }
 
     private fun showReportDialog(post: PostModel) {
