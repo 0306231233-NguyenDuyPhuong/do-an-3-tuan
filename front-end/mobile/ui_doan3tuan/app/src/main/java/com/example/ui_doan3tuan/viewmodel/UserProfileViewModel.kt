@@ -8,8 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.ui_doan3tuan.model.CommentModel
 import com.example.ui_doan3tuan.model.ListCommentModel
 import com.example.ui_doan3tuan.model.PostModel
-import com.example.ui_doan3tuan.model.PostResponse
-import com.example.ui_doan3tuan.model.PostResponseID
+import com.example.ui_doan3tuan.model.PostResponseIDModel
 import com.example.ui_doan3tuan.view.slbb
 import com.example.ui_doan3tuan.view.slbv
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +52,7 @@ class UserProfileViewModel: ViewModel() {
                         }
                     }
                     val jsonBody = resp.body?.string().orEmpty()
-                    val response = json.decodeFromString<PostResponseID>(jsonBody)
+                    val response = json.decodeFromString<PostResponseIDModel>(jsonBody)
                     val listPostId = response.post
                     slbv = response.post_count
                     slbb = response.friend_count

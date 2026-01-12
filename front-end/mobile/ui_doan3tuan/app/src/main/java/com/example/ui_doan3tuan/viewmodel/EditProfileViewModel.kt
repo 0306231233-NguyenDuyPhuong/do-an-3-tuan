@@ -1,15 +1,8 @@
 package com.example.ui_doan3tuan.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.ui_doan3tuan.model.PostResponse
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.json.JSONObject
 
 class EditProfileViewModel: ViewModel() {
     private val client = OkHttpClient()
@@ -32,7 +25,7 @@ class EditProfileViewModel: ViewModel() {
 //
 //                client.newCall(req).execute().use { resp ->
 //                    val jsonBody = resp.body?.string().orEmpty()
-//                    val response = json.decodeFromString<PostResponse>(jsonBody)
+//                    val response = json.decodeFromString<PostResponseModel>(jsonBody)
 //                    val list = response.data
 //
 //                }

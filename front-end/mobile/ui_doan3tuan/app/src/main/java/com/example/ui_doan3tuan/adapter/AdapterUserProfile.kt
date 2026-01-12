@@ -80,9 +80,11 @@ class AdapterUserProfile(private var list: List<PostModel>,val onCommentClick:(P
         holder.imgReport.setOnClickListener {
             onReportClick(list[position])
         }
-        val fullUrl ="http://10.0.2.2:8989/api/images/${list[position].User.avatar}"
-        holder.imgDaiDien.load(fullUrl){
-            crossfade(true)
+        if(list[position].User.avatar.toString().isNotEmpty()) {
+            val fullUrl = "http://10.0.2.2:8989/api/images/${list[position].User.avatar}"
+            holder.imgDaiDien.load(fullUrl) {
+                crossfade(true)
+            }
         }
 
     }

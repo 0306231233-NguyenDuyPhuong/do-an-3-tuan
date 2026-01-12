@@ -25,8 +25,9 @@ import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+var userId = 1;
 val token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODE4NzgyMywiZXhwIjoxNzY4MTkxNDIzfQ.omkOgxxZ7Z-nGLXRWV5F3tTPrWuei4n0LNlW7TXZWBA"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODIyMzQ4OCwiZXhwIjoxNzY4MjI3MDg4fQ.s3pzW_sQ-9AbZYzN1sIIPJqhF27mTg_FlXBIL5yMkIc"
 class NewsletterActivity : AppCompatActivity() {
 
     private val viewModel: NewsletterViewModel by viewModels()
@@ -112,7 +113,7 @@ class NewsletterActivity : AppCompatActivity() {
         }
 
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-//        val token = sharedPref.getString("access_token", null)
+        val token = sharedPref.getString("access_token", null)
         if (token != null) {
             viewModel.getPost(token)
             viewModel.getListfriends(token)
@@ -129,6 +130,7 @@ class NewsletterActivity : AppCompatActivity() {
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
         btnReport.setOnClickListener {
             showDetailReportDialog(post.User.id,post.id)
+
             dialog.dismiss()
         }
         dialog.setContentView(view)
@@ -140,24 +142,23 @@ class NewsletterActivity : AppCompatActivity() {
         val txtSpam = view.findViewById<TextView>(R.id.txtSpam)
         val txtThongTinSai = view.findViewById<TextView>(R.id.txtThongTinSai)
         val txtVandenhaycam = view.findViewById<TextView>(R.id.txtVandenhaycam)
-//        viewModel.report.observe(this) { report ->
-//            if(report){
-//
-//            }
-//
-//        }
         txtSpam.setOnClickListener {
             viewModel.reportPost(token,postId,id,"Spam")
+            Toast.makeText(this, "Báo cáo thành công spam!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         txtThongTinSai.setOnClickListener {
             viewModel.reportPost(token,postId,id,"Thông tin sai sự thật")
+            Toast.makeText(this, "Báo cáo thành công thông tin sai!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         txtVandenhaycam.setOnClickListener {
             viewModel.reportPost(token,postId,id,"Nội dung nhạy cảm")
+            Toast.makeText(this, "Báo cáo thành công vấn đề nhạy cảm!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
+
+
 
         dialog.setContentView(view)
         dialog.show()
