@@ -18,10 +18,10 @@ const Report = () => {
   //const [status, setStatus] = useState(0);
   // map status number -> text
   const statusMap = {
-    1: "pending",
-    2: "reviewed",
-    3: "resolved",
-    4: "rejected",
+    0: "pending",
+    1: "reviewed",
+    2: "resolved",
+    3: "rejected",
   };
 
   const statusClasses = {
@@ -33,15 +33,32 @@ const Report = () => {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability
-    getReport(1);
+    getReport({ page: 1 });
     // eslint-disable-next-line react-hooks/immutability
   }, []);
 
-  const getReport = async (page = 1, status = 4, type = "", id = "") => {
-    const res = await fetchReport(page, status, type, id);
-    setCurrentPage(page);
-    setTotal(res?.data?.count ?? 0);
-    setListReports(res?.data?.rows ?? []);
+  const getReport = async ({
+    page = 1,
+    status,
+    report_type,
+    report_id
+  } = {}) => {
+    try {
+      const res = await fetchReport({
+        page,
+        status,
+        report_type,
+        report_id
+      });
+      console.log(">>>>>>>>", res)
+      if (res && res.data) {
+        setCurrentPage(page);
+        setTotal(res?.data?.count ?? 0);
+        setListReports(res?.data?.rows ?? []);
+      }
+    } catch (error) {
+      console.log("Get Report error: ", error);
+    }
   };
 
   const handleClick = async (item) => {
@@ -72,9 +89,8 @@ const Report = () => {
 
   const handleReportComment = async (comment) => {
     await fetchCommentData(comment.id);
-
-    const postId = comment.post_id;
-    console.log(">>>>>>>>>>", postId)
+    // const postId = comment.post_id;
+    // console.log(">>>>>>>>>>", postId)
   }
 
 
@@ -82,12 +98,10 @@ const Report = () => {
     return <div>Loading...</div>;
   }
 
-
-
   return (
     <>
       <div className="flex gap-5">
-        <div className="flex-1 bg-white rounded-xl border border-gray-100  p-10 shadow-md">
+        <div className="flex-1 bg-white rounded-xl border border-gray-300  p-10 shadow-md">
           <div className="flex justify-between items-center">
             <div className="flex gap-4 items-center">
               <div className="size-10 border rounded-md p-1">
@@ -106,7 +120,7 @@ const Report = () => {
 
       <div className="flex gap-5 items-center mt-10">
         {/* Search box */}
-        <div className="flex items-center gap-3 border border-gray-300 rounded-2xl h-20 p-4 shadow-md flex-1">
+        <div className="flex flex-3 items-center gap-3 border border-gray-300 rounded-2xl h-20 p-4 shadow-md flex-1">
           <CiSearch size={30} />
           <input
             type="text"
@@ -114,52 +128,56 @@ const Report = () => {
             placeholder="Search post"
             className="flex-1 outline-none text-2xl h-10"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                const reportId = Number(search)
-                getReport(1, 5, "", reportId)
-                console.log(">>>>>>", setListReports)
-              }
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearch(value);
+              getReport({ page: 1, report_id: search })
             }}
           />
         </div>
 
-        {/* Filter select */}
-        <div className="flex flex-1 items-center justify-center">
-          <div className="border border-gray-300 rounded-md shadow-md px-3 py-2">
+        <div className="flex flex-1 items-center gap-5 justify-center">
+          <div className="flex items-center border h-20 border-gray-300 rounded-xl shadow-md px-3 py-2">
             <select
-              className="outline-none text-2xl font-bold"
+              className="outline-none text-2xl"
               value={type}
               onChange={(e) => {
                 const value = (e.target.value).toString();
                 setType(value);
-                getReport(1, 4, value)
+                console.log(value)
+                getReport({ page: 1, report_type: value })
               }}
             >
+              <option value="">Type</option>
               <option value="post">post</option>
               <option value="comment">comment</option>
               <option value="user">user</option>
             </select>
           </div>
-        </div>
-
-        <div className="flex flex-1 items-center justify-center">
-          <div className="border border-gray-300 rounded-md shadow-md px-3 py-2">
+          <div className="flex items-center h-20 border border-gray-300 rounded-md shadow-md px-3 py-2">
             <select
-              className="outline-none text-2xl font-bold"
+              className="outline-none text-2xl"
               value={status}
               onChange={(e) => {
-                const value = Number(e.target.value);
+                const value = e.target.value;
                 setStatus(value);
-                getReport(value)
+                getReport({ page: 1, status: value })
               }}
             >
+              <option value="">status</option>
               <option value="0">pending</option>
               <option value="1">reviewed</option>
               <option value="2">resolved</option>
               <option value="3">rejected</option>
             </select>
+          </div>
+          <div className="flex items-center justify-center h-20 border px-2 border-gray-300 rounded-md shadow-md">
+            <input className="outline-none text-xl"
+              type="date" />
+          </div>
+          <div className="flex items-center justify-center h-20 border px-2 border-gray-300 rounded-md shadow-md">
+            <input className="outline-none text-xl"
+              type="date" />
           </div>
         </div>
       </div>

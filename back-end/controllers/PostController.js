@@ -114,6 +114,7 @@ const getPostAdmin = async (req, res) => {
   const limit = 10;
   const offset = (page - 1) * limit;
   const userRole = Number(req.user.role);
+  
   if (userRole != 1) {
     return res.status(403).json({
       message: "User no access rights"

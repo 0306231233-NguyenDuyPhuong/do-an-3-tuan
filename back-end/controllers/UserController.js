@@ -31,13 +31,13 @@ const getUsers = async (req, res) => {
       ...(search && {
         full_name: { [Op.like]: `%${search}%` },
       }),
-      ...(userId !== undefined && {
-        id: userId,
+      ...(user_id && {
+        id: user_id
       }),
-      ...(role !== undefined && {
-        role: role,
-      }),
-    };
+      ...(role&& {
+        role: role
+      })
+    }
     const users = await db.User.findAll({
       where: whereUser,
       attributes: ["id", "full_name", "avatar", "status", "role"],

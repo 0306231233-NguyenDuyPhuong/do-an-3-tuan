@@ -48,7 +48,7 @@ const Home = () => {
   return (
     <>
       <div className="flex flex-col w-full min-w-0 bg-w">
-        <div className="flex mt-5 gap-4 flex-wrap">
+        <div className="flex gap-4 flex-wrap">
           <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl border border-gray-300 shadow-md p-10">
             <div className="flex justify-between items-center">
               <div className="flex gap-4">
@@ -143,6 +143,7 @@ const Home = () => {
             <UserChart data={chartData.postsChart}/>
           </div>
           <div className="flex-1 h-100 bg-white rounded-xl border border-gray-300 border-2 shadow-md p-10">
+            <span className="text-2xl font-bold text-blue-300">REPORT TYPE</span>
             <div className="flex justify-between">
               <div className="text-black font-bold text-xl">Revenue</div>
               <div className="text-black font-bold text-xl">Revenue</div>

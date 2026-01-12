@@ -8,7 +8,7 @@ const User = () =>{
     const [listUsers, setListUsers] = useState([]);
     let [total, setTotatl] = useState(null);
     const statusPost = {
-      0: "delete", 
+      2: "banned", 
       1: "approved"
     }
     const roleUser = {
@@ -20,14 +20,26 @@ const User = () =>{
     const [search, setSearch] = useState("");
     useEffect(() => {
         // eslint-disable-next-line react-hooks/immutability
-        getUser(1)
+        getUser({page:1})
     }, []);
 
-    const getUser = async (page = 1) => {
-        let res = await fetchUser(page, search, role);
-        setTotatl(res.total);
-        if (res && res.data) {
-            setListUsers(res.data.data)
+    const getUser = async ({
+      page,
+      search, 
+      role
+    }={}) => {
+        try {
+          let res = await fetchUser({
+            page, 
+            search, 
+            role
+          });
+          if (res && res.data) {
+              setListUsers(res.data.data);
+              setTotatl(res.total);
+          }
+        } catch (error) {
+          console.log("Get user error: ", error)
         }
     }
 
@@ -124,31 +136,30 @@ const User = () =>{
               <input className="flex h-10 w-200 flex-1 outline-none text-2xl" 
               placeholder="Search post" type="text" name="search"
               value={search}
-              onChange={(e)=>setSearch(e.target.value)}
-              onKeyDown={(e)=>{
-                if(e.key === "Enter"){
-                  console.log(">>>>>>>>>ENTER: ", search)
-                  getUser(1, search)
-                }
+              onChange={(e)=>{
+                setSearch(e.target.value)
+                getUser({page:1, search:search})
               }}
               />
             </div>
           </div>
           <div className="flex flex-1 items-center justify-center">
-            <div className="flex
+            <div className="flex h-20
             rounded-md border border-gray-300 shadow-md">
               <select className="outline-none 
               my-5
-              text-2xl font-bold" 
+              text-2xl" 
               value={role}
               onChange={(e)=>{
-                const role = Number(e.target.value);
-                setRole(role);
-                getUser(1, role)
+                const value = e.target.value;
+                setRole(value);
+                console.log(">>>>>",value);
+                getUser({page:1, role: value})
               }}
               >
-              <option value="0">admin</option>
-              <option value="1">user</option>
+              <option value="">status</option>
+              <option value="1">admin</option>
+              <option value="0">user</option>
             </select>
           </div>
 
@@ -195,8 +206,8 @@ const User = () =>{
                 <td className="h-15 px-4 py-2 text-center">
                     <div
                     className={`inline-block px-3 py-1 rounded-md font-bold ${
-                        item.status === 0
-                        ? "bg-red-100 text-red-500 border border-red-300"
+                        item.status === 2
+                        ? "bg-yellow-100 text-yellow-500 border border-yellow-300"
                         : "bg-green-100 text-green-500 border border-green-300"
                     }`}
                     >

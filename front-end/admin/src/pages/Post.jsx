@@ -8,6 +8,8 @@ import Calenda from "../components/Calenda"
 const Post = () => {
   const [listPosts, setListPosts] = useState([]);
   let [total, setTotatl] = useState(null);
+  const [date, setDate] = useState("")
+  const [dateEnd, setDateEnd] = useState("")
   const statusPost = {
     0: "delete",
     1: "approved"
@@ -16,20 +18,45 @@ const Post = () => {
   const [search, setSearch] = useState("");
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability
-    getPostAdmin(1)
+    getPostAdmin({page: 1})
   }, []);
 
-  const getPostAdmin = async (page = 1, search = "", location = "", sort = "") => {
-    let res = await fetchPostAdmin(page, search.trim(), location.trim(), sort.trim());
+  const getPostAdmin = async ({
+    page = 1,
+    search = "",
+    sort = "",
+    date, 
+    dateStart, 
+    dateEnd
+  } = {}) => {
+    try {
+      const res = await fetchPostAdmin({
+      page,
+      search, sort,
+      date, 
+      dateStart,
+      dateEnd
+    });
     setTotatl(res.total);
     if (res && res.data) {
       setListPosts(res.data)
     }
+    } catch (error) {
+      console.log("Fetch admin post error: ",error)
+    }
   }
 
   const handlePageClick = (event) => {
-    console.log(">>> seleted: ", event)
-    getPostAdmin(+event.selected + 1);
+    const selectedPage = event.selected +1;
+    getPostAdmin({
+      page: selectedPage,
+      search,
+      sort, 
+      date, 
+      dateStart: date, 
+      dateEnd
+    })
+    
   }
 
   return (
@@ -116,33 +143,53 @@ const Post = () => {
             <input className="flex h-10 w-200 flex-1 outline-none text-2xl"
               placeholder="Search post" type="text" name="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  getPostAdmin(1, search, search)
-                }
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value)
+                getPostAdmin({page: 1, search: search})
               }}
             />
           </div>
         </div>
 
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex gap-5">
           <div className="flex
             rounded-md border border-gray-300 shadow-md">
             <select className="outline-none 
               my-5
-              text-2xl font-bold"
+              text-2xl"
               value={sort}
               onChange={(e) => {
                 const value = e.target.value;
                 setSort(value);
-                getPostAdmin(1, search, search, value)
+                getPostAdmin({page: 1, sort: value})
               }}
             >
               <option value="">date</option>
               <option value="trending">Trending</option>
             </select>
           </div>
+              <div className="flex flex-col items-center justify-center h-18 border px-2 border-gray-300 rounded-md shadow-md">
+                <input className="outline-none text-xl" 
+                value={date}
+                onChange={(e)=>{
+                  const value = e.target.value;
+                  setDate(value)         ;         
+                  getPostAdmin({page:1, date: date})
+                }}
+                type="date"
+                />
+              </div>
+              <div className="flex items-center justify-center h-18 border px-2 border-gray-300 rounded-md shadow-md">
+                <input className="outline-none text-xl"
+                value={dateEnd}
+                onChange={(e)=>{
+                  const value = e.target.value;
+                  setDateEnd(value)                  
+                  getPostAdmin({page: 1, dateStart: date, dateEnd: dateEnd})
+                }}
+                type="date"/>
+              </div>
         </div>
       </div>
 

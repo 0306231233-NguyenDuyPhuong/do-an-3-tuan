@@ -5,6 +5,7 @@ import { BsBookmark } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 import avatar from "../images/avatar.png"
+import logo from "../images/logo.png"
 const Sidebar = () =>{
     const user = JSON.parse(localStorage.getItem("user"))
     const full_name = user?.full_name;
@@ -17,7 +18,9 @@ const Sidebar = () =>{
         <>
         <div className="flex flex-col pt-5 px-5">
             <div className="flex flex gap-1 items-center gap-5">
-                <div className="h-12 w-12 bg-blue-200 rounded-full"></div>
+                <div className="size-15 p-3">
+                    <img src={logo} className="w-full rounded-full"/>
+                </div>
                 <div className="flex flex-col">
                 <div className="text-black text-xl font-bold">{full_name}</div>
                 <div className="text-gray-320 text-sm">Pivora</div>
