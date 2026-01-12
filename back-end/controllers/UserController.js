@@ -74,7 +74,7 @@ const getUserById = async (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = 10;
     const offset = (page - 1) * limit;
-    const [user, postData, totalLike, totalComment, totalPost] = await Promise.all([
+    const [user, postData, totalLike, totalComment, totalPost, totalFriend] = await Promise.all([
       db.User.findOne({
         where: {
           id
@@ -104,6 +104,9 @@ const getUserById = async (req, res) => {
               },
               {
                 model: db.PostMedia,
+              },
+              {
+                model: db.Location
               }
             ],
           }),
@@ -123,7 +126,13 @@ const getUserById = async (req, res) => {
             {where: {
               user_id: id
             }}
-          )
+          ),
+          db.Friendship.count({
+            where: {
+              user_id: id,
+              status: 1
+            }
+          })
     ])
 
     if (!user) {
@@ -135,6 +144,7 @@ const getUserById = async (req, res) => {
           like_count: totalLike,
           comment_count: totalComment,
           post_count: totalPost,
+          friend_count: totalFriend,
           page,
           limit,
           user: user,
@@ -181,6 +191,9 @@ const getAdminUserById = async(req,res)=>{
               },
               {
                 model: db.PostMedia,
+              },
+              {
+                model: db.Location
               }
             ],
           }),
