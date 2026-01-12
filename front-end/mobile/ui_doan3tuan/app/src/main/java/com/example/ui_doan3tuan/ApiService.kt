@@ -2,26 +2,40 @@ package com.example.ui_doan3tuan
 
 import com.example.ui_doan3tuan.model.*
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.POST
-import retrofit2.http.GET
-import retrofit2.http.PATCH
+import retrofit2.http.*
 
 interface ApiService {
+    // Auth
     @POST("auth/login")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
 
     @POST("auth/register")
     fun register(@Body request: RegisterRequest): Call<RegisterResponse>
+    // 1. Lấy danh sách lời mời kết bạn
+    @GET("api/friends/requests")
+    fun getFriendRequests(
+        @Header("Authorization") token: String
+    ): Call<FriendRequestResponse>
 
-    @GET("friends/requests")
-    fun requests(@Body request: User): Call<User>
+    // 2. Chấp nhận lời mời (dùng Void để đơn giản)
+    @PATCH("api/friends/requests/accept")
+    fun acceptRequest(
+        @Header("Authorization") token: String,
+        @Body request: AcceptRequest
+    ): Call<Void>  // Chỉ cần biết thành công hay thất bại
 
-    @PATCH("friends/requests/accept")
-    fun accept(@Body request: User): Call<User>
+    // 3. Từ chối lời mời (dùng Void để đơn giản)
+    @PATCH("api/friends/requests/reject")
+    fun rejectRequest(
+        @Header("Authorization") token: String,
+        @Body request: RejectRequest
+    ): Call<Void>  // Chỉ cần biết thành công hay thất bại
 
-    @PATCH("friends/requests/reject")
-    fun reject(@Body request: User): Call<User>
+    // 4. Lấy danh sách bạn bè
+    @GET("api/friends")
+    fun getFriendList(
+        @Header("Authorization") token: String
+    ): Call<FriendListResponse>
 }
 
 object ApiClient {

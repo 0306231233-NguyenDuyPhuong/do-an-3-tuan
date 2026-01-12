@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     android:background="#0b141a">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_above="@+id/bottom_navigation">
+        android:layout_above="@+id/bottom_navigation"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:paddingHorizontal="16dp">
-
             <ImageView
                 android:id="@+id/imgThoatLF"
                 android:layout_width="24dp"
@@ -23,7 +23,6 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/back"
                 app:tint="@color/white" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -32,8 +31,8 @@
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <ImageView
+                android:id="@+id/imgAddFriend"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_alignParentEnd="true"
@@ -43,6 +42,7 @@
         </RelativeLayout>
 
         <EditText
+            android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_margin="16dp"
@@ -58,7 +58,6 @@
             android:id="@+id/rvFriends"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -66,10 +65,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#1E1E1E"
-        app:itemIconTint="@color/selector_bottom_nav"
-        app:itemTextColor="@color/selector_bottom_nav"
-        app:menu="@menu/menu_bottom_nav"
-        app:labelVisibilityMode="labeled"/>
+        android:background="#0b141a"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/menu_bottom_nav" />
 
 </RelativeLayout>
