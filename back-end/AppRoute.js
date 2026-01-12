@@ -34,6 +34,7 @@ import checkCanComment from "./middledewares/CheckComment.js";
 import CommentController from "./controllers/CommentController.js";
 import checkBlocked from "./middledewares/checkBlocked.js";
 import checkBlockedPost from "./middledewares/checkBlockedPost.js";
+import upload from "./middledewares/ImageUpload.js";
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser);
@@ -58,11 +59,13 @@ const AppRoute = (app) => {
   router.get("/users/:id", verifyToken, UserController.getUserById);
   router.get("/admin/users/:id", verifyToken, UserController.getAdminUserById);
   router.get("/users", verifyToken, UserController.getUsers);
-  router.patch("/user/update", verifyToken, UserController.update);
-  router.put("/admin/user/:id",
-    verifyToken, 
-    UserController.putUserAdmin
-  )
+  router.put(
+    "/user/update",
+    verifyToken,
+    uploadImage.single("avatar"),
+    UserController.update
+  );
+  router.put("/admin/user/:id", verifyToken, UserController.putUserAdmin);
 
   //INTERACT
   router.post(
@@ -112,10 +115,11 @@ const AppRoute = (app) => {
     CommentController.create
   );
   router.patch("/comment", verifyToken, CommentController.updateComment);
-  router.put("/comment/admin/:id", 
+  router.put(
+    "/comment/admin/:id",
     verifyToken,
     CommentController.putCommentAdmin
-  )
+  );
   router.delete(
     "/comment/:commentId",
     verifyToken,

@@ -29,6 +29,10 @@ const login = async (req, res) => {
         message: "Invalid credentials",
       });
     }
+    if (user.status === 2)
+      return res.status(403).json({
+        message: "Account being locked",
+      });
     if (!user.is_verified)
       return res.status(403).json({
         message: "Account not verified",
