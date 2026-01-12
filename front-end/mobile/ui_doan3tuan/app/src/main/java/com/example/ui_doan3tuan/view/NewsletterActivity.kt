@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -25,7 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 val token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODE3NDk0MiwiZXhwIjoxNzY4MTc4NTQyfQ.7jF-wT8bJhpGlMnM9imv16PhIKkGojVQLaIhhNRaJs8"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODE4NzgyMywiZXhwIjoxNzY4MTkxNDIzfQ.omkOgxxZ7Z-nGLXRWV5F3tTPrWuei4n0LNlW7TXZWBA"
 class NewsletterActivity : AppCompatActivity() {
 
     private val viewModel: NewsletterViewModel by viewModels()
@@ -86,7 +87,10 @@ class NewsletterActivity : AppCompatActivity() {
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },
-            onReportClick = { post -> showReportDialog(post) }
+            onReportClick = { post -> showReportDialog(post) },
+            onImageClick = { id -> val intent = Intent(this, FriendsProfileActivity::class.java)
+                intent.putExtra("id", id)
+                startActivity(intent) }
         )
 
         revHienBaiDang.adapter = adapterNewsletter
@@ -95,8 +99,6 @@ class NewsletterActivity : AppCompatActivity() {
                 adapterNewsletter.updateData(listPosts)
             }
         }
-
-
         revDSBanBe.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
         adapterFriends = AdapterFriends(mutableListOf())
         revDSBanBe.adapter = adapterFriends
@@ -119,19 +121,44 @@ class NewsletterActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
-
-
-
-
-
-
     }
 
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_report, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
+        btnReport.setOnClickListener {
+            showDetailReportDialog(post.User.id,post.id)
+            dialog.dismiss()
+        }
+        dialog.setContentView(view)
+        dialog.show()
+    }
+    private fun showDetailReportDialog(id:Int,postId:Int) {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_detail_report, null)
+        val txtSpam = view.findViewById<TextView>(R.id.txtSpam)
+        val txtThongTinSai = view.findViewById<TextView>(R.id.txtThongTinSai)
+        val txtVandenhaycam = view.findViewById<TextView>(R.id.txtVandenhaycam)
+//        viewModel.report.observe(this) { report ->
+//            if(report){
+//
+//            }
+//
+//        }
+        txtSpam.setOnClickListener {
+            viewModel.reportPost(token,postId,id,"Spam")
+            dialog.dismiss()
+        }
+        txtThongTinSai.setOnClickListener {
+            viewModel.reportPost(token,postId,id,"Thông tin sai sự thật")
+            dialog.dismiss()
+        }
+        txtVandenhaycam.setOnClickListener {
+            viewModel.reportPost(token,postId,id,"Nội dung nhạy cảm")
+            dialog.dismiss()
+        }
+
         dialog.setContentView(view)
         dialog.show()
     }
@@ -153,7 +180,6 @@ class NewsletterActivity : AppCompatActivity() {
                 commentAdapter.updateData(listComments)
                 rcvComments.scrollToPosition(listComments.size - 1)
             } else {
-                Log.d("test", "Rỗng")
                 commentAdapter.updateData(listComments)
                 rcvComments.scrollToPosition(listComments.size - 1)
             }

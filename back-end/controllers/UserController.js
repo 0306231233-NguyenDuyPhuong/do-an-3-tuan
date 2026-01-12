@@ -1,6 +1,7 @@
-import db from "../models/index"
+import { group } from "console";
+import db, { sequelize } from "../models/index"
 import jwt from "jsonwebtoken";
-import { Op,Sequelize } from "sequelize";
+import { Op,Sequelize, where } from "sequelize";
 
 const login = async (req, res) => {
   try {
@@ -39,6 +40,7 @@ const getProfile = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     const {search, userId, role} = req.query;
+    const id = req.params;
     const currentUserId = req.user.userId; 
     const whereUser = {
       ...(search&& {
@@ -72,7 +74,7 @@ const getUserById = async (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = 10;
     const offset = (page - 1) * limit;
-    const [user, postData, total] = await Promise.all([
+    const [user, postData, totalLike, totalComment, totalPost] = await Promise.all([
       db.User.findOne({
         where: {
           id
@@ -93,7 +95,7 @@ const getUserById = async (req, res) => {
                     { /*privacy: 2, */user_id: id },
                   ]
                 }
-              ]
+              ],
               },
             include: [
               {
@@ -105,28 +107,34 @@ const getUserById = async (req, res) => {
               }
             ],
           }),
-          db.Post.count({
-                where: {
-                  [Op.and]: [
-                    { status: 1},
-                    {
-                      [Op.or]: [
-                        { privacy: 0 },
-                        { privacy: 2, user_id: id },
-                      ]
-                    }
-                  ]
-          
-                },
-              })
+          db.Post.sum("like_count",{
+            where: {
+              user_id: id,
+              //status: 1
+            }
+          }),
+          db.Post.sum("comment_count",{
+            where: {
+              user_id: id,
+              //status: 1
+            }
+          }),
+          db.Post.count(
+            {where: {
+              user_id: id
+            }}
+          )
     ])
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     return res.status(200).json({
           message: "Post",
-          total: total,
+          like_count: totalLike,
+          comment_count: totalComment,
+          post_count: totalPost,
           page,
           limit,
           user: user,

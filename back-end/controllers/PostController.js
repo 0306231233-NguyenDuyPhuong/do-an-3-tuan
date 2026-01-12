@@ -29,7 +29,7 @@ const getPostUser = async (req, res) => {
       where: { user_id: userId, status: 3 },
       attributes: ["friend_id"]
     });
-    const blockIds = friendBlock.map(i => i.friend_id);
+    const blockIds = friendBlock.map(item => item.friend_id);
 
     let createdAtFilter = {};
     if (date) {

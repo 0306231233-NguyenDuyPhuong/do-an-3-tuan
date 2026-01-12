@@ -9,9 +9,4 @@ data class UserModel(
     var full_name:String?,
     var avatar:String?,
 )
-@Serializable
-data class UserInformation(
-    var countPost:Int,
-    var countFriend:Int,
-)
 

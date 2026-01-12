@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,16 +19,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.AdapterComment
 import com.example.ui_doan3tuan.adapter.AdapterNewsletter
+import com.example.ui_doan3tuan.adapter.AdapterUserProfile
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.example.ui_doan3tuan.viewmodel.UserProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlin.getValue
-
+var slbb:Int = 0;
+var slbv:Int = 0;
 class UserProfileActivity : AppCompatActivity() {
     private val viewModel: UserProfileViewModel by viewModels()
-    private lateinit var adapterNewsletter: AdapterNewsletter
+    private lateinit var adapterUserProfile: AdapterUserProfile
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,6 +45,9 @@ class UserProfileActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnChinhSuaTrangCaNhan).setOnClickListener {
             startActivity(Intent(this, EditProfileActivity::class.java))
         }
+        val txtSoLuongBaiViet = findViewById<TextView>(R.id.txtSoLuongBaiViet)
+        val txtSoLuongBanBe = findViewById<TextView>(R.id.txtSoLuongBanBe)
+
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNav.selectedItemId = R.id.nav_profile
         bottomNav.setOnItemSelectedListener { item ->
@@ -82,15 +88,20 @@ class UserProfileActivity : AppCompatActivity() {
         }
         val revDSBaiDang = findViewById<RecyclerView>(R.id.revDSBaiDang)
         revDSBaiDang.layoutManager = LinearLayoutManager(this)
-        adapterNewsletter = AdapterNewsletter(
+        adapterUserProfile = AdapterUserProfile(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },
             onReportClick = { post -> showReportDialog(post) }
         )
-        revDSBaiDang.adapter = adapterNewsletter
+        revDSBaiDang.adapter = adapterUserProfile
         viewModel.postsId.observe(this) { listPostsId ->
             if (listPostsId != null) {
-                adapterNewsletter.updateData(listPostsId)
+                adapterUserProfile.updateData(listPostsId)
+                txtSoLuongBanBe.setText(slbb.toString())
+                txtSoLuongBaiViet.setText(slbv.toString())
+
+            }else{
+                Log.d("Lỗi", "Null")
             }
         }
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)

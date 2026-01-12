@@ -10,6 +10,8 @@ import com.example.ui_doan3tuan.model.ListCommentModel
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.PostResponse
 import com.example.ui_doan3tuan.model.PostResponseID
+import com.example.ui_doan3tuan.view.slbb
+import com.example.ui_doan3tuan.view.slbv
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -37,11 +39,11 @@ class UserProfileViewModel: ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
-                    .url("http://10.0.2.2:8989/api/users/1")
+                    .url("http://10.0.2.2:8989/api/users/$id")
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
-
+                Log.e("Lỗi", "Vào 1")
                 client.newCall(req).execute().use { resp ->
                     if (!resp.isSuccessful) {
                         Log.e("API_ERROR", "Lỗi: ${resp.code}")
@@ -53,6 +55,11 @@ class UserProfileViewModel: ViewModel() {
                     val jsonBody = resp.body?.string().orEmpty()
                     val response = json.decodeFromString<PostResponseID>(jsonBody)
                     val listPostId = response.post
+                    slbv = response.post_count
+                    slbb = response.friend_count
+                    Log.d("Test", "$slbv")
+                    Log.d("Test", "$slbb")
+
                     Log.d("listPostId", "$listPostId")
                     _postsId.postValue(listPostId)
                 }

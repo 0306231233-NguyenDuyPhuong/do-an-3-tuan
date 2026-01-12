@@ -23,12 +23,3 @@ data class PostModel(
 
 )
 
-//
-//
-//@Serializable
-//data class CommentRequest(
-//    val post_id: Int,
-//    val content: String
-//    // user_id thường lấy từ token hoặc session, nếu API cần thì thêm vào
-//)
-

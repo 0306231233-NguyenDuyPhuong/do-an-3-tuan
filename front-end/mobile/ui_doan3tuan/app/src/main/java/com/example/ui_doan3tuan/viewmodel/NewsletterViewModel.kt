@@ -10,7 +10,6 @@ import com.example.ui_doan3tuan.model.ListCommentModel
 import com.example.ui_doan3tuan.model.ListFriends
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.PostResponse
-import com.example.ui_doan3tuan.model.UserInformation
 import com.example.ui_doan3tuan.model.UserModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -82,6 +81,7 @@ class NewsletterViewModel : ViewModel() {
                     .build()
                 val response = client.newCall(request).execute()
                 if (response.isSuccessful) {
+                    Log.d("Test", "$response")
                     getCommentsByPostId(postId,token)
                 }
             } catch (e: Exception) {
@@ -106,9 +106,10 @@ class NewsletterViewModel : ViewModel() {
                     resp->
                     if (resp.isSuccessful) {
                         val jsonString = resp.body?.string()
+                        Log.d("Test", "$jsonString")
                         val listComment = json.decodeFromString<ListCommentModel>(jsonString ?: "[]")
-                        Log.d("Test", "$listComment")
-                        Log.d("Test", "$postId")
+//                        Log.d("Test", "$listComment")
+//                        Log.d("Test", "$postId")
                         _comments.postValue(listComment.data)
                     }
                 }
@@ -142,6 +143,36 @@ class NewsletterViewModel : ViewModel() {
             }
         }
 
+    }
+    private val _report = MutableLiveData<Boolean>()
+    val report: LiveData<Boolean> get() = _report
+    fun reportPost(token: String, postId: Int,userId:Int,reason:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val reportBody = JSONObject()
+                    .put("reporter_id", userId)
+                    .put("target_id", postId)
+                    .put("target_type", "post")
+                    .put("reason", reason)
+                    .put("description", "sd")
+                    .toString()
+                val JSON = "application/json;charset=utf-8".toMediaType();
+                val requestBody = reportBody.toRequestBody(JSON);
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/reports")
+                    .addHeader("Authorization", "Bearer $token")
+                    .post(requestBody)
+                    .build()
+                client.newCall(request).execute().use {
+                        resp->
+                    if (resp.isSuccessful) {
+                        _report.postValue(true)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
 }

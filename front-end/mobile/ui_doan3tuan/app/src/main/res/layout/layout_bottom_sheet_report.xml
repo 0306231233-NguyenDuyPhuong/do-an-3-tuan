@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:background="@color/background"
+    android:paddingBottom="30dp"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -13,7 +14,6 @@
         android:orientation="vertical">
 
         <LinearLayout
-
             android:id="@+id/btnReport"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

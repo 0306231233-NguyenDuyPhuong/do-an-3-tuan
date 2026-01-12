@@ -6,27 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.ui_doan3tuan.R
+import com.example.ui_doan3tuan.adapter.AdapterNewsletter.BangTinViewHolder
 import com.example.ui_doan3tuan.model.PostModel
-import java.time.Instant
 import java.time.Duration
-import java.time.ZoneId
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import java.time.Instant
 
-class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(PostModel)-> Unit,val onReportClick:(PostModel)-> Unit,val onImageClick:(String)-> Unit): RecyclerView.Adapter<AdapterNewsletter.BangTinViewHolder>() {
+class AdapterUserProfile(private var list: List<PostModel>,val onCommentClick:(PostModel)-> Unit,val onReportClick:(PostModel)-> Unit): RecyclerView.Adapter<AdapterUserProfile.UserProfileViewHolder>() {
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): BangTinViewHolder {
+    ): UserProfileViewHolder {
         var view = LayoutInflater.from(parent.context).inflate(R.layout.item_newsletter, parent, false)
-        return BangTinViewHolder(view)
+        return UserProfileViewHolder(view)
     }
 
     override fun onBindViewHolder(
-        holder: BangTinViewHolder,
+        holder: UserProfileViewHolder,
         position: Int
     ) {
         val ngayDang = Instant.parse(list[position].createdAt)
@@ -84,17 +84,13 @@ class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(Po
         holder.imgDaiDien.load(fullUrl){
             crossfade(true)
         }
-        holder.imgDaiDien.setOnClickListener {
-            onImageClick(list[position].User.id.toString())
-        }
 
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
-
-    class BangTinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class UserProfileViewHolder(itemView:View): RecyclerView.ViewHolder(itemView){
         var txtTen = itemView.findViewById<TextView>(R.id.txtName_BaiDang)
         var txtNoiDung = itemView.findViewById<TextView>(R.id.txtConten_BaiDang)
         var txtThoiGian = itemView.findViewById<TextView>(R.id.txtHour_BaiDang)
@@ -108,15 +104,10 @@ class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(Po
         var imgDaiDien = itemView.findViewById<ImageView>(R.id.imgAnhDaiDien_Home)
         var imgReport = itemView.findViewById<ImageView>(R.id.imgReport)
 
-
-
-
-
-
-
     }
     fun updateData(newList: List<PostModel>) {
         this.list = newList
         notifyDataSetChanged()
     }
+
 }
