@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ui_doan3tuan.model.CommentModel
 import com.example.ui_doan3tuan.model.ListCommentModel
-import com.example.ui_doan3tuan.model.ListFriends
+import com.example.ui_doan3tuan.model.ListFriendsModel
 import com.example.ui_doan3tuan.model.PostModel
-import com.example.ui_doan3tuan.model.PostResponse
+import com.example.ui_doan3tuan.model.PostResponseModel
 import com.example.ui_doan3tuan.model.UserModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +17,6 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
@@ -53,7 +52,7 @@ class NewsletterViewModel : ViewModel() {
                     }
 
                     val jsonBody = resp.body?.string().orEmpty()
-                    val response = json.decodeFromString<PostResponse>(jsonBody)
+                    val response = json.decodeFromString<PostResponseModel>(jsonBody)
                     val list = response.data
                     Log.d("test1", "$list")
                     _posts.postValue(list)
@@ -108,8 +107,6 @@ class NewsletterViewModel : ViewModel() {
                         val jsonString = resp.body?.string()
                         Log.d("Test", "$jsonString")
                         val listComment = json.decodeFromString<ListCommentModel>(jsonString ?: "[]")
-//                        Log.d("Test", "$listComment")
-//                        Log.d("Test", "$postId")
                         _comments.postValue(listComment.data)
                     }
                 }
@@ -134,8 +131,8 @@ class NewsletterViewModel : ViewModel() {
                         resp->
                     if (resp.isSuccessful) {
                         val jsonString = resp.body?.string()
-                        val listFriends = json.decodeFromString<ListFriends>(jsonString ?: "[]")
-                        _listFriends.postValue(listFriends.data)
+                        val listFriendsModel = json.decodeFromString<ListFriendsModel>(jsonString ?: "[]")
+                        _listFriends.postValue(listFriendsModel.data)
                     }
                 }
             } catch (e: Exception) {

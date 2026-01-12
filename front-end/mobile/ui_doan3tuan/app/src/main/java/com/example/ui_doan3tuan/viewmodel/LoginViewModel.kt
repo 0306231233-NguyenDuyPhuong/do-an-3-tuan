@@ -96,13 +96,11 @@ class LoginViewModel : ViewModel() {
     }
 
     fun isTokenValid(): Boolean {
-
         val accessTime = sharedPref.getLong("access_token_time", 0)
         if (accessTime != 0L) {
             val minutes = (System.currentTimeMillis() - accessTime) /( 60*1000)
             if (minutes < 10) return true  // Access token còn hiệu lực
         }
-
         // Nếu access hết hạn, check refresh
         val refreshTime = sharedPref.getLong("refresh_token_time", 0)
         if (refreshTime == 0L) return false

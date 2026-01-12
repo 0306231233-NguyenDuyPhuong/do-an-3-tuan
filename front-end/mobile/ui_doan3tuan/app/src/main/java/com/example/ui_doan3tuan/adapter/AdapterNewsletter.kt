@@ -39,7 +39,7 @@ class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(Po
             else ->"${khoangCach.toDays()} ngày trước"
         }
 
-        holder.txtTen.text = list[position].User.full_name ?:"NGuyên Dương"
+        holder.txtTen.text = list[position].User.full_name?:"NGuyên Dương"
         holder.txtNoiDung.text = list[position].content
         holder.txtThoiGian.text =hienThiThoiGian
         holder.txtSoLuongThich.text = list[position].likeCount.toString()
@@ -80,10 +80,13 @@ class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(Po
         holder.imgReport.setOnClickListener {
             onReportClick(list[position])
         }
-        val fullUrl ="http://10.0.2.2:8989/api/images/${list[position].User.avatar}"
-        holder.imgDaiDien.load(fullUrl){
-            crossfade(true)
+        if(list[position].User.avatar.toString().isNotEmpty()){
+            val fullUrl ="http://10.0.2.2:8989/api/images/${list[position].User.avatar}"
+            holder.imgDaiDien.load(fullUrl){
+                crossfade(true)
+            }
         }
+
         holder.imgDaiDien.setOnClickListener {
             onImageClick(list[position].User.id.toString())
         }

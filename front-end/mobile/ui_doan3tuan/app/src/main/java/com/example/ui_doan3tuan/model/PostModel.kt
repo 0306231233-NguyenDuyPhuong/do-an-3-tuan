@@ -10,9 +10,9 @@ data class PostModel(
     var content: String,
     var privacy:Int,
     var status: Int,
-    @SerialName("like_count") var likeCount: Int,
-    @SerialName("comment_count")var commentCount: Int,
-    @SerialName("share_count") var shareCount: Int,
+    @SerialName("like_count") var likeCount: Int=0,
+    @SerialName("comment_count")var commentCount: Int=0,
+    @SerialName("share_count") var shareCount: Int=0,
     @SerialName("created_at") var createdAt: String,
     @SerialName("updated_at") var updatedAt: String,
     @SerialName("location_id") var locationId: Int?,
@@ -20,6 +20,5 @@ data class PostModel(
     var User: UserModel,
     var Location:LocationModel,
     var PostMedia: List<PostMediaModel>
-
 )
 

@@ -105,9 +105,9 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-//        val token = sharedPref.getString("access_token", null)
+        val token = sharedPref.getString("access_token", null)
         if (token != null) {
-            viewModel.getPostID(token,1)
+            viewModel.getPostID(token,userId)
         } else {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
