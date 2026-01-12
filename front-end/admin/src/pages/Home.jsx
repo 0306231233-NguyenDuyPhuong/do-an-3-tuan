@@ -143,6 +143,7 @@ const Home = () => {
             <UserChart data={chartData.postsChart}/>
           </div>
           <div className="flex-1 h-100 bg-white rounded-xl border border-gray-300 border-2 shadow-md p-10">
+            <span className="text-2xl font-bold text-blue-300">REPORT TYPE</span>
             <div className="flex justify-between">
               <div className="text-black font-bold text-xl">Revenue</div>
               <div className="text-black font-bold text-xl">Revenue</div>

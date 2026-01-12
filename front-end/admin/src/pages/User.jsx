@@ -8,7 +8,7 @@ const User = () =>{
     const [listUsers, setListUsers] = useState([]);
     let [total, setTotatl] = useState(null);
     const statusPost = {
-      0: "delete", 
+      2: "banned", 
       1: "approved"
     }
     const roleUser = {
@@ -206,8 +206,8 @@ const User = () =>{
                 <td className="h-15 px-4 py-2 text-center">
                     <div
                     className={`inline-block px-3 py-1 rounded-md font-bold ${
-                        item.status === 0
-                        ? "bg-red-100 text-red-500 border border-red-300"
+                        item.status === 2
+                        ? "bg-yellow-100 text-yellow-500 border border-yellow-300"
                         : "bg-green-100 text-green-500 border border-green-300"
                     }`}
                     >

@@ -63,7 +63,9 @@ const PostDetail = () => {
     try {
       await putStatusPost(postId, status);
       getPostDetail(postId)
-      await updateStatusReport(reportId, 1)
+      if(reportId){
+      await updateStatusReport(reportId, 2)
+      }
       toast.success("Update status success!")
     } catch (error) {
       alert("Update status post faild, error: ", error)
