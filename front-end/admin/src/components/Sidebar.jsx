@@ -9,6 +9,10 @@ const Sidebar = () =>{
     const user = JSON.parse(localStorage.getItem("user"))
     const full_name = user?.full_name;
     const email = user?.email
+    const handleLogout = () =>{
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+    }
     return (
         <>
         <div className="flex flex-col pt-5 px-5">
@@ -76,7 +80,11 @@ const Sidebar = () =>{
                         <span className="text-xl">Report</span>
                         </div>
                     </NavLink>
-                    <NavLink to="/login" className={({isActive})=>
+                    <NavLink to="/login" 
+                    onClick={()=>{
+                        handleLogout()
+                    }}
+                    className={({isActive})=>
                         `block rounded-lg px-4 py-2 transition 
                         ${isActive ? "bg-gray-200 text-black font-bold":"hover:bg-gray-50-100 text-2xl"}`
                     }>

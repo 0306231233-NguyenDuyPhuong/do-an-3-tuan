@@ -1,7 +1,7 @@
 import axios from "../services/customize-axio.s";
 const accessToken = localStorage.getItem("accessToken");
-const fetchPostAdmin = (page, search, location, sort)=>{
-    return axios.get(`posts/admin?page=${page}&search=${search}&location=${location}&sort=${sort}`, {
+const fetchPostAdmin = (page, search, sort)=>{
+    return axios.get(`posts/admin?page=${page}&search=${search}&sort=${sort}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`
         }

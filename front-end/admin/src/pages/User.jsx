@@ -147,9 +147,8 @@ const User = () =>{
                 getUser(1, role)
               }}
               >
-              <option value="">date</option>
-              <option value="1">admin</option>
-              <option value="0">user</option>
+              <option value="0">admin</option>
+              <option value="1">user</option>
             </select>
           </div>
 

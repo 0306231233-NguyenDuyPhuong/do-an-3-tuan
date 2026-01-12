@@ -29,3 +29,32 @@ export const fetchUserById = (id)=>{
     }}
   )
 }
+
+export const putStatusUser = (id, newStatus) =>{
+    return axios.put(`http://localhost:8989/api/admin/user/${id}`,
+        {status: newStatus},
+        {
+            headers:{
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+        }
+    })
+}
+
+export const refreshAccessToken = async () =>{
+  try{
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if(!refreshToken) return;
+    const res = await axios.post(
+      "http://localhost:8989/api/auth/refresh",
+      {refreshToken}
+    );
+    const newAccessToken = res.data.accessToken;
+    localStorage.setItem("accessToken", newAccessToken);
+    console.log("SuCCEss")
+  } catch(error){
+    localStorage.clear();
+    console.log(error)
+  }
+}
