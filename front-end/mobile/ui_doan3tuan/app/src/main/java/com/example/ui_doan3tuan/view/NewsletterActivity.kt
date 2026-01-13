@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -94,13 +96,24 @@ class NewsletterActivity : AppCompatActivity() {
                 val intent = Intent(this, FriendsProfileActivity::class.java)
                 intent.putExtra("id", id)
                 startActivity(intent)
-            }
+            },
+            onLikeClick = { post -> viewModel.isLiked(token, post.id) }
         )
 
         revHienBaiDang.adapter = adapterNewsletter
         viewModel.posts.observe(this) { listPosts ->
             if (listPosts != null) {
                 adapterNewsletter.updateData(listPosts)
+            }
+        }
+        val progressBar =  findViewById<ProgressBar>(R.id.progressBar)
+        viewModel.isLoading.observe(this) { isLoading ->
+            if (isLoading) {
+                progressBar.visibility = View.VISIBLE
+                revHienBaiDang.visibility = View.GONE
+            } else {
+                progressBar.visibility = View.GONE
+                revHienBaiDang.visibility = View.VISIBLE
             }
         }
         viewModel.error.observe(this) { error ->
@@ -156,7 +169,11 @@ class NewsletterActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.imgSearch).setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
+
+
         }
+
+
     }
 
 

@@ -52,7 +52,8 @@ class SearchActivity : AppCompatActivity() {
                 val intent = Intent(this, FriendsProfileActivity::class.java)
                 intent.putExtra("id", id)
                 startActivity(intent)
-            }
+            },
+            onLikeClick = { post -> viewModel.isLiked(token, post.id) }
         )
         revRecentSearch.adapter = adapterNewsletter
         viewModel.resultSearch.observe(this) { listPosts ->
@@ -92,7 +93,14 @@ class SearchActivity : AppCompatActivity() {
                 false
             }
         }
+
+
+
+
+
+
     }
+
 
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)

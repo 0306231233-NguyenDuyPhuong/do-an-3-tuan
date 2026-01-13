@@ -20,18 +20,24 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
+
 class NewsletterViewModel : ViewModel() {
     private val client = OkHttpClient()
     private val json: Json = Json { ignoreUnknownKeys = true
         isLenient = true
         encodeDefaults = true }
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     private val _posts = MutableLiveData<List<PostModel>>()
     val posts: LiveData<List<PostModel>> get() = _posts
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
     fun getPost(token: String,page:Int,limit:Int=10) {
+        if (page == 1) {
+            _isLoading.postValue(true)
+        }
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
@@ -59,6 +65,8 @@ class NewsletterViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            }finally {
+                _isLoading.postValue(false)
             }
         }
     }
@@ -85,6 +93,34 @@ class NewsletterViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+
+
+    }
+    fun isLiked(token: String,postId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val commentBody = JSONObject()
+                    .put("postId", postId)
+                    .toString()
+                val JSON = "application/json;charset=utf-8".toMediaType();
+                val requestBody = commentBody.toRequestBody(JSON);
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/interact/like")
+                    .addHeader("Authorization", "Bearer $token")
+                    .post(requestBody)
+                    .build()
+                Log.d("Like", "$token")
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    Log.d("Like", "$response")
+                }else{
+                    Log.d("Like", "${response.code}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("Like", "${e.message}")
             }
         }
 
