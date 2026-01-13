@@ -4,11 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -104,23 +107,59 @@ class UserProfileActivity : AppCompatActivity() {
                 Log.d("Lỗi", "Null")
             }
         }
-        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("access_token", null)
-        if (token != null) {
-            viewModel.getPostID(token,userId)
-        } else {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+        val progressBar2 =  findViewById<ProgressBar>(R.id.progressBarLoadingProfile)
+        viewModel.isLoading.observe(this) { isLoading ->
+            if (isLoading) {
+                progressBar2.visibility = View.VISIBLE
+                revDSBaiDang.visibility = View.GONE
+            } else {
+                progressBar2.visibility = View.GONE
+                revDSBaiDang.visibility = View.VISIBLE
+            }
         }
+        viewModel.error.observe(this) { error ->
+            val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+
+            if (error == "TOKEN_EXPIRED") {
+                sharedPref.edit().remove("access_token").apply()
+                sharedPref.edit().remove("refresh_token").apply()
+                sharedPref.edit().remove("access_token_time").apply()
+                sharedPref.edit().remove("refresh_token_time").apply()
+                Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+
+        viewModel.getPostID(token,userId)
     }
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_report_profile, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
+        btnReport.setOnClickListener {
+            viewModel.deletePost(post.id, token)
+            viewModel.deletePost.observe(this) { reported ->
+                if (reported) {
+                    Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
+
+                    viewModel.getPostID(token,userId)
+                }else{
+                    Log.d("Lỗi", "Null")
+                }
+            }
+            Log.e("Lỗi", "Id lần 1: ${post.id}")
+
+
+            dialog.dismiss()
+
+        }
+
         dialog.setContentView(view)
         dialog.show()
     }
+
     private fun showCommentDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_comment, null)
