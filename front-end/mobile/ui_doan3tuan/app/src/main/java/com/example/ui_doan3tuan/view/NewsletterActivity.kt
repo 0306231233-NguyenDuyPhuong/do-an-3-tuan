@@ -26,17 +26,16 @@ import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-var userId = 1;
+var userId: Int = 1;
 val token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODIyMzQ4OCwiZXhwIjoxNzY4MjI3MDg4fQ.s3pzW_sQ-9AbZYzN1sIIPJqhF27mTg_FlXBIL5yMkIc"
+
 class NewsletterActivity : AppCompatActivity() {
 
     private val viewModel: NewsletterViewModel by viewModels()
     private lateinit var adapterNewsletter: AdapterNewsletter
     private lateinit var adapterFriends: AdapterFriends
-    var isLoading = false
-    var isLastPage = false
-    var currentPage = 1
+    var page: Int = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -86,15 +85,18 @@ class NewsletterActivity : AppCompatActivity() {
 
         val revHienBaiDang = findViewById<RecyclerView>(R.id.revHienBaiDang)
         val revDSBanBe = findViewById<RecyclerView>(R.id.revDSBanBe)
+        val nestedScrollView = findViewById<NestedScrollView>(R.id.myNestedScrollView)
 
         revHienBaiDang.layoutManager = LinearLayoutManager(this)
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },
             onReportClick = { post -> showReportDialog(post) },
-            onImageClick = { id -> val intent = Intent(this, FriendsProfileActivity::class.java)
+            onImageClick = { id ->
+                val intent = Intent(this, FriendsProfileActivity::class.java)
                 intent.putExtra("id", id)
-                startActivity(intent) }
+                startActivity(intent)
+            }
         )
 
         revHienBaiDang.adapter = adapterNewsletter
@@ -103,85 +105,94 @@ class NewsletterActivity : AppCompatActivity() {
                 adapterNewsletter.updateData(listPosts)
             }
         }
-        revDSBanBe.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        viewModel.error.observe(this) { error ->
+            val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+            sharedPref.edit().clear().apply()
+            if (error == "TOKEN_EXPIRED") {
+                Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+
+
+
+
+
+        revDSBanBe.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         adapterFriends = AdapterFriends(mutableListOf())
         revDSBanBe.adapter = adapterFriends
-        viewModel.friends.observe(this){
-            listFriend->
-            if(listFriend.isNotEmpty()){
-                revDSBanBe.adapter= AdapterFriends(listFriend)
+        viewModel.friends.observe(this) { listFriend ->
+            if (listFriend.isNotEmpty()) {
+                revDSBanBe.adapter = AdapterFriends(listFriend)
 
             }
 
         }
-
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
         val token = sharedPref.getString("access_token", null)
         if (token != null) {
-            viewModel.getPost(token)
+            viewModel.getPost(token,page)
             viewModel.getListfriends(token)
+            nestedScrollView.setOnScrollChangeListener(
+                NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
+                    if (!v.canScrollVertically(1)) {
+                        Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT)
+                            .show()
+                        viewModel.getPost(token, page)
+                        page += 1;
+
+                    }
+                }
+            )
         } else {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
-        loadData(1)
-        val nestedScrollView = findViewById<NestedScrollView>(R.id.myNestedScrollView)
+        findViewById<ImageView>(R.id.imgSearch).setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
 
-        if (nestedScrollView != null) {
-            nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-                if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
-                    if (!isLoading && !isLastPage) {
-                        loadMoreItems()
-                    }
-                }
-            })
+
         }
 
+
     }
-    private fun loadData(page: Int) {
-        token?.let {
-            viewModel.getPost(it)
-        }
-    }
-    // Logic tính toán trang tiếp theo
-    private fun loadMoreItems() {
-        isLoading = true
-        currentPage++
-        Toast.makeText(this, "Đang tải trang $currentPage...", Toast.LENGTH_SHORT).show()
-        loadData(currentPage)
-    }
+
 
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_report, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
         btnReport.setOnClickListener {
-            showDetailReportDialog(post.User.id,post.id)
+            showDetailReportDialog(post.User.id, post.id)
 
             dialog.dismiss()
         }
         dialog.setContentView(view)
         dialog.show()
     }
-    private fun showDetailReportDialog(id:Int,postId:Int) {
+
+    private fun showDetailReportDialog(id: Int, postId: Int) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_detail_report, null)
         val txtSpam = view.findViewById<TextView>(R.id.txtSpam)
         val txtThongTinSai = view.findViewById<TextView>(R.id.txtThongTinSai)
         val txtVandenhaycam = view.findViewById<TextView>(R.id.txtVandenhaycam)
         txtSpam.setOnClickListener {
-            viewModel.reportPost(token,postId,id,"Spam")
+            viewModel.reportPost(token, postId, id, "Spam")
             Toast.makeText(this, "Báo cáo thành công spam!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         txtThongTinSai.setOnClickListener {
-            viewModel.reportPost(token,postId,id,"Thông tin sai sự thật")
+            viewModel.reportPost(token, postId, id, "Thông tin sai sự thật")
             Toast.makeText(this, "Báo cáo thành công thông tin sai!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         txtVandenhaycam.setOnClickListener {
-            viewModel.reportPost(token,postId,id,"Nội dung nhạy cảm")
+            viewModel.reportPost(token, postId, id, "Nội dung nhạy cảm")
             Toast.makeText(this, "Báo cáo thành công vấn đề nhạy cảm!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }

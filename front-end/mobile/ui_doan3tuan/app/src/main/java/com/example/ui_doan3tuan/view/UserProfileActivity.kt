@@ -116,7 +116,7 @@ class UserProfileActivity : AppCompatActivity() {
     }
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
-        val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_report, null)
+        val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_report_profile, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
         dialog.setContentView(view)
         dialog.show()

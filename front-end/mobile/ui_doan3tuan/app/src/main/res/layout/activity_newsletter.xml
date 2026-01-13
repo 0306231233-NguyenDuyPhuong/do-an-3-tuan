@@ -42,7 +42,7 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/imgSearch"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:padding="8dp"

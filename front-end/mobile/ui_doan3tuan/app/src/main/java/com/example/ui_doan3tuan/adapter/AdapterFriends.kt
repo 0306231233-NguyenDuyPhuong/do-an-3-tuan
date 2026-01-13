@@ -8,9 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.ui_doan3tuan.R
+import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.UserModel
 
-class AdapterFriends(private val listFriend:List<UserModel>): RecyclerView.Adapter<AdapterFriends.FriendsViewHolder>() {
+class AdapterFriends(private var listFriend:List<UserModel>): RecyclerView.Adapter<AdapterFriends.FriendsViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -37,6 +38,10 @@ class AdapterFriends(private val listFriend:List<UserModel>): RecyclerView.Adapt
         val imgBanBe = itemView.findViewById<ImageView>(R.id.imgBanBe)
         val txtTenBaBe = itemView.findViewById<TextView>(R.id.txtTenBaBe)
 
+    }
+    fun updateData(newList: List<UserModel>) {
+        this.listFriend = newList
+        notifyDataSetChanged()
     }
 
 }

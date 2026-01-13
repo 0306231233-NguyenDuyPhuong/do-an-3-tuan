@@ -29,11 +29,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import kotlin.getValue
-
 class CreatePostActivity : AppCompatActivity() {
     private lateinit var adapterChonAnhVideo: AdapterSelectImageAndVideo
     private val viewModel: CreatePostViewModel by viewModels()
-
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
             if (uris.isNotEmpty()) {
@@ -77,6 +75,7 @@ class CreatePostActivity : AppCompatActivity() {
                 Toast.makeText(this, "Đăng bài thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show()
             }
         }
+
 
         val content = findViewById<EditText>(R.id.edtContent)
         findViewById<Button>(R.id.btnDangBai).setOnClickListener {

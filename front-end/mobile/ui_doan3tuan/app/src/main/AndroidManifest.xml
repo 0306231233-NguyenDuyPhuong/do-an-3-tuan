@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Ui_doan3tuan"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".view.SearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.NotificationActivity"
             android:exported="false" />
         <activity
@@ -55,17 +58,16 @@
             android:exported="true" />
         <activity
             android:name=".view.NewsletterActivity"
-            android:exported="true"/>
-
+            android:exported="true" />
         <activity
             android:name=".view.WelcomeActivity"
             android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

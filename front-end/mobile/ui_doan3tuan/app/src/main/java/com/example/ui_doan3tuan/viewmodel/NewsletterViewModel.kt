@@ -31,39 +31,39 @@ class NewsletterViewModel : ViewModel() {
     val posts: LiveData<List<PostModel>> get() = _posts
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
+    fun getPost(token: String,page:Int,limit:Int=10) {
 
-    fun getPost(token:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
-                    .url("http://10.0.2.2:8989/api/posts/users")
+                    .url("http://10.0.2.2:8989/api/posts/users?page=$page&limit=$limit")
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
-
                 client.newCall(req).execute().use { resp ->
                     if (!resp.isSuccessful) {
-                        // Xử lý lỗi nếu token sai hoặc hết hạn (Lỗi 401/403)
-                        Log.e("API_ERROR", "Lỗi: ${resp.code}")
-                        if (resp.code == 401) {
-                            _error.postValue("Phiên đăng nhập hết hạn, vui lòng login lại.")
-                            return@use
+                        if(resp.code == 403){
+                            _error.postValue("TOKEN_EXPIRED")
                         }
+                        return@use
                     }
-
-                    val jsonBody = resp.body?.string().orEmpty()
-                    val response = json.decodeFromString<PostResponseModel>(jsonBody)
-                    val list = response.data
-                    Log.d("test1", "$list")
-                    _posts.postValue(list)
+                    val body = resp.body?.string().orEmpty()
+                    val response = json.decodeFromString<PostResponseModel>(body)
+                    val current = _posts.value ?: emptyList()
+                    val newList = response.data
+                    val updateList = current + newList
+                    Log.d("Test", "Cur $current")
+                    Log.d("Test", "New $newList")
+                    Log.d("Test", "Update $updateList")
+                    _posts.postValue(updateList)
                 }
-
             } catch (e: Exception) {
-                Log.e("API_EXCEPTION", "Lỗi mạng: ${e.message}")
-                _error.postValue("Kết nối mạng không ổn định, vui lòng thử lại sau!")
+                e.printStackTrace()
             }
         }
     }
+
+
     fun sendComment(postId: Int, content: String,token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -127,6 +127,7 @@ class NewsletterViewModel : ViewModel() {
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
+
                 client.newCall(request).execute().use {
                         resp->
                     if (resp.isSuccessful) {
