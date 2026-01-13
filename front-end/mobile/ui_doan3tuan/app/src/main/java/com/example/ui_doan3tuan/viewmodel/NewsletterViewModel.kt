@@ -35,9 +35,11 @@ class NewsletterViewModel : ViewModel() {
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
     fun getPost(token: String,page:Int,limit:Int=10) {
+
         if (page == 1) {
             _isLoading.postValue(true)
         }
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
@@ -65,8 +67,10 @@ class NewsletterViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+
             }finally {
                 _isLoading.postValue(false)
+
             }
         }
     }

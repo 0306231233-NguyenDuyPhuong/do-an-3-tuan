@@ -49,19 +49,6 @@ class SettingActivity : AppCompatActivity() {
                 finish()
             }
         }
-/*<<<<<<< HEAD
-        findViewById<Button>(R.id.btnDangXuat).setOnClickListener {
-            val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-            val refreshToken = sharedPref.getString("refresh_token", null)
-            if (refreshToken != null) {
-                viewModel.logout(token,refreshToken)
-                sharedPref.edit().remove("access_token").apply()
-                sharedPref.edit().remove("refresh_token").apply()
-            }
-
-        }
-=======
->>>>>>> 9c5920cb2d171c85cbc7e502de04312dac133621*/
 
     }
 }

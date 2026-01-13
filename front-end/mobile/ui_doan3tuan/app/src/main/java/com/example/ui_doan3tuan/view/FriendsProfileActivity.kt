@@ -2,6 +2,7 @@ package com.example.ui_doan3tuan.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -35,9 +36,11 @@ class FriendsProfileActivity : AppCompatActivity() {
 
         // Xử lý nút nhắn tin
         findViewById<Button>(R.id.btnNhanTin).setOnClickListener {
+            //val intent = Intent(this, ChatActivity::class.java)
+            //intent.putExtra("friend_id", friendId)
+            //intent.putExtra("friend_name", friendName)
+            //startActivity(intent)
             val intent = Intent(this, ChatActivity::class.java)
-            intent.putExtra("friend_id", friendId)
-            intent.putExtra("friend_name", friendName)
             startActivity(intent)
         }
 
