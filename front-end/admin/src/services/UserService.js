@@ -34,7 +34,7 @@ export const fetchUser = ({
 }
 
 export const fetchUserById = (id)=>{
-  return axios.get(`http://localhost:8989/api/users/${id}`, 
+  return axios.get(`http://localhost:8989/api/admin/users/${id}`, 
     {headers: {
       Authorization: `Bearer ${accessToken}`
     }}

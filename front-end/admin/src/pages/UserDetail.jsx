@@ -3,12 +3,17 @@ import { useState, useEffect } from "react";
 import { ArrowCircleLeft, ArrowLeft, CommandSquare, DirectRight, Like, Like1, Message2 } from "iconsax-react";
 import { ToastContainer, toast } from 'react-toastify';
 import { fetchUserById, putStatusUser } from "../services/UserService";
+import {putStatusPost } from "../services/PostService";
 
 const UserDetail = () => {
   const { userId } = useParams();
   const [userDetailData, setUserDetailData] = useState(null);
   const [listPostByUser, setPostByUser] = useState([]);
   const navigate = useNavigate();
+  const statusPost = {
+    0: "delete",
+    1: "approved"
+  }
   const privacyMap = {
     0: "public",
     1: "friends",
@@ -34,7 +39,6 @@ const UserDetail = () => {
   const getUserDetail = async (userId) => {
     try {
       const res = await fetchUserById(userId);
-      console.log(">>>>>>>>>>>>>>>>",res)
       if (res) {
         setUserDetailData(res.data.user);
         setPostByUser(res.data.post)
@@ -45,10 +49,18 @@ const UserDetail = () => {
   };
 
   const updateStautusUser = async(id, status) =>{
-    console.log(">>>>>>>>", id, status)
     await putStatusUser(id, status)
     await getUserDetail(userId)
     toast.success("Update status success!")
+  }
+  const updateStatusPost = async(postId, status) =>{
+    try {
+      await putStatusPost(postId, status);      
+      getUserDetail(userId)
+      toast.success("Update status success!")
+    } catch (error) {
+      alert("Update status post faild, error: ", error)
+    }
   }
   if (!userDetailData || !listPostByUser) {
     return <div className="flex justify-center items-center h-64">
@@ -103,8 +115,12 @@ const UserDetail = () => {
                 </span>
               </div>
 
-              <span className="px-3 py-1 rounded bg-green-100 text-green-600 text-sm font-medium">
-                {statusMap[item.status]}
+              <span className="px-3 py-1 rounded bg-green-100 text-green-600 text-sm font-medium"
+              onClick={()=>{
+                updateStatusPost(item.id, item.status===0? 1:0)
+              }}
+              >
+                {statusPost[item.status]}
               </span>
             </div>
 
