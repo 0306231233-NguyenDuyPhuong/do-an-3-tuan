@@ -46,8 +46,8 @@ class UserProfileActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_user_profile)
 
-        img_postPrivate = findViewById(R.id.img_postPrivate)
-        img_postFavorite = findViewById(R.id.img_postFavorite)
+        /*img_postPrivate = findViewById(R.id.img_postPrivate)
+        img_postFavorite = findViewById(R.id.img_postFavorite)*/
         imgSetting = findViewById(R.id.imgSetting)
         imgThoatHoSoNguoiDung = findViewById(R.id.imgThoatHoSoNguoiDung)
         btnChinhSuaTrangCaNhan = findViewById(R.id.btnChinhSuaTrangCaNhan)
@@ -59,7 +59,7 @@ class UserProfileActivity : AppCompatActivity() {
 
 
         imgSetting.setOnClickListener {
-            Log.d("Click", ":click")
+            Log.d("CLICK", "CLICK")
             startActivity(Intent(this, SettingActivity::class.java))
         }
 
@@ -138,7 +138,7 @@ class UserProfileActivity : AppCompatActivity() {
     }
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
-        val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_report, null)
+        val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_report_profile, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
         dialog.setContentView(view)
         dialog.show()

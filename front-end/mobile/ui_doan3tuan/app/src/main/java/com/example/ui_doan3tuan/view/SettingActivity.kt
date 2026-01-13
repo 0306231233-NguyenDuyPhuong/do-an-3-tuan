@@ -30,11 +30,23 @@ class SettingActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.imgThoatCaiDat).setOnClickListener {
             finish()
         }
+
+        findViewById<Button>(R.id.btnDangXuat).setOnClickListener {
+            val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+            val accessToken = sharedPref.getString("access_token", "")
+            val refreshToken = sharedPref.getString("refresh_token", "")
+            sharedPref.edit().clear().apply()
+            if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
+                viewModel.logout("Bearer $accessToken", refreshToken)
+            }
+
+        }
         viewModel.logout.observe(this) { isSuccess ->
             if (isSuccess) {
                 val logout = Intent(this, LoginActivity::class.java)
                 logout.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(logout)
+                finish()
             }
         }
         findViewById<Button>(R.id.btnDangXuat).setOnClickListener {
@@ -47,6 +59,7 @@ class SettingActivity : AppCompatActivity() {
             }
 
         }
+
 
     }
 }

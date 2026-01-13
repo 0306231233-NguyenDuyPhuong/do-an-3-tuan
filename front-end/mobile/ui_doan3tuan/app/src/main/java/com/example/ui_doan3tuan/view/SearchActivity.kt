@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
@@ -23,69 +25,25 @@ import com.example.ui_doan3tuan.adapter.AdapterFriends
 import com.example.ui_doan3tuan.adapter.AdapterNewsletter
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
+import com.example.ui_doan3tuan.viewmodel.SearchViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
-var userId: Int = 1;
-
-class NewsletterActivity : AppCompatActivity() {
-
-    private val viewModel: NewsletterViewModel by viewModels()
+class SearchActivity : AppCompatActivity() {
+    private val viewModel: SearchViewModel by viewModels()
     private lateinit var adapterNewsletter: AdapterNewsletter
-    private lateinit var adapterFriends: AdapterFriends
     var page: Int = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_newsletter)
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.nav_home
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    return@setOnItemSelectedListener true
-                }
-
-                R.id.nav_friend -> {
-                    val intent = Intent(this, FriendsListActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    return@setOnItemSelectedListener false
-                }
-
-                R.id.nav_add -> {
-                    val intent = Intent(this, CreatePostActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    return@setOnItemSelectedListener false
-                }
-
-                R.id.nav_notification -> {
-                    val intent = Intent(this, NotificationActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    return@setOnItemSelectedListener false
-                }
-
-                R.id.nav_profile -> {
-                    val intent = Intent(this, UserProfileActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    return@setOnItemSelectedListener false
-                }
-            }
-            false
+        setContentView(R.layout.activity_search)
+        findViewById<ImageView>(R.id.btnBackSearch).setOnClickListener {
+            page = 1;
+            finish()
         }
+        val revRecentSearch = findViewById<RecyclerView>(R.id.revRecentSearch)
+        revRecentSearch.layoutManager = LinearLayoutManager(this)
 
-        val revHienBaiDang = findViewById<RecyclerView>(R.id.revHienBaiDang)
-        val revDSBanBe = findViewById<RecyclerView>(R.id.revDSBanBe)
-        val nestedScrollView = findViewById<NestedScrollView>(R.id.myNestedScrollView)
 
-        revHienBaiDang.layoutManager = LinearLayoutManager(this)
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },
@@ -96,69 +54,48 @@ class NewsletterActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         )
-
-        revHienBaiDang.adapter = adapterNewsletter
-        viewModel.posts.observe(this) { listPosts ->
+        revRecentSearch.adapter = adapterNewsletter
+        viewModel.resultSearch.observe(this) { listPosts ->
             if (listPosts != null) {
                 adapterNewsletter.updateData(listPosts)
             }
         }
-        viewModel.error.observe(this) { error ->
-            val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        findViewById<EditText>(R.id.edtSearch).setOnEditorActionListener { v, actionId, event ->
+            // Kiểm tra xem người dùng có nhấn nút Search trên bàn phím không
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val query = findViewById<EditText>(R.id.edtSearch).text.toString()
+                val nestedScrollView2 = findViewById<NestedScrollView>(R.id.myNested)
+                val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+                val token = sharedPref.getString("access_token", null)
+                if (token != null) {
+                    viewModel.searchContent(token,page,query)
+                    viewModel.getListfriends(token)
+                    nestedScrollView2.setOnScrollChangeListener(
+                        NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
+                            if (!v.canScrollVertically(1)) {
+                                Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT)
+                                    .show()
+                                page += 1;
+                                viewModel.searchContent(token, page,query)
 
-            if (error == "TOKEN_EXPIRED") {
-                sharedPref.edit().remove("access_token").apply()
-                sharedPref.edit().remove("refresh_token").apply()
-                Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-            }
-        }
-        Log.d("token", "$token")
-
-
-
-
-
-        revDSBanBe.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        adapterFriends = AdapterFriends(mutableListOf())
-        revDSBanBe.adapter = adapterFriends
-        viewModel.friends.observe(this) { listFriend ->
-            if (listFriend.isNotEmpty()) {
-                revDSBanBe.adapter = AdapterFriends(listFriend)
-
-            }
-
-        }
-        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("access_token", null)
-        if (token != null) {
-            viewModel.getPost(token,page)
-            viewModel.getListfriends(token)
-            nestedScrollView.setOnScrollChangeListener(
-                NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
-                    if (!v.canScrollVertically(1)) {
-                        Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT)
-                            .show()
-                        page += 1;
-                        viewModel.getPost(token, page)
-
-
-                    }
+                            }
+                        }
+                    )
+                } else {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
-            )
-        } else {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+
+                true
+            } else {
+                false
+            }
         }
-        findViewById<ImageView>(R.id.imgSearch).setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
 
 
-        }
+
+
 
 
     }
@@ -241,4 +178,6 @@ class NewsletterActivity : AppCompatActivity() {
         dialog.setContentView(view)
         dialog.show()
     }
+
+
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 
-class EditProfileViewModel: ViewModel() {
+class   EditProfileViewModel: ViewModel() {
     private val client = OkHttpClient()
     private val json: Json = Json { ignoreUnknownKeys = true
         isLenient = true

@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.model.User
 import com.example.ui_doan3tuan.viewmodel.LoginViewModel
-
+var token:String = "";
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var viewModel: LoginViewModel

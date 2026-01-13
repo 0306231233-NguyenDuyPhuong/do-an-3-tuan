@@ -27,26 +27,22 @@ class CreatePostViewModel : ViewModel() {
         isLenient = true
         encodeDefaults = true }
 
-    // Trạng thái chung cho cả quá trình đăng bài
     private val _postResult = MutableLiveData<Boolean>()
     val postResult: LiveData<Boolean> get() = _postResult
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> get() = _error
 
-    // Hàm tổng hợp để xử lý toàn bộ quy trình
     fun publishFullPost(token: String, userId: Int, content: String, privacy: Int, files: List<File>) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // Bước 1: Upload ảnh (nếu có) và lấy danh sách URL
                 val uploadedImageUrls = if (files.isNotEmpty()) {
-                    uploadImagesSuspend(token,files) // Hàm chờ upload xong mới chạy tiếp
+                    uploadImagesSuspend(token,files)
                 } else {
                     emptyList()
                 }
-
-                // Bước 2: Tạo bài viết và lấy Post ID
                 val newPostId = createPostSuspend(token, userId, content, privacy)
                 Log.d("Test", "Vô 1")
                 if (newPostId != null) {
-                    // Bước 3: Gắn từng ảnh vào bài viết
                     Log.d("Test", "Vô 2")
                     uploadedImageUrls.forEach { imageUrl ->
                         Log.d("Test", "Vô 3")
@@ -65,7 +61,6 @@ class CreatePostViewModel : ViewModel() {
         }
     }
 
-    // --- Các hàm con dạng Suspend (Chạy ngầm và trả về kết quả) ---
 
     private fun uploadImagesSuspend(token: String, files: List<File>): List<String> {
         val urls = mutableListOf<String>()
@@ -100,7 +95,6 @@ class CreatePostViewModel : ViewModel() {
     }
 
     private fun createPostSuspend(token: String, userId: Int, content: String, privacy: Int): Int? {
-        // 1. Log ngay đầu hàm để chứng minh code đã chạy vào đây
         Log.d("Test", "--- BẮT ĐẦU createPostSuspend ---")
 
         try {
@@ -111,24 +105,25 @@ class CreatePostViewModel : ViewModel() {
                 .put("location_id", 1)
                 .put("status", 1)
                 .toString()
-
+            Log.d("token", "create ${token}")
             val mediaType = "application/json;charset=utf-8".toMediaType()
             val requestBody = reportBody.toRequestBody(mediaType)
 
             val request = Request.Builder()
                 .url("http://10.0.2.2:8989/api/posts")
                 .addHeader("Authorization", "Bearer $token")
+
                 .post(requestBody)
                 .build()
-
+            Log.d("token", "create tmp ${token}")
             Log.d("Test", "Đang gửi request tạo bài viết...")
 
             client.newCall(request).execute().use { resp ->
-                Log.d("Test", "Response Code: ${resp.code}") // Log mã lỗi (200, 401, 500...)
-
+                Log.d("Test", "Response Code: ${resp.code}")
+                Log.d("token", "create ${requestBody}")
                 if (resp.isSuccessful) {
                     val bodyString = resp.body?.string().orEmpty()
-                    Log.d("Test", "Response Body: $bodyString") // Log nội dung server trả về
+                    Log.d("Test", "Response Body: $bodyString")
 
                     // Coi chừng lỗi Parse JSON ở đây nếu PostPostModel không khớp
                     val data = json.decodeFromString<ResponsePostPostModel>(bodyString)
@@ -136,10 +131,15 @@ class CreatePostViewModel : ViewModel() {
                     return data.data.id
                 } else {
                     Log.d("Test", "Request thất bại: ${resp.message}")
+                    if (!resp.isSuccessful) {
+                        if(resp.code == 403){
+                            _error.postValue("TOKEN_EXPIRED")
+                        }
+                        return@use
+                    }
                 }
             }
         } catch (e: Exception) {
-            // Log lỗi Exception chi tiết
             Log.e("Test", "LỖI CRASH trong createPostSuspend: ${e.message}")
             e.printStackTrace()
         }

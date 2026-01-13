@@ -29,17 +29,14 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import kotlin.getValue
-
 class CreatePostActivity : AppCompatActivity() {
     private lateinit var adapterChonAnhVideo: AdapterSelectImageAndVideo
     private val viewModel: CreatePostViewModel by viewModels()
-
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
             if (uris.isNotEmpty()) {
                 val currentList = adapterChonAnhVideo.currentList
                 val updatedList = (currentList + uris).distinct()
-
                 adapterChonAnhVideo.submitList(updatedList)
             }
         }
@@ -48,7 +45,6 @@ class CreatePostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_create_post)
-
         adapterChonAnhVideo = AdapterSelectImageAndVideo { uriToDelete ->
             val newList = adapterChonAnhVideo.currentList.toMutableList()
             newList.remove(uriToDelete)
@@ -67,6 +63,7 @@ class CreatePostActivity : AppCompatActivity() {
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
             )
         }
+        Log.d("token", "$token")
         viewModel.postResult.observe(this) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(this, "Đăng bài thành công!", Toast.LENGTH_SHORT).show()
@@ -77,6 +74,15 @@ class CreatePostActivity : AppCompatActivity() {
                 Toast.makeText(this, "Đăng bài thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show()
             }
         }
+        viewModel.error.observe(this) { error ->
+            if (error == "TOKEN_EXPIRED") {
+                Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+
 
         val content = findViewById<EditText>(R.id.edtContent)
         findViewById<Button>(R.id.btnDangBai).setOnClickListener {
@@ -100,7 +106,9 @@ class CreatePostActivity : AppCompatActivity() {
                     }
                 }
             }
+
             viewModel.publishFullPost(token, userId, content.text.toString(), privacy, listFiles)
+            Log.d("token", "test $token")
         }
 
 
