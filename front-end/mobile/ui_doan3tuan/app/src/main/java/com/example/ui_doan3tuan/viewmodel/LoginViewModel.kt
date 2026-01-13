@@ -8,7 +8,7 @@ import com.example.ui_doan3tuan.ApiClient
 import com.example.ui_doan3tuan.model.LoginRequest
 import com.example.ui_doan3tuan.model.LoginResponse
 import com.example.ui_doan3tuan.model.User
-import com.example.ui_doan3tuan.view.token
+
 
 class LoginViewModel : ViewModel() {
 
@@ -75,7 +75,6 @@ class LoginViewModel : ViewModel() {
         // Lưu tokens với thời gian
         editor.putString("access_token", response.accessToken)
         Log.d("token", "login ${response.accessToken} ")
-        token = response.accessToken
         editor.putLong("access_token_time", currentTime)
 
         editor.putString("refresh_token", response.refreshToken)

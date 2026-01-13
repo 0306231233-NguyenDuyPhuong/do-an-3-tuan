@@ -2,6 +2,7 @@ package com.example.ui_doan3tuan.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.UserManager
 import android.text.InputType
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.model.User
 import com.example.ui_doan3tuan.viewmodel.LoginViewModel
-var token:String = "";
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var viewModel: LoginViewModel
@@ -28,14 +28,12 @@ class LoginActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         viewModel.init(applicationContext)
 
-
         edtUsername = findViewById(R.id.etEmail)
         edtPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
         tvSignUp = findViewById(R.id.tvSignUp)
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
         ivPasswordToggle = findViewById(R.id.ivPasswordToggle)
-
 
         if (kiemTraDaDangNhap()) {
             chuyenManHinhChinh()
@@ -46,12 +44,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupEvents() {
-        // Sự kiện đăng nhập
+
         btnLogin.setOnClickListener {
             xuLyDangNhap()
         }
 
-        // Chuyển sang đăng ký
         tvSignUp.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
         }
@@ -66,7 +63,6 @@ class LoginActivity : AppCompatActivity() {
             isPasswordVisible = !isPasswordVisible
             if (isPasswordVisible) {
                 edtPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-
             } else {
                 edtPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             }
@@ -88,33 +84,32 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-
+        // Hiển thị loading
         btnLogin.text = "Đang đăng nhập..."
         btnLogin.isEnabled = false
 
-
         viewModel.login(username, password,
             onSuccess = { accessToken, refreshToken, userData ->
-                xuLyDangNhapThanhCong(userData)
+                xuLyDangNhapThanhCong(accessToken, userData)
             },
             onError = { error ->
-
                 xuLyDangNhapThatBai(error)
             }
         )
     }
 
-    private fun xuLyDangNhapThanhCong(userData: User) {
-
+    private fun xuLyDangNhapThanhCong(accessToken: String, userData: User) {
+        luuThongTinUser(userData)
+        Toast.makeText(this, "Đăng nhập thành công! ", Toast.LENGTH_SHORT).show()
         btnLogin.text = "Đăng nhập"
         btnLogin.isEnabled = true
+
         chuyenManHinhChinh()
     }
 
     private fun xuLyDangNhapThatBai(error: String) {
         btnLogin.text = "Đăng nhập"
         btnLogin.isEnabled = true
-
 
         Toast.makeText(this, error, Toast.LENGTH_LONG).show()
 
@@ -123,13 +118,27 @@ class LoginActivity : AppCompatActivity() {
             edtPassword.requestFocus()
         }
     }
+
     private fun kiemTraDaDangNhap(): Boolean {
-        return viewModel.isTokenValid()
+        return viewModel.isLoggedIn()
     }
 
     private fun chuyenManHinhChinh() {
         val intent = Intent(this, NewsletterActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun luuThongTinUser(userData: User) {
+        val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putInt("user_id", userData.id)
+            putString("user_name", userData.full_name)
+            putString("user_email", userData.email ?: "")
+            putString("user_phone", userData.phone ?: "")
+            apply()
+        }
+
+
     }
 }
