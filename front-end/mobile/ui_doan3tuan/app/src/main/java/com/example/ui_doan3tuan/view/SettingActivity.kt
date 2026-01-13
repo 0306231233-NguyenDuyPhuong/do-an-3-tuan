@@ -44,7 +44,6 @@ class SettingActivity : AppCompatActivity() {
                 viewModel.logout(token,refreshToken)
                 sharedPref.edit().remove("access_token").apply()
                 sharedPref.edit().remove("refresh_token").apply()
-
             }
 
         }

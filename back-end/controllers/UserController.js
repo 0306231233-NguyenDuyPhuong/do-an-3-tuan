@@ -25,14 +25,13 @@ const getProfile = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     const { search, userId, role } = req.query;
-    const id = req.params;
     const currentUserId = req.user.userId;
     const whereUser = {
       ...(search && {
         full_name: { [Op.like]: `%${search}%` },
       }),
-      ...(user_id && {
-        id: user_id
+      ...(currentUserId && {
+        id: {[Op.ne]: currentUserId}
       }),
       ...(role&& {
         role: role

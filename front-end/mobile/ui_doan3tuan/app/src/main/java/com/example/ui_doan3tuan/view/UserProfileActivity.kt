@@ -31,25 +31,46 @@ var slbv:Int = 0;
 class UserProfileActivity : AppCompatActivity() {
     private val viewModel: UserProfileViewModel by viewModels()
     private lateinit var adapterUserProfile: AdapterUserProfile
+    private lateinit var img_postPrivate: ImageView;
+    private lateinit var img_postFavorite: ImageView;
+    private lateinit var imgSetting: ImageView
+    private lateinit var imgThoatHoSoNguoiDung: ImageView
+    private lateinit var btnChinhSuaTrangCaNhan: Button
+    private lateinit var txtSoLuongBaiViet: TextView
+    private lateinit var txtSoLuongBanBe: TextView
+    private lateinit var bottomNav: BottomNavigationView
+    private lateinit var revDSBaiDang: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_user_profile)
 
-        findViewById<ImageView>(R.id.imgSetting).setOnClickListener {
+        img_postPrivate = findViewById(R.id.img_postPrivate)
+        img_postFavorite = findViewById(R.id.img_postFavorite)
+        imgSetting = findViewById(R.id.imgSetting)
+        imgThoatHoSoNguoiDung = findViewById(R.id.imgThoatHoSoNguoiDung)
+        btnChinhSuaTrangCaNhan = findViewById(R.id.btnChinhSuaTrangCaNhan)
+        txtSoLuongBaiViet = findViewById(R.id.txtSoLuongBaiViet)
+        txtSoLuongBanBe = findViewById(R.id.txtSoLuongBanBe)
+        bottomNav = findViewById(R.id.bottom_navigation)
+        bottomNav.selectedItemId = R.id.nav_profile
+        revDSBaiDang = findViewById(R.id.revDSBaiDang)
+
+
+        imgSetting.setOnClickListener {
+            Log.d("Click", ":click")
             startActivity(Intent(this, SettingActivity::class.java))
         }
-        findViewById<ImageView>(R.id.imgThoatHoSoNguoiDung).setOnClickListener {
+
+        imgThoatHoSoNguoiDung.setOnClickListener {
             finish()
         }
-        findViewById<Button>(R.id.btnChinhSuaTrangCaNhan).setOnClickListener {
+
+        btnChinhSuaTrangCaNhan.setOnClickListener {
             startActivity(Intent(this, EditProfileActivity::class.java))
         }
-        val txtSoLuongBaiViet = findViewById<TextView>(R.id.txtSoLuongBaiViet)
-        val txtSoLuongBanBe = findViewById<TextView>(R.id.txtSoLuongBanBe)
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.nav_profile
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -86,7 +107,8 @@ class UserProfileActivity : AppCompatActivity() {
             }
             false
         }
-        val revDSBaiDang = findViewById<RecyclerView>(R.id.revDSBaiDang)
+
+
         revDSBaiDang.layoutManager = LinearLayoutManager(this)
         adapterUserProfile = AdapterUserProfile(
             mutableListOf(),
@@ -158,11 +180,4 @@ class UserProfileActivity : AppCompatActivity() {
         dialog.setContentView(view)
         dialog.show()
     }
-
-
-
-
-
-
-
 }
