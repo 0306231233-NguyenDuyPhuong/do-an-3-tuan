@@ -16,7 +16,7 @@ import java.time.ZoneId
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 
-class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(PostModel)-> Unit,val onReportClick:(PostModel)-> Unit,val onImageClick:(String)-> Unit): RecyclerView.Adapter<AdapterNewsletter.BangTinViewHolder>() {
+class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(PostModel)-> Unit,val onReportClick:(PostModel)-> Unit,val onImageClick:(String)-> Unit,val onLikeClick:(PostModel)-> Unit): RecyclerView.Adapter<AdapterNewsletter.BangTinViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -54,6 +54,7 @@ class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(Po
                 holder.txtSoLuongThich.text = list[position].likeCount.toString()
                 holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
                 holder.imgThich.setColorFilter(Color.parseColor("#FF0000"))
+                onLikeClick(list[position])
 
             }else{
                 list[position].likeCount = list[position].likeCount-1

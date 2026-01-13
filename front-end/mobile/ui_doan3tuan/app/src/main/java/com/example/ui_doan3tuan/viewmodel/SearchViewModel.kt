@@ -91,6 +91,30 @@ class SearchViewModel: ViewModel() {
 
 
     }
+    fun isLiked(token: String,postId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val commentBody = JSONObject()
+                    .put("postId", postId)
+                    .toString()
+                val JSON = "application/json;charset=utf-8".toMediaType();
+                val requestBody = commentBody.toRequestBody(JSON);
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/interact/like")
+                    .addHeader("Authorization", "Bearer $token")
+                    .post(requestBody)
+                    .build()
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    Log.d("Like", "$response")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+
+    }
 
     private val _comments = MutableLiveData<List<CommentModel>>()
     val comments: LiveData<List<CommentModel>> get() = _comments
