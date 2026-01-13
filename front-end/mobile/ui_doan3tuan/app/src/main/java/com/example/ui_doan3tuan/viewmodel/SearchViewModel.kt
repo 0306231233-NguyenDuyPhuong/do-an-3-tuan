@@ -10,6 +10,7 @@ import com.example.ui_doan3tuan.model.ListCommentModel
 import com.example.ui_doan3tuan.model.ListFriendsModel
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.PostResponseModel
+import com.example.ui_doan3tuan.model.ResponseSearchModel
 import com.example.ui_doan3tuan.model.UserModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,51 +20,51 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import kotlin.collections.plus
 
-class NewsletterViewModel : ViewModel() {
+class SearchViewModel: ViewModel() {
     private val client = OkHttpClient()
-    private val json: Json = Json { ignoreUnknownKeys = true
-        isLenient = true
-        encodeDefaults = true }
+    private val json: Json = Json { ignoreUnknownKeys = true}
 
-
-    private val _posts = MutableLiveData<List<PostModel>>()
-    val posts: LiveData<List<PostModel>> get() = _posts
+    private val _resultSearch = MutableLiveData<List<PostModel>>()
+    val resultSearch: LiveData<List<PostModel>> get() = _resultSearch
     private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
-    fun getPost(token: String,page:Int,limit:Int=10) {
+
+    fun searchContent(token: String,page:Int,content:String) {
         viewModelScope.launch(Dispatchers.IO) {
+            Log.d("Search", "Vô searchContent")
             try {
                 val req = Request.Builder()
-                    .url("http://10.0.2.2:8989/api/posts/users?page=$page&limit=$limit")
+                    .url("http://10.0.2.2:8989/api/posts/users?page=$page&search=$content")
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
-
+                Log.d("Search", "$req")
                 client.newCall(req).execute().use { resp ->
-                    if (!resp.isSuccessful) {
-                        if(resp.code == 403){
-                            _error.postValue("TOKEN_EXPIRED")
-                        }
-                        return@use
+                    Log.d("Search", "Vô client")
+                    if (resp.isSuccessful) {
+                        val body = resp.body?.string().orEmpty()
+                        val response = json.decodeFromString<ResponseSearchModel>(body)
+                        val current = _resultSearch.value ?: emptyList()
+                        val newList = response.data
+                        val updateList =if(page==1) newList else current + newList
+                        Log.d("Search", "Cur $current")
+                        Log.d("Search", "New $newList")
+                        Log.d("Search", "Update $updateList")
+                        Log.d("Search", "Update ${updateList.size}")
+                        _resultSearch.postValue(updateList)
+                    }else{
+                        Log.d("Search", "Lỗi")
+                        Log.d("Search", "${resp.code}")
+                        Log.d("Search", "${resp.message}")
                     }
-                    val body = resp.body?.string().orEmpty()
-                    val response = json.decodeFromString<PostResponseModel>(body)
-                    val current = _posts.value ?: emptyList()
-                    val newList = response.data
-                    val updateList = current + newList
-                    Log.d("Test", "Cur $current")
-                    Log.d("Test", "New $newList")
-                    Log.d("Test", "Update $updateList")
-                    _posts.postValue(updateList)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                Log.d("Search", "${e.message}")
             }
         }
     }
-
-
     fun sendComment(postId: Int, content: String,token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -102,7 +103,7 @@ class NewsletterViewModel : ViewModel() {
                     .get()
                     .build()
                 client.newCall(request).execute().use {
-                    resp->
+                        resp->
                     if (resp.isSuccessful) {
                         val jsonString = resp.body?.string()
                         Log.d("Test", "$jsonString")
@@ -112,7 +113,7 @@ class NewsletterViewModel : ViewModel() {
                 }
 
 
-          } catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -172,5 +173,4 @@ class NewsletterViewModel : ViewModel() {
             }
         }
     }
-
 }

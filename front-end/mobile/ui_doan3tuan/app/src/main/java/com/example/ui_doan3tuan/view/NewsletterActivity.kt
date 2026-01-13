@@ -27,8 +27,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 var userId: Int = 1;
-val token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOjAsImlhdCI6MTc2ODIyMzQ4OCwiZXhwIjoxNzY4MjI3MDg4fQ.s3pzW_sQ-9AbZYzN1sIIPJqhF27mTg_FlXBIL5yMkIc"
 
 class NewsletterActivity : AppCompatActivity() {
 
@@ -107,14 +105,17 @@ class NewsletterActivity : AppCompatActivity() {
         }
         viewModel.error.observe(this) { error ->
             val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-            sharedPref.edit().clear().apply()
+
             if (error == "TOKEN_EXPIRED") {
+                sharedPref.edit().remove("access_token").apply()
+                sharedPref.edit().remove("refresh_token").apply()
                 Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             }
         }
+        Log.d("token", "$token")
 
 
 
@@ -140,8 +141,9 @@ class NewsletterActivity : AppCompatActivity() {
                     if (!v.canScrollVertically(1)) {
                         Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT)
                             .show()
-                        viewModel.getPost(token, page)
                         page += 1;
+                        viewModel.getPost(token, page)
+
 
                     }
                 }
