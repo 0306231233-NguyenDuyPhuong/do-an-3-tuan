@@ -156,11 +156,7 @@ class NewsletterActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.imgSearch).setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
-
-
         }
-
-
     }
 
 

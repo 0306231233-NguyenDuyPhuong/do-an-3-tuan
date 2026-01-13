@@ -92,14 +92,7 @@ class SearchActivity : AppCompatActivity() {
                 false
             }
         }
-
-
-
-
-
-
     }
-
 
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
