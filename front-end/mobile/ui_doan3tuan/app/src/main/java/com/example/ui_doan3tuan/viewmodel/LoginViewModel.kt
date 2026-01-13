@@ -72,9 +72,16 @@ class LoginViewModel : ViewModel() {
         val currentTime = System.currentTimeMillis()
         val editor = sharedPref.edit()
 
+        editor.remove("access_token_time")
+        editor.remove("access_token")
         // Lưu tokens với thời gian
         editor.putString("access_token", response.accessToken)
         Log.d("token", "login ${response.accessToken} ")
+<<<<<<< HEAD
+=======
+
+        token = response.accessToken
+>>>>>>> 66dd9d464dde6af1f289b0e065930cc1ffc1f409
         editor.putLong("access_token_time", currentTime)
 
         editor.putString("refresh_token", response.refreshToken)

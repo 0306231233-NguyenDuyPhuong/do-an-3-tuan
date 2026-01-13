@@ -27,12 +27,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
 
-      birth_date: {
+      birth: {
         type: DataTypes.DATEONLY,
       },
 
       gender: {
-        type: DataTypes.STRING,
+        type: DataTypes.TINYINT,
       },
 
       avatar: {
@@ -58,6 +58,20 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       reset_token_expire: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+      },
+      is_verified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+
+      verify_token: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
+      },
+
+      verify_token_expire: {
         type: DataTypes.BIGINT,
         allowNull: true,
       },
