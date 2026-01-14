@@ -333,11 +333,14 @@
             </LinearLayout>
         </LinearLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnDangXuat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:background="@drawable/bg_buttton_blue"
+            android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Đăng xuất" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
