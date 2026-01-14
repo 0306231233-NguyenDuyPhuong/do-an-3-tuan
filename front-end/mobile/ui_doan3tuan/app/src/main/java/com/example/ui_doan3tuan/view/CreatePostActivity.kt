@@ -110,7 +110,6 @@ class CreatePostActivity : AppCompatActivity() {
             Log.d("token", "test $token")
         }
 
-
         findViewById<ImageView>(R.id.imgThoatTaoBaiDang).setOnClickListener {
             finish()
         }

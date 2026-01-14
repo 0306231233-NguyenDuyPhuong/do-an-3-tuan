@@ -42,28 +42,31 @@ class UserProfileViewModel: ViewModel() {
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
-                Log.e("Lỗi", "Vào 1")
+
+                Log.e("Lỗi", "${token}")
+                Log.e("Lỗi", "${id}")
                 client.newCall(req).execute().use { resp ->
                     if (!resp.isSuccessful) {
-                        Log.e("API_ERROR", "Lỗi: ${resp.code}")
+                        Log.e("API_ERROR", "Lỗi: ${resp.message}")
                         if (resp.code == 401) {
                             _error.postValue("Phiên đăng nhập hết hạn, vui lòng login lại.")
                             return@use
                         }
                     }
                     val jsonBody = resp.body?.string().orEmpty()
-
                     val response = json.decodeFromString<PostResponseIDModel>(jsonBody)
                     val listPostId = response.post
                     slbv = response.post_count
                     slbb = response.friend_count
+
+                    Log.e("ID", "${id}")
+
                     Log.d("Test", "$slbv")
                     Log.d("Test", "$slbb")
 
                     Log.d("listPostId", "$listPostId")
                     _postsId.postValue(listPostId)
                 }
-
             } catch (e: Exception) {
                 Log.e("API_EXCEPTION", "Lỗi mạng: ${e.message}")
                 _error.postValue("Kết nối mạng không ổn định, vui lòng thử lại sau!")
