@@ -26,13 +26,15 @@ const User = () =>{
     const getUser = async ({
       page,
       search, 
-      role
+      role,
+      status
     }={}) => {
         try {
           let res = await fetchUser({
             page, 
             search, 
-            role
+            role,
+            status
           });
           if (res && res.data) {
               setListUsers(res.data.data);
@@ -151,15 +153,24 @@ const User = () =>{
               text-2xl" 
               value={role}
               onChange={(e)=>{
-                const value = e.target.value;
+                const value = Number(e.target.value);
                 setRole(value);
-                console.log(">>>>>",value);
-                getUser({page:1, role: value})
+                if(value <2 && value>-1){
+                  getUser({page:1, role: value})
+                }
+                else{
+                  if(value == 3)
+                  getUser({page:1, status: 1})
+                  else getUser({page:1, status: 2})
+                    
+                }
               }}
               >
               <option value="">status</option>
               <option value="1">admin</option>
               <option value="0">user</option>
+              <option value="3">active</option>
+              <option value="4">banned</option>
             </select>
           </div>
 

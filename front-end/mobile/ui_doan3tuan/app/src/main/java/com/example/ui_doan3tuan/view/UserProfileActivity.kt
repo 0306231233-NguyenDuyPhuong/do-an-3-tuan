@@ -99,7 +99,6 @@ class UserProfileActivity : AppCompatActivity() {
                 adapterUserProfile.updateData(listPostsId)
                 txtSoLuongBanBe.setText(slbb.toString())
                 txtSoLuongBaiViet.setText(slbv.toString())
-
             }else{
                 Log.d("Lỗi", "Null")
             }
@@ -158,11 +157,4 @@ class UserProfileActivity : AppCompatActivity() {
         dialog.setContentView(view)
         dialog.show()
     }
-
-
-
-
-
-
-
 }

@@ -52,6 +52,7 @@ class UserProfileViewModel: ViewModel() {
                         }
                     }
                     val jsonBody = resp.body?.string().orEmpty()
+
                     val response = json.decodeFromString<PostResponseIDModel>(jsonBody)
                     val listPostId = response.post
                     slbv = response.post_count
