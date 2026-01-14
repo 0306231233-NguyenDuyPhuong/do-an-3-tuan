@@ -116,7 +116,37 @@ class NewsletterViewModel : ViewModel() {
     fun clearComments() {
         _comments.postValue(emptyList())
     }
-    fun isLiked(token: String,postId: Int) {
+    fun likePost(token: String,postId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val commentBody = JSONObject()
+                    .put("postId", postId)
+                    .toString()
+                Log.d("Like", "id2 :$postId")
+                val JSON = "application/json;charset=utf-8".toMediaType();
+                val requestBody = commentBody.toRequestBody(JSON);
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/interact/like")
+                    .addHeader("Authorization", "Bearer $token")
+                    .post(requestBody)
+                    .build()
+                Log.d("Like", "$token")
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    Log.d("Like", "$response")
+                }else{
+                    Log.d("Like", "${response.code}")
+                    Log.d("Like", "Lỗi ${response.message}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("Like", "${e.message}")
+            }
+        }
+
+
+    }
+    fun UnlikePost(token: String,postId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val commentBody = JSONObject()
@@ -127,7 +157,7 @@ class NewsletterViewModel : ViewModel() {
                 val request = Request.Builder()
                     .url("http://10.0.2.2:8989/api/interact/like")
                     .addHeader("Authorization", "Bearer $token")
-                    .post(requestBody)
+                    .delete(requestBody)
                     .build()
                 Log.d("Like", "$token")
                 val response = client.newCall(request).execute()

@@ -53,7 +53,13 @@ class SearchActivity : AppCompatActivity() {
                 intent.putExtra("id", id)
                 startActivity(intent)
             },
-            onLikeClick = { post -> viewModel.isLiked(token, post.id) }
+            onLikeClick = { post, isActionLike ->
+                if (isActionLike) {
+                    viewModel.likePost(token, post.id)
+                } else {
+                    viewModel.UnlikePost(token, post.id)
+                }
+            }
         )
         revRecentSearch.adapter = adapterNewsletter
         viewModel.resultSearch.observe(this) { listPosts ->

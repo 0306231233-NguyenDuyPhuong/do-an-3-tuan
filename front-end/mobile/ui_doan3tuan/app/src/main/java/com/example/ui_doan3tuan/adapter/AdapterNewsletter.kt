@@ -16,7 +16,7 @@ import java.time.ZoneId
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 
-class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(PostModel)-> Unit,val onReportClick:(PostModel)-> Unit,val onImageClick:(String)-> Unit,val onLikeClick:(PostModel)-> Unit): RecyclerView.Adapter<AdapterNewsletter.BangTinViewHolder>() {
+class AdapterNewsletter(private var list: List<PostModel>, val onCommentClick:(PostModel)-> Unit, val onReportClick:(PostModel)-> Unit, val onImageClick:(String)-> Unit, val onLikeClick:(PostModel,Boolean)-> Unit): RecyclerView.Adapter<AdapterNewsletter.BangTinViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -46,21 +46,29 @@ class AdapterNewsletter(private var list: List<PostModel>,val onCommentClick:(Po
         holder.txtSoLuongChiaSe.text = list[position].shareCount.toString()
         holder.txtSoLuongBinhLuan.text = list[position].commentCount.toString()
 
-        var isLiked:Boolean  = false;
-        holder.imgThich.setOnClickListener {
-            isLiked=!isLiked;
-            if(isLiked==true){
-                list[position].likeCount = list[position].likeCount+1
-                holder.txtSoLuongThich.text = list[position].likeCount.toString()
-                holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
-                holder.imgThich.setColorFilter(Color.parseColor("#FF0000"))
-                onLikeClick(list[position])
+        if (list[position].is_liked) {
+            holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
+            holder.imgThich.setColorFilter(Color.parseColor("#FF0000"))
+            holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
+            holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF"))
+        }
 
-            }else{
-                list[position].likeCount = list[position].likeCount-1
-                holder.txtSoLuongThich.text = list[position].likeCount.toString()
-                holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
+        holder.imgThich.setOnClickListener {
+            if (list[position].is_liked) {
+                list[position].is_liked = false
+                list[position].likeCount = list[position].likeCount - 1
+
                 holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF"))
+                holder.txtSoLuongThich.text = list[position].likeCount.toString()
+                onLikeClick(list[position], false)
+
+            } else {
+                list[position].is_liked = true
+                list[position].likeCount = list[position].likeCount + 1
+
+                holder.imgThich.setColorFilter(Color.parseColor("#FF0000"))
+                holder.txtSoLuongThich.text = list[position].likeCount.toString()
+                onLikeClick(list[position], true)
             }
         }
 

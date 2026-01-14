@@ -17,6 +17,7 @@ data class PostModel(
     @SerialName("updated_at") var updatedAt: String,
     @SerialName("location_id") var locationId: Int?,
     @SerialName("user_id") var userId: Int,
+    var is_liked: Boolean,
     var User: UserModel,
     var Location:LocationModel,
     var PostMedia: List<PostMediaModel>
