@@ -130,7 +130,7 @@ const AppRoute = (app) => {
   router.post(
     "/friends/requests",
     verifyToken,
-    checkBlocked,
+    //checkBlocked,
     FriendController.sendFriendRequest
   );
   router.get(

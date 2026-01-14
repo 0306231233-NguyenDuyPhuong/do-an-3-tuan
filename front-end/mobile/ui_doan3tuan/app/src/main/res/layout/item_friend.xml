@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/friendItem"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
+    android:background="@color/black"
     android:orientation="horizontal"
-    android:padding="11dp"
-    android:background="#1a1a1a"
-    android:layout_marginBottom="1dp">
+
+    android:padding="11dp">
 
     <!-- Ảnh đại diện -->
     <ImageView
         android:id="@+id/imgBanBe"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/profile" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <!-- Tên bạn bè -->
@@ -25,6 +34,8 @@
         android:layout_marginStart="16dp"
         android:text="Tên bạn bè"
         android:textColor="@android:color/white"
-        android:textSize="29sp"/>
+        android:textSize="20dp"
+        app:layout_constraintStart_toEndOf="@+id/imgBanBe"
+        app:layout_constraintTop_toTopOf="@+id/imgBanBe" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
