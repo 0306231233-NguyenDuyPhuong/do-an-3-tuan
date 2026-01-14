@@ -63,7 +63,6 @@ class CreatePostActivity : AppCompatActivity() {
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
             )
         }
-        Log.d("token", "$token")
         viewModel.postResult.observe(this) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(this, "Đăng bài thành công!", Toast.LENGTH_SHORT).show()
