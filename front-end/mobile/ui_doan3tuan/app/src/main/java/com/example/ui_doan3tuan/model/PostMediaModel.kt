@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PostMediaModel(
     val id:Int,
-    val media_url:String,
+    val media_url:String?,
     val media_type:Int,
     val thumbnail_url:String?,
     val deleted_at:String?,

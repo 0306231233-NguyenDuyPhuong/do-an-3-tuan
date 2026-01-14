@@ -214,10 +214,7 @@ class FriendsAddListActivity : AppCompatActivity() {
             })
     }
     private fun getToken(): String {
-        // 1. Lấy SharedPreferences với tên "user_data"
         val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
-
-        // 2. Lấy token từ key "access_token", mặc định là "" nếu không có
-        return sharedPref.getString("access_token", "r") ?: ""
+        return sharedPref.getString("access_token", "") ?: ""
     }
 }
