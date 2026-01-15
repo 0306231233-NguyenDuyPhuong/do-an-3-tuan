@@ -25,7 +25,7 @@ import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-var userId: Int = 15
+var userId: Int = 1
 
 class NewsletterActivity : AppCompatActivity() {
 
@@ -187,6 +187,14 @@ class NewsletterActivity : AppCompatActivity() {
             showDetailReportDialog(post.User.id, post.id)
             dialog.dismiss()
         }
+        val btnSavePost = view.findViewById<LinearLayout>(R.id.btnSavePost)
+        btnSavePost.setOnClickListener {
+            viewModel.savePost(token, post.id)
+            Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+
+
         dialog.setContentView(view)
         dialog.show()
     }

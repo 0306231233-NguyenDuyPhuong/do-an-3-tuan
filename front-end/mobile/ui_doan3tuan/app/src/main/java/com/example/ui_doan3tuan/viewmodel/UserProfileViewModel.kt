@@ -9,6 +9,8 @@ import com.example.ui_doan3tuan.model.CommentModel
 import com.example.ui_doan3tuan.model.ListCommentModel
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.PostResponseIDModel
+import com.example.ui_doan3tuan.model.PostResponseModel
+import com.example.ui_doan3tuan.model.SharePostModel
 import com.example.ui_doan3tuan.view.slbb
 import com.example.ui_doan3tuan.view.slbv
 import kotlinx.coroutines.Dispatchers
@@ -73,6 +75,52 @@ class UserProfileViewModel: ViewModel() {
             }
         }
     }
+
+
+
+    fun getListPostSave(token: String, id: Int) {
+        _isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val req = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/interact/saved")
+                    .addHeader("Authorization", "Bearer $token")
+                    .get()
+                    .build()
+                Log.e("ListSavePost", "Vào 1")
+                client.newCall(req).execute().use { resp ->
+                    if (!resp.isSuccessful) {
+                        Log.e("API_ERROR", "Lỗi: ${resp.code}")
+                        if (resp.code == 401||resp.code == 403) {
+                            _error.postValue("TOKEN_EXPIRED")
+                            return@use
+                        }
+                    }
+                    val jsonBody = resp.body?.string().orEmpty()
+                    val response = json.decodeFromString<SharePostModel>(jsonBody)
+                    val listPostId = response.data
+                    val listPost: MutableList<PostModel> = mutableListOf()
+                    for (post in listPostId) {
+                        listPost.add(post.Post)
+                    }
+                    Log.d("ListSavePost", "listPostId $listPostId")
+                    Log.d("ListSavePost", "listPost $listPost")
+
+                    _postsId.postValue(listPost)
+                }
+
+            } catch (e: Exception) {
+                Log.e("ListSavePost", "Lỗi mạng: ${e.message}")
+                _error.postValue("Kết nối mạng không ổn định, vui lòng thử lại sau!")
+            }finally {
+                _isLoading.postValue(false)
+            }
+        }
+    }
+
+
+
+
     private val _deletePost = MutableLiveData<Boolean>()
     val deletePost: LiveData<Boolean> get() = _deletePost
     fun deletePost(postId: Int,token: String) {

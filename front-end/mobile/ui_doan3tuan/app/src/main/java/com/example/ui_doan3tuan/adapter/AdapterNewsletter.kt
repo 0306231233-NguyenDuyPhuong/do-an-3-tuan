@@ -28,6 +28,7 @@ class AdapterNewsletter(
         return BangTinViewHolder(view)
     }
 
+
     override fun onBindViewHolder(holder: BangTinViewHolder, position: Int) {
         val ngayDang = Instant.parse(list[position].createdAt)
         val ngayHienTai = Instant.now()

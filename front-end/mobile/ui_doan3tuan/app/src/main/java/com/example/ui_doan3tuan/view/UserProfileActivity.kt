@@ -44,11 +44,17 @@ class UserProfileActivity : AppCompatActivity() {
             viewModel.getPostID(token, userId)
         }
     }
+    private var interact: Int = 0;
     private lateinit var adapterUserProfile: AdapterUserProfile
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_user_profile)
+
+
+        val imgAllPost = findViewById<ImageView>(R.id.imgAllPost)
+        val imgPostFav = findViewById<ImageView>(R.id.imgPostFav) // Icon Tim
+        val imgPostSave = findViewById<ImageView>(R.id.imgPostSave)
 
         findViewById<ImageView>(R.id.imgSetting).setOnClickListener {
             startActivity(Intent(this, SettingActivity::class.java))
@@ -56,6 +62,7 @@ class UserProfileActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.imgThoatHoSoNguoiDung).setOnClickListener {
             finish()
         }
+
 
         findViewById<Button>(R.id.btnChinhSuaTrangCaNhan).setOnClickListener {
             val intent = Intent(this, EditProfileActivity::class.java)
@@ -161,7 +168,40 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getPostID(token,userId)
+        fun updateIconState(selectedIcon: ImageView) {
+            val colorUnselected = getColor(R.color.gray)
+            val colorSelected = getColor(R.color.white)
+
+            imgAllPost.setColorFilter(colorUnselected)
+            imgPostFav.setColorFilter(colorUnselected)
+            imgPostSave.setColorFilter(colorUnselected)
+
+            selectedIcon.setColorFilter(colorSelected)
+        }
+        imgAllPost.setOnClickListener {
+            adapterUserProfile.setData(emptyList())
+            updateIconState(imgAllPost)
+            viewModel.getPostID(token, userId)
+        }
+
+        imgPostFav.setOnClickListener {
+            updateIconState(imgPostFav)
+//            viewModel.getListPostSave(token, userId)
+            adapterUserProfile.setData(emptyList())
+            Toast.makeText(this, "Đang tải bài viết đã thích...", Toast.LENGTH_SHORT).show()
+        }
+
+        imgPostSave.setOnClickListener {
+            updateIconState(imgPostSave)
+            viewModel.getListPostSave(token, userId)
+            adapterUserProfile.setData(emptyList())
+            Toast.makeText(this, "Đang tải bài viết đã lưu...", Toast.LENGTH_SHORT).show()
+        }
+        updateIconState(imgAllPost)
+        if(interact == 0){
+            viewModel.getPostID(token, userId)
+        }
+
     }
 
     private fun showReportDialog(post: PostModel) {
@@ -173,7 +213,6 @@ class UserProfileActivity : AppCompatActivity() {
             viewModel.deletePost.observe(this) { reported ->
                 if (reported) {
                     Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
-
                     viewModel.getPostID(token,userId)
                 }else{
                     Log.d("Lỗi", "Null")

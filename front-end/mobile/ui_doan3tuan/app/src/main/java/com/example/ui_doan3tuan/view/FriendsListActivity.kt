@@ -32,7 +32,32 @@ class FriendsListActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.rvFriends)
         editTextSearch = findViewById(R.id.etSearch)
         setupRecyclerView()
-
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav.selectedItemId = R.id.nav_friend
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    startActivity(Intent(this, NewsletterActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+                    return@setOnItemSelectedListener false
+                }
+                R.id.nav_friend -> {
+                    return@setOnItemSelectedListener true
+                }
+                R.id.nav_add -> {
+                    startActivity(Intent(this, CreatePostActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+                    return@setOnItemSelectedListener false
+                }
+                R.id.nav_notification -> {
+                    startActivity(Intent(this, NotificationActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+                    return@setOnItemSelectedListener false
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, UserProfileActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+                    return@setOnItemSelectedListener false
+                }
+            }
+            false
+        }
         loadFriends()
         findViewById<ImageView>(R.id.imgThoatLF).setOnClickListener {
             finish()
@@ -44,7 +69,7 @@ class FriendsListActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        setupBottomNav()
+//        setupBottomNav()
     }
 
     private fun setupRecyclerView() {
@@ -102,34 +127,34 @@ class FriendsListActivity : AppCompatActivity() {
         })
     }
 
-    private fun setupBottomNav() {
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.nav_friend
-
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    startActivity(Intent(this, NewsletterActivity::class.java))
-                    true
-                }
-                R.id.nav_friend -> {
-                    // Đã ở trang bạn bè
-                    true
-                }
-                R.id.nav_add -> {
-                    startActivity(Intent(this, CreatePostActivity::class.java))
-                    true
-                }
-                R.id.nav_notification -> {
-                    startActivity(Intent(this, NotificationActivity::class.java))
-                    true
-                }
-                R.id.nav_profile -> {
-                    startActivity(Intent(this, UserProfileActivity::class.java))
-                    true
-                }
-                else -> false
-            }
-        }
-    }
+//    private fun setupBottomNav() {
+//        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+//        bottomNav.selectedItemId = R.id.nav_friend
+//
+//        bottomNav.setOnItemSelectedListener { item ->
+//            when (item.itemId) {
+//                R.id.nav_home -> {
+//                    startActivity(Intent(this, NewsletterActivity::class.java))
+//                    true
+//                }
+//                R.id.nav_friend -> {
+//                    // Đã ở trang bạn bè
+//                    true
+//                }
+//                R.id.nav_add -> {
+//                    startActivity(Intent(this, CreatePostActivity::class.java))
+//                    true
+//                }
+//                R.id.nav_notification -> {
+//                    startActivity(Intent(this, NotificationActivity::class.java))
+//                    true
+//                }
+//                R.id.nav_profile -> {
+//                    startActivity(Intent(this, UserProfileActivity::class.java))
+//                    true
+//                }
+//                else -> false
+//            }
+//        }
+//    }
 }

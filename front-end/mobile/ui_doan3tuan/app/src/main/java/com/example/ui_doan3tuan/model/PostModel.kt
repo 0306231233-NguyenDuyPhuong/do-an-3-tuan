@@ -14,10 +14,10 @@ data class PostModel(
     @SerialName("comment_count")var commentCount: Int=0,
     @SerialName("share_count") var shareCount: Int=0,
     @SerialName("created_at") var createdAt: String,
-    @SerialName("updated_at") var updatedAt: String,
+    @SerialName("updated_at") var updatedAt: String?,
     @SerialName("location_id") var locationId: Int?,
     @SerialName("user_id") var userId: Int,
-    var is_liked: Boolean,
+    var is_liked: Boolean = false,
     var User: UserModel,
     var Location:LocationModel,
     var PostMedia: List<PostMediaModel>
