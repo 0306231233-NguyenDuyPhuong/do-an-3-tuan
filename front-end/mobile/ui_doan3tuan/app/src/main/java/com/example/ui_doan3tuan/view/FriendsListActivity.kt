@@ -15,30 +15,25 @@ import com.example.ui_doan3tuan.adapter.FriendsAdapter
 import com.example.ui_doan3tuan.model.Friend
 import com.example.ui_doan3tuan.model.FriendListResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 
 class FriendsListActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var editTextSearch: EditText
     private lateinit var adapter: FriendsAdapter
-    private val friendsList = mutableListOf<Friend>()
+    private var friendsList = mutableListOf<Friend>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friends_list)
+
         recyclerView = findViewById(R.id.rvFriends)
         editTextSearch = findViewById(R.id.etSearch)
-
         setupRecyclerView()
 
-        // Load danh sách bạn bè
         loadFriends()
-
-        // Xử lý nút thoát
         findViewById<ImageView>(R.id.imgThoatLF).setOnClickListener {
             finish()
         }
@@ -48,11 +43,8 @@ class FriendsListActivity : AppCompatActivity() {
             val intent = Intent(this, FriendsAddListActivity::class.java)
             startActivity(intent)
         }
+
         setupBottomNav()
-    }
-    override fun onResume() {
-        super.onResume()
-        loadFriends()
     }
 
     private fun setupRecyclerView() {
@@ -74,105 +66,40 @@ class FriendsListActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
         val token = sharedPref.getString("access_token", "")
 
+
         if (token.isNullOrEmpty()) {
             Toast.makeText(this, "Vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show()
-            // Có thể chuyển về màn hình login
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
             return
         }
 
         val fullToken = "Bearer $token"
-        Log.d("API_DEBUG", "Token: $token")
-        Log.d("API_DEBUG", "Full token: $fullToken")
+        Log.d("test"," load thành công")
 
-        // Sử dụng coroutine để không block main thread
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                Log.d("API_DEBUG", "Đang gọi API...")
-                val response: Response<FriendListResponse> =
-                    ApiClient.apiService.getFriendList(fullToken).execute()
-
-                withContext(Dispatchers.Main) {
-                    Log.d("API_DEBUG", "Response code: ${response.code()}")
-
-                    if (response.isSuccessful) {
-                        val data = response.body()
-                        if (data != null) {
-
-                            if (data.data != null && data.data.isNotEmpty()) {
-                                friendsList.clear()
-                                friendsList.addAll(data.data)
-                                adapter.updateList(friendsList)
-
-                            } else {
-
-                                if (data.message != null) {
-                                    Toast.makeText(
-                                        this@FriendsListActivity,
-                                        data.message,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        this@FriendsListActivity,
-                                        "Bạn chưa có bạn bè nào",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        } else {
-                            Toast.makeText(
-                                this@FriendsListActivity,
-                                "Không có dữ liệu trả về",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+        ApiClient.apiService.getFriendList(fullToken).enqueue(object : Callback<FriendListResponse> {
+            override fun onResponse(
+                call: Call<FriendListResponse>,
+                response: Response<FriendListResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    if (data != null && data.data.isNotEmpty()) {
+                        friendsList.clear()
+                        friendsList.addAll(data.data)
+                        adapter.notifyDataSetChanged()
+                        Log.d("test"," load thành công")
                     } else {
-                        // Xử lý lỗi HTTP
-                        handleApiError(response.code(), response.errorBody()?.string())
+                        Toast.makeText(this@FriendsListActivity, "Bạn chưa có bạn bè nào", Toast.LENGTH_SHORT).show()
                     }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Log.e("API_ERROR", "Exception: ${e.message}", e)
-                    Toast.makeText(
-                        this@FriendsListActivity,
-                        "Lỗi kết nối: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                } else {
+                    Toast.makeText(this@FriendsListActivity, "Lỗi: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Log.d("test"," load lỗi")
                 }
             }
-        }
-    }
 
-    private fun handleApiError(errorCode: Int, errorBody: String?) {
-        Log.e("API_ERROR", "Error code: $errorCode")
-        Log.e("API_ERROR", "Error body: $errorBody")
-
-        val errorMessage = when (errorCode) {
-            400 -> "Request không hợp lệ"
-            401 -> {
-                // Token hết hạn, chuyển về login
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                "Phiên đăng nhập hết hạn"
+            override fun onFailure(call: Call<FriendListResponse>, t: Throwable) {
+                Toast.makeText(this@FriendsListActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
             }
-            403 -> {
-                // Không có quyền truy cập
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                "Không có quyền truy cập. Vui lòng đăng nhập lại"
-            }
-            404 -> "API không tồn tại"
-            500 -> "Lỗi server"
-            else -> "Lỗi: $errorCode"
-        }
-
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+        })
     }
 
     private fun setupBottomNav() {

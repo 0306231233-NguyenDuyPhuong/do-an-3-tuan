@@ -11,14 +11,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
 
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginTop="30dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -40,15 +39,14 @@
                 android:textSize="23dp"
                 android:textStyle="bold" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <Button
                 android:id="@+id/btnDangBai"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="@color/white"
-                android:background="@drawable/bg_buttton_blue"
+                android:backgroundTint="@color/background_btn"
                 android:text="Đăng" />
 
         </LinearLayout>
@@ -126,21 +124,19 @@
             android:gravity="top|start"
             />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <Button
             android:id="@+id/btnChonAnhVideo"
             android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:background="@drawable/bg_buttton_blue"
+            android:backgroundTint="@color/background_btn"
             android:text="Chọn ảnh/video" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/revHienAnhVideo"
+            android:layout_margin="20dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="20dp" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

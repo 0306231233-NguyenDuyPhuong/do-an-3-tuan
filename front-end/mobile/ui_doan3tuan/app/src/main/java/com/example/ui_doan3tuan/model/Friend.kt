@@ -8,9 +8,7 @@ data class Friend(
 )
 
 data class FriendListResponse(
-    val data: List<Friend>? = null,
-    val message: String? = null,
-    val success: Boolean? = null
+    val data: List<Friend>
 )
 
 // lời mời kết bạn
@@ -38,18 +36,7 @@ data class RejectRequest(
     val from: Int
 )
 
-// Model cho gửi lời mời
-data class SendRequest(
-    val to: Int
-)
-
-// Model cho hủy kết bạn
-data class UnfriendRequest(
-    val friendId: Int
-)
-
-
-// Response message
+//
 data class ApiMessage(
     val message: String
 )

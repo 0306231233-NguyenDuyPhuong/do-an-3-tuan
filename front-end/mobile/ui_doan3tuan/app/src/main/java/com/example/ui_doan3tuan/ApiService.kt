@@ -12,42 +12,30 @@ interface ApiService {
     @POST("auth/register")
     fun register(@Body request: RegisterRequest): Call<RegisterResponse>
     // 1. Lấy danh sách lời mời kết bạn
-    @GET("friends/requests")
+    @GET("api/friends/requests")
     fun getFriendRequests(
         @Header("Authorization") token: String
     ): Call<FriendRequestResponse>
 
-    // 2. Chấp nhận lời mời
-    @PATCH("friends/requests/accept")
+    // 2. Chấp nhận lời mời (dùng Void để đơn giản)
+    @PATCH("api/friends/requests/accept")
     fun acceptRequest(
         @Header("Authorization") token: String,
         @Body request: AcceptRequest
-    ): Call<Void>
+    ): Call<Void>  // Chỉ cần biết thành công hay thất bại
 
-    // 3. Từ chối lời mời
-    @PATCH("friends/requests/reject")
+    // 3. Từ chối lời mời (dùng Void để đơn giản)
+    @PATCH("api/friends/requests/reject")
     fun rejectRequest(
         @Header("Authorization") token: String,
         @Body request: RejectRequest
-    ): Call<Void>
+    ): Call<Void>  // Chỉ cần biết thành công hay thất bại
 
     // 4. Lấy danh sách bạn bè
-    @GET("friends")
+    @GET("api/friends")
     fun getFriendList(
         @Header("Authorization") token: String
     ): Call<FriendListResponse>
-
-    @POST("friends/requests/send")
-    fun sendFriendRequest(
-        @Header("Authorization") token: String,
-        @Body request: SendRequest
-    ): Call<ApiMessage>
-
-    @PATCH("friends/unfriend")
-    fun unfriend(
-        @Header("Authorization") token: String,
-        @Body request: UnfriendRequest
-    ): Call<ApiMessage>
 }
 
 object ApiClient {

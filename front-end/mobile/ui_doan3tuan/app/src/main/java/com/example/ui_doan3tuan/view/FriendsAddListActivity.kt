@@ -21,27 +21,28 @@ import retrofit2.Response
 class FriendsAddListActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var editTextSearch: EditText
-    private lateinit var imgBack: ImageView
-
     private lateinit var adapter: FriendRequestAdapter
     private val requestList = mutableListOf<FriendRequest>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friends_add_list)
+
         recyclerView = findViewById(R.id.rvAddFriends)
         editTextSearch = findViewById(R.id.etSearch)
-        imgBack = findViewById(R.id.imgThoatLF)
 
         setupRecyclerView()
+
         loadFriendRequests()
 
-        imgBack.setOnClickListener {
-            finish() // Đóng màn hình này
+        findViewById<ImageView>(R.id.imgThoatLF).setOnClickListener {
+            finish()
         }
     }
 
+    // Hàm cài đặt RecyclerView
     private fun setupRecyclerView() {
+        // Tạo adapter với 2 nút xử lý
         adapter = FriendRequestAdapter(requestList,
             onAcceptClick = { request ->
                 // Khi bấm nút "Chấp nhận"
@@ -52,19 +53,19 @@ class FriendsAddListActivity : AppCompatActivity() {
                 rejectRequest(request)
             }
         )
+
+        // Cài đặt layout và adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
     }
 
-
+    // Hàm load danh sách lời mời từ API
     private fun loadFriendRequests() {
-        // Lấy token đăng nhập
-        val token = getToken()
-
-        // Kiểm tra xem đã đăng nhập chưa
+        // Lấy token từ bộ nhớ
+        val token = getTokenFromSharedPreferences()
         if (token.isEmpty()) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
-            finish() // Đóng màn hình nếu chưa đăng nhập
+            finish()
             return
         }
 
@@ -76,26 +77,24 @@ class FriendsAddListActivity : AppCompatActivity() {
                     call: Call<FriendRequestResponse>,
                     response: Response<FriendRequestResponse>
                 ) {
+                    // Kiểm tra response
                     if (response.isSuccessful) {
                         val data = response.body()
 
                         if (data != null && data.data.isNotEmpty()) {
+                            // Có dữ liệu, hiển thị lên màn hình
                             requestList.clear()
-
-                            // 2. Thêm dữ liệu mới
                             requestList.addAll(data.data)
-
-
                             adapter.notifyDataSetChanged()
 
-                            // 4. Hiển thị thông báo
+                            // Hiển thị thông báo
                             Toast.makeText(
                                 this@FriendsAddListActivity,
-                                "Đã tải lời mời",
+                                "Đã tải ${data.data.size} lời mời",
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
-                            // KHÔNG CÓ DỮ LIỆU
+                            // Không có lời mời nào
                             Toast.makeText(
                                 this@FriendsAddListActivity,
                                 "Không có lời mời kết bạn",
@@ -103,7 +102,7 @@ class FriendsAddListActivity : AppCompatActivity() {
                             ).show()
                         }
                     } else {
-                        // API TRẢ VỀ LỖI
+                        // API trả về lỗi
                         Toast.makeText(
                             this@FriendsAddListActivity,
                             "Lỗi tải dữ liệu",
@@ -112,8 +111,11 @@ class FriendsAddListActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<FriendRequestResponse>, t: Throwable) {
-                    // LỖI KẾT NỐI MẠNG
+                override fun onFailure(
+                    call: Call<com.example.ui_doan3tuan.model.FriendRequestResponse>,
+                    t: Throwable
+                ) {
+                    // Lỗi kết nối mạng
                     Toast.makeText(
                         this@FriendsAddListActivity,
                         "Lỗi kết nối: ${t.message}",
@@ -123,33 +125,34 @@ class FriendsAddListActivity : AppCompatActivity() {
             })
     }
 
-    // HÀM XỬ LÝ KHI CHẤP NHẬN LỜI MỜI
+    // Hàm xử lý khi bấm nút "Chấp nhận"
     private fun acceptRequest(request: FriendRequest) {
-        val token = getToken()
+        val token = getTokenFromSharedPreferences()
         if (token.isEmpty()) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Tạo request body (gửi id người gửi lời mời)
+        // Tạo request body
         val acceptBody = AcceptRequest(from = request.sender.id)
 
+        // Gọi API chấp nhận
         ApiClient.apiService.acceptRequest("Bearer $token", acceptBody)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
-                        // THÀNH CÔNG
+                        // Thành công
                         Toast.makeText(
                             this@FriendsAddListActivity,
                             "Đã chấp nhận kết bạn với ${request.sender.full_name}",
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        // XÓA LỜI MỜI KHỎI DANH SÁCH
+                        // Xóa khỏi danh sách
                         requestList.remove(request)
                         adapter.notifyDataSetChanged()
                     } else {
-                        // THẤT BẠI
+                        // Thất bại
                         Toast.makeText(
                             this@FriendsAddListActivity,
                             "Lỗi: ${response.code()}",
@@ -168,34 +171,34 @@ class FriendsAddListActivity : AppCompatActivity() {
             })
     }
 
-    // HÀM XỬ LÝ KHI TỪ CHỐI LỜI MỜI
+    // Hàm xử lý khi bấm nút "Từ chối"
     private fun rejectRequest(request: FriendRequest) {
-        val token = getToken()
+        val token = getTokenFromSharedPreferences()
         if (token.isEmpty()) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Tạo request body (gửi id người gửi lời mời)
+        // Tạo request body
         val rejectBody = RejectRequest(from = request.sender.id)
 
-        // GỌI API TỪ CHỐI
+        // Gọi API từ chối
         ApiClient.apiService.rejectRequest("Bearer $token", rejectBody)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
-                        // THÀNH CÔNG
+                        // Thành công
                         Toast.makeText(
                             this@FriendsAddListActivity,
                             "Đã từ chối lời mời của ${request.sender.full_name}",
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        // XÓA LỜI MỜI KHỎI DANH SÁCH
+                        // Xóa khỏi danh sách
                         requestList.remove(request)
                         adapter.notifyDataSetChanged()
                     } else {
-                        // THẤT BẠI
+                        // Thất bại
                         Toast.makeText(
                             this@FriendsAddListActivity,
                             "Lỗi: ${response.code()}",
@@ -213,7 +216,9 @@ class FriendsAddListActivity : AppCompatActivity() {
                 }
             })
     }
-    private fun getToken(): String {
+
+    // lấy token từ SharedPreferences
+    private fun getTokenFromSharedPreferences(): String {
         val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
         return sharedPref.getString("access_token", "") ?: ""
     }
