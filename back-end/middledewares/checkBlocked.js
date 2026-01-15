@@ -1,4 +1,5 @@
 import { Op } from "sequelize";
+import db from "../models";
 
 const checkBlocked = async (req, res, next) => {
   try {
@@ -15,6 +16,7 @@ const checkBlocked = async (req, res, next) => {
       req.params.otherId ||
       req.params.friendId;
 
+    console.log({ myId, targetId });
     if (!targetId) return next();
     if (Number(myId) === Number(targetId))
       return res.status(400).json({ message: "Invalid friend block" });

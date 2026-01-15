@@ -16,13 +16,6 @@ module.exports = {
     // 2. Thêm các cột auth nếu chưa có
     const table = await queryInterface.describeTable("users");
 
-    if (!table.refresh_token) {
-      await queryInterface.addColumn("users", "refresh_token", {
-        type: Sequelize.STRING(500),
-        allowNull: true,
-      });
-    }
-
     if (!table.reset_token) {
       await queryInterface.addColumn("users", "reset_token", {
         type: Sequelize.STRING(500),
