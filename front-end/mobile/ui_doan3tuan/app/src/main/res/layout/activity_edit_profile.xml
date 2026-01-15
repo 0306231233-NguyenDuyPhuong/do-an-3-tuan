@@ -12,7 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
-        android:orientation="vertical">
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,8 +95,8 @@
                 android:id="@+id/textView8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="Tên" />
+                android:text="Tên"
+                android:textColor="@color/white" />
 
             <EditText
                 android:id="@+id/edtTenCSHS"
@@ -113,9 +119,9 @@
                 android:id="@+id/edtTieuSuCSHS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="top|start"
                 android:inputType="textMultiLine"
                 android:minLines="1"
-                android:gravity="top|start"
                 android:scrollbars="vertical"
                 android:text="Trăm năm chỉ có một lần ngàn năm chỉ có một người yêu tôi"
                 android:textColor="#E6DFDF" />
@@ -125,18 +131,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:textColor="@color/white"
-                android:text="Liên kết" />
+                android:text="Liên kết"
+                android:textColor="@color/white" />
 
             <EditText
                 android:id="@+id/edtLienKetCSHS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="text"
                 android:hint="Thêm liên kết"
-                android:textColorHint="@color/gray"
-                android:textColor="#EDE6E6" />
+                android:inputType="text"
+                android:textColor="#EDE6E6"
+                android:textColorHint="@color/gray" />
 
         </LinearLayout>
 
