@@ -18,8 +18,7 @@ const create = async (req, res) => {
       content: content,
       status: 1,
     });
-    postExists.comment_count += 1;
-    await postExists.save();
+    await db.Post.increment("comment_count", { by: 1, where: { id: postId } });
     return res
       .status(201)
       .json({ message: "Comment created successfully", data: comment });
@@ -45,6 +44,10 @@ const deleteComment = async (req, res) => {
     comment.status = 2;
     comment.deleted_at = new Date();
     await comment.save();
+    await db.Post.increment("comment_count", {
+      by: -1,
+      where: { id: comment.post_id },
+    });
     return res.status(200).json({ message: "Deleted" });
   } catch (error) {
     console.error("delete comment error:", error);
@@ -58,7 +61,7 @@ const getCommentsPost = async (req, res) => {
     if (!postId)
       return res.status(400).json({ message: "Post id is required" });
 
-    const comments = await db.Comment.findAndCountAll({
+    const comments = await db.Comment.findAll({
       where: {
         post_id: postId,
         status: 1,
@@ -132,14 +135,14 @@ const putCommentAdmin = async (req, res) => {
   const role = req.user.role;
   if (role !== 1) {
     return res.status(400).json({
-      message: 'User not admin'
-    })
+      message: "User not admin",
+    });
   }
   await db.Comment.update(req.body, { where: { id } });
   return res.status(200).json({
-    message: "Update post success"
-  })
-}
+    message: "Update post success",
+  });
+};
 
 export default {
   create,
@@ -147,5 +150,5 @@ export default {
   getCommentsPost,
   updateComment,
   putCommentAdmin,
-  getCommentsAdmin
+  getCommentsAdmin,
 };
