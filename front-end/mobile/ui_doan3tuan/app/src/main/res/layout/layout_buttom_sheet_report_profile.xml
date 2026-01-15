@@ -16,7 +16,11 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
+<<<<<<< HEAD
             android:id="@+id/btnReport"
+=======
+
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -41,6 +45,10 @@
         </LinearLayout>
 
         <LinearLayout
+<<<<<<< HEAD
+=======
+            android:id="@+id/btnReport"
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

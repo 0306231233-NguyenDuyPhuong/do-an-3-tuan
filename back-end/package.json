@@ -23,11 +23,16 @@
     "multer": "^2.0.2",
     "mysql2": "^3.16.0",
     "nodemailer": "^7.0.12",
+<<<<<<< HEAD
+=======
+    "nodemon": "^3.1.10",
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.3",
     "xlsx": "^0.18.5"
   },
   "keywords": [],
+<<<<<<< HEAD
   "description": "",
   "devDependencies": {
     "@babel/cli": "^7.28.6",
@@ -36,4 +41,7 @@
     "@babel/preset-env": "^7.28.6",
     "nodemon": "^3.1.11"
   }
+=======
+  "description": ""
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
 }

@@ -28,13 +28,15 @@ class UserProfileViewModel: ViewModel() {
         encodeDefaults = true
     }
 
-
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
     private val _postsId = MutableLiveData<List<PostModel>>()
     val postsId: LiveData<List<PostModel>> get() = _postsId
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
     fun getPostID(token: String, id: Int) {
+        _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
@@ -46,8 +48,8 @@ class UserProfileViewModel: ViewModel() {
                 client.newCall(req).execute().use { resp ->
                     if (!resp.isSuccessful) {
                         Log.e("API_ERROR", "Lỗi: ${resp.code}")
-                        if (resp.code == 401) {
-                            _error.postValue("Phiên đăng nhập hết hạn, vui lòng login lại.")
+                        if (resp.code == 401||resp.code == 403) {
+                            _error.postValue("TOKEN_EXPIRED")
                             return@use
                         }
                     }
@@ -67,8 +69,45 @@ class UserProfileViewModel: ViewModel() {
             } catch (e: Exception) {
                 Log.e("API_EXCEPTION", "Lỗi mạng: ${e.message}")
                 _error.postValue("Kết nối mạng không ổn định, vui lòng thử lại sau!")
+            }finally {
+                _isLoading.postValue(false)
             }
         }
+    }
+    private val _deletePost = MutableLiveData<Boolean>()
+    val deletePost: LiveData<Boolean> get() = _deletePost
+    fun deletePost(postId: Int,token: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val commentBody = JSONObject()
+                    .put("status", 0)
+                    .toString()
+                val JSON = "application/json;charset=utf-8".toMediaType();
+                val requestBody = commentBody.toRequestBody(JSON);
+                Log.e("Lỗi", "Id lần 2: ${postId}")
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/posts/$postId")
+                    .addHeader("Authorization", "Bearer $token")
+                    .delete(requestBody)
+                    .build()
+                val response = client.newCall(request).execute()
+                Log.e("Lỗi", "body: ${response.code}")
+                Log.e("Lỗi", "body: ${response.body}")
+                if (response.isSuccessful) {
+                    Log.e("Lỗi", "Thành công")
+                    _deletePost.postValue(true)
+                }else{
+                    Log.e("Lỗi", "Vô1")
+                    Log.e("Lỗi", "body: ${response.message}")
+                    _deletePost.postValue(false)
+                }
+            } catch (e: Exception) {
+                Log.e("Lỗi", "Lỗi mạng: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+
+
     }
 
     fun sendComment(postId: Int, content: String, token: String) {

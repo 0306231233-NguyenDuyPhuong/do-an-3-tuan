@@ -88,7 +88,11 @@
     </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
+<<<<<<< HEAD
         android:id="@+id/progressBar"
+=======
+        android:id="@+id/progressBarLoadingNewletter"
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"

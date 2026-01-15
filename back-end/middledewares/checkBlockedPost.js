@@ -15,7 +15,7 @@ const checkBlockedPost = async (req, res, next) => {
     const userId = post.user_id;
     if (Number(myId) === Number(userId))
       return res.status(400).json({ message: "Invalid friend block" });
-    const userExists = await db.User.findByPk(targetId);
+    const userExists = await db.User.findByPk(post.user_id);
     if (!userExists)
       return res.status(404).json({ message: "User does not exist" });
     const blockedUser = await db.Friendship.findOne({

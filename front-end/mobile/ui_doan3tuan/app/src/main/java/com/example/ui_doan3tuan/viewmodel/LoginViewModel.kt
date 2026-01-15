@@ -10,6 +10,7 @@ import com.example.ui_doan3tuan.model.LoginResponse
 import com.example.ui_doan3tuan.model.User
 import com.example.ui_doan3tuan.view.token
 
+
 class LoginViewModel : ViewModel() {
 
     var isLoading = false
@@ -72,11 +73,22 @@ class LoginViewModel : ViewModel() {
         val currentTime = System.currentTimeMillis()
         val editor = sharedPref.edit()
 
+<<<<<<< HEAD
         // Xóa các token cũ nếu có
         editor.clear()
 
+=======
+        editor.remove("access_token_time")
+        editor.remove("access_token")
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         // Lưu tokens với thời gian
         editor.putString("access_token", response.accessToken)
+        Log.d("token", "login ${response.accessToken} ")
+<<<<<<< HEAD
+=======
+
+        token = response.accessToken
+>>>>>>> 66dd9d464dde6af1f289b0e065930cc1ffc1f409
         editor.putLong("access_token_time", currentTime)
 
         editor.putString("refresh_token", response.refreshToken)

@@ -106,7 +106,11 @@ class NewsletterActivity : AppCompatActivity() {
                 adapterNewsletter.updateData(listPosts)
             }
         }
+<<<<<<< HEAD
         val progressBar =  findViewById<ProgressBar>(R.id.progressBar)
+=======
+        val progressBar =  findViewById<ProgressBar>(R.id.progressBarLoadingNewletter)
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         viewModel.isLoading.observe(this) { isLoading ->
             if (isLoading) {
                 progressBar.visibility = View.VISIBLE
@@ -122,13 +126,22 @@ class NewsletterActivity : AppCompatActivity() {
             if (error == "TOKEN_EXPIRED") {
                 sharedPref.edit().remove("access_token").apply()
                 sharedPref.edit().remove("refresh_token").apply()
+<<<<<<< HEAD
+=======
+                sharedPref.edit().remove("access_token_time").apply()
+                sharedPref.edit().remove("refresh_token_time").apply()
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                 Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             }
         }
+<<<<<<< HEAD
         Log.d("token", "$token")
+=======
+
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
 
 
 
@@ -144,6 +157,7 @@ class NewsletterActivity : AppCompatActivity() {
             }
 
         }
+<<<<<<< HEAD
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
         val token = sharedPref.getString("access_token", null)
         if (token != null) {
@@ -163,15 +177,38 @@ class NewsletterActivity : AppCompatActivity() {
             )
         } else {
             val intent = Intent(this, LoginActivity::class.java)
+=======
+
+        viewModel.getPost(token,page)
+        viewModel.getListfriends(token)
+        nestedScrollView.setOnScrollChangeListener(
+            NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
+                if (!v.canScrollVertically(1)) {
+                    Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT)
+                        .show()
+                    page += 1;
+                    viewModel.getPost(token, page)
+
+
+                }
+            }
+        )
+        findViewById<ImageView>(R.id.imgSearch).setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             startActivity(intent)
-            finish()
+
+
         }
+<<<<<<< HEAD
         findViewById<ImageView>(R.id.imgSearch).setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
 
 
         }
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
 
 
     }
@@ -229,13 +266,12 @@ class NewsletterActivity : AppCompatActivity() {
         val commentAdapter = AdapterComment(emptyList())
         rcvComments.layoutManager = LinearLayoutManager(this)
         rcvComments.adapter = commentAdapter
-
+        viewModel.clearComments()
         viewModel.comments.observe(this) { listComments ->
-            if (!listComments.isNullOrEmpty()) {
-                commentAdapter.updateData(listComments)
-                rcvComments.scrollToPosition(listComments.size - 1)
-            } else {
-                commentAdapter.updateData(listComments)
+            Log.d("listComments", "$listComments")
+            Log.d("CheckComment", "Số lượng comment: ${listComments.size}")
+            commentAdapter.updateData(listComments)
+            if (listComments.isNotEmpty()) {
                 rcvComments.scrollToPosition(listComments.size - 1)
             }
         }
@@ -245,7 +281,7 @@ class NewsletterActivity : AppCompatActivity() {
             if (content.isNotBlank()) {
                 viewModel.sendComment(post.id, content, token)
                 edtComment.setText("")
-                viewModel.getCommentsByPostId(post.id, token)
+//                viewModel.getCommentsByPostId(post.id, token)
             }
         }
         dialog.setOnDismissListener {

@@ -19,7 +19,6 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var edtEmail: EditText
     private lateinit var edtMatKhau: EditText
     private lateinit var edtNhapLaiMatKhau: EditText
-
     private lateinit var btnDangKy: Button
     private lateinit var txtQuayLai: TextView
 
@@ -49,18 +48,19 @@ class SignupActivity : AppCompatActivity() {
         }
 
         txtQuayLai.setOnClickListener {
-            
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
     }
+
     private fun dangKy() {
         val hoTen = edtHoTen.text.toString().trim()
         val email = edtEmail.text.toString().trim()
         val matKhau = edtMatKhau.text.toString()
         val nhapLaiMatKhau = edtNhapLaiMatKhau.text.toString()
-        
+
+        // Validate input
         if (hoTen.isEmpty()) {
             edtHoTen.error = "Nhập họ tên"
             return
@@ -80,19 +80,24 @@ class SignupActivity : AppCompatActivity() {
             edtNhapLaiMatKhau.error = "Nhập lại mật khẩu"
             return
         }
-        
+
         if (matKhau.length < 8) {
             edtMatKhau.error = "Mật khẩu ít nhất 8 ký tự"
             return
         }
-        
+
         if (matKhau != nhapLaiMatKhau) {
             edtNhapLaiMatKhau.error = "Mật khẩu không khớp"
             return
         }
-        
-        viewModel.register(email, matKhau, nhapLaiMatKhau, hoTen)
 
+
+        viewModel.register(
+            email = email,
+            matKhau = matKhau,
+            nhapLaiMatKhau = nhapLaiMatKhau,
+            hoTen = hoTen
+        )
 
         btnDangKy.text = "Đang xử lý..."
         btnDangKy.isEnabled = false
@@ -110,29 +115,35 @@ class SignupActivity : AppCompatActivity() {
         // Xem khi đăng ký thành công
         viewModel.registerSuccess.observe(this) { response ->
             if (response != null) {
-                Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_LONG).show()
+                val fullName = response.user?.full_name ?: "Không có tên"
+                val email = response.user?.email ?: "Không có email"
 
+                Toast.makeText(this, "Đăng ký thành công! Xin chào $fullName", Toast.LENGTH_LONG).show()
                 hienThiThongBaoThanhCong(response)
             }
         }
-        
+
         viewModel.errorMessage.observe(this) { error ->
             if (error != null && error.isNotEmpty()) {
                 Toast.makeText(this, "Lỗi: $error", Toast.LENGTH_LONG).show()
             }
         }
     }
-    private fun hienThiThongBaoThanhCong(response: RegisterResponse) {
 
+    private fun hienThiThongBaoThanhCong(response: RegisterResponse) {
         androidx.appcompat.app.AlertDialog.Builder(this)
+<<<<<<< HEAD
             .setTitle(" Thành công!")
             .setMessage("Tạo tài khoản thành công")
+=======
+            .setTitle("Thành công!")
+            .setMessage("Tạo tài khoản thành công cho ${response.user?.full_name ?: "bạn"}")
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             .setPositiveButton("Đăng nhập ngay") { dialog, _ ->
                 dialog.dismiss()
 
-
                 val intent = Intent(this, LoginActivity::class.java)
-                val emailDeDien = response.user.email ?: ""
+                val emailDeDien = response.user?.email ?: edtEmail.text.toString()
                 if (emailDeDien.isNotEmpty()) {
                     intent.putExtra("email", emailDeDien)
                 }
@@ -142,5 +153,4 @@ class SignupActivity : AppCompatActivity() {
             .setCancelable(false)
             .show()
     }
-    
 }

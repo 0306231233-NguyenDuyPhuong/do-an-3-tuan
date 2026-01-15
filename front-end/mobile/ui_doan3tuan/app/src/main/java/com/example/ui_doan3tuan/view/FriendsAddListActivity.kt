@@ -66,7 +66,7 @@ class FriendsAddListActivity : AppCompatActivity() {
         // Kiểm tra xem đã đăng nhập chưa
         if (token.isEmpty()) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
-            finish()
+            finish() // Đóng màn hình nếu chưa đăng nhập
             return
         }
 
@@ -77,8 +77,12 @@ class FriendsAddListActivity : AppCompatActivity() {
                 override fun onResponse(
                     call: Call<FriendRequestResponse>,
                     response: Response<FriendRequestResponse>
+<<<<<<< HEAD
 
                 ) {  Log.e("ACCEPT_API", "Response code: ${response.code()}")
+=======
+                ) {
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                     if (response.isSuccessful) {
                         val data = response.body()
 
@@ -134,10 +138,14 @@ class FriendsAddListActivity : AppCompatActivity() {
             return
         }
 
-        // Tạo request body
+        // Tạo request body (gửi id người gửi lời mời)
         val acceptBody = AcceptRequest(from = request.sender.id)
+<<<<<<< HEAD
         Log.e("ACCEPT_API", "TOKEN: Bearer $token")
         Log.e("ACCEPT_API", "BODY: ${Gson().toJson(acceptBody)}")
+=======
+
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         ApiClient.apiService.acceptRequest("Bearer $token", acceptBody)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -148,7 +156,11 @@ class FriendsAddListActivity : AppCompatActivity() {
                             "Đã chấp nhận kết bạn ",
                             Toast.LENGTH_SHORT
 
+<<<<<<< HEAD
                         ).show()
+=======
+                        // XÓA LỜI MỜI KHỎI DANH SÁCH
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                         requestList.remove(request)
                         adapter.notifyDataSetChanged()
                     } else {
@@ -181,8 +193,12 @@ class FriendsAddListActivity : AppCompatActivity() {
 
         // Tạo request body (gửi id người gửi lời mời)
         val rejectBody = RejectRequest(from = request.sender.id)
+<<<<<<< HEAD
         Log.e("REJECT_API", "BODY: ${Gson().toJson(rejectBody)}")
         Log.e("REJECT_API", "TOKEN: Bearer $token")
+=======
+
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         // GỌI API TỪ CHỐI
         ApiClient.apiService.rejectRequest("Bearer $token", rejectBody)
             .enqueue(object : Callback<Void> {

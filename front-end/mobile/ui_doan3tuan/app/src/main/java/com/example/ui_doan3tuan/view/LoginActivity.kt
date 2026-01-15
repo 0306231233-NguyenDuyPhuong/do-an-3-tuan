@@ -2,6 +2,7 @@ package com.example.ui_doan3tuan.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.UserManager
 import android.text.InputType
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -9,9 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.model.User
 import com.example.ui_doan3tuan.viewmodel.LoginViewModel
+<<<<<<< HEAD
 
 var token: String = ""
 
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var viewModel: LoginViewModel
@@ -46,12 +50,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupEvents() {
-        // Sự kiện đăng nhập
+
         btnLogin.setOnClickListener {
             xuLyDangNhap()
         }
 
-        // Chuyển sang đăng ký
         tvSignUp.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
         }
@@ -87,6 +90,10 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
+<<<<<<< HEAD
+=======
+        // Hiển thị loading
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         btnLogin.text = "Đang đăng nhập..."
         btnLogin.isEnabled = false
 
@@ -101,11 +108,17 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun xuLyDangNhapThanhCong(accessToken: String, userData: User) {
+<<<<<<< HEAD
         // Lưu token và user id vào SharedPreferences
         luuThongTinNguoiDung(accessToken, userData.id)
 
+=======
+        luuThongTinUser(userData)
+        Toast.makeText(this, "Đăng nhập thành công! ", Toast.LENGTH_SHORT).show()
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         btnLogin.text = "Đăng nhập"
         btnLogin.isEnabled = true
+
         chuyenManHinhChinh()
     }
 
@@ -140,12 +153,25 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun kiemTraDaDangNhap(): Boolean {
-        return viewModel.isTokenValid()
+        return viewModel.isLoggedIn()
     }
 
     private fun chuyenManHinhChinh() {
         val intent = Intent(this, NewsletterActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun luuThongTinUser(userData: User) {
+        val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putInt("user_id", userData.id)
+            putString("user_name", userData.full_name)
+            putString("user_email", userData.email ?: "")
+            putString("user_phone", userData.phone ?: "")
+            apply()
+        }
+
+
     }
 }

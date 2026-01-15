@@ -28,7 +28,11 @@ class FriendsProfileActivity : AppCompatActivity() {
     private var isFriend: Boolean = false
     private var hasSentRequest: Boolean = false
 
+<<<<<<< HEAD
     // LƯU TRẠNG THÁI KHI ACTIVITY BỊ DESTROY
+=======
+    //LƯU TRẠNG THÁI KHI ACTIVITY BỊ DESTROY
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("isFriend", isFriend)
@@ -37,7 +41,11 @@ class FriendsProfileActivity : AppCompatActivity() {
         outState.putString("friendName", friendName)
     }
 
+<<<<<<< HEAD
     // KHÔI PHỤC TRẠNG THÁI KHI ACTIVITY TẠO LẠI
+=======
+    //  KHÔI PHỤC TRẠNG THÁI KHI ACTIVITY TẠO LẠI
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         isFriend = savedInstanceState.getBoolean("isFriend", false)
@@ -62,6 +70,7 @@ class FriendsProfileActivity : AppCompatActivity() {
         }
 
         findViews()
+<<<<<<< HEAD
         showInfo()
         setupButtons()
 
@@ -69,17 +78,36 @@ class FriendsProfileActivity : AppCompatActivity() {
         checkFriendStatusFromAPI()
     }
 
+=======
+
+        showInfo()
+
+        setupButtons()
+
+
+        if (!isFriend && !hasSentRequest) {
+            checkFriendStatusFromAPI()
+        }
+    }
+
+
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
     private fun getDataFromIntent() {
         friendId = intent.getIntExtra("friend_id", -1)
         friendName = intent.getStringExtra("friend_name") ?: "Chưa có tên"
 
+<<<<<<< HEAD
         // isFriend = true nếu từ danh sách bạn bè VÀ chưa có trạng thái lưu
+=======
+        //  isFriend = true nếu từ danh sách bạn bè VÀ chưa có trạng thái lưu
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         if (!isFriend) {
             val fromFriendsList = intent.getBooleanExtra("from_friends_list", false)
             isFriend = fromFriendsList
         }
     }
 
+<<<<<<< HEAD
     private fun checkFriendStatusFromAPI() {
         val token = getToken()
         if (token.isEmpty()) {
@@ -88,6 +116,12 @@ class FriendsProfileActivity : AppCompatActivity() {
         }
 
         Log.d("FriendsProfile", "Checking friend status for friendId: $friendId")
+=======
+
+    private fun checkFriendStatusFromAPI() {
+        val token = getToken()
+        if (token.isEmpty()) return
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
 
         ApiClient.apiService.getFriendList("Bearer $token")
             .enqueue(object : Callback<FriendListResponse> {
@@ -98,16 +132,22 @@ class FriendsProfileActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val friendList = response.body()?.data
                         if (friendList != null) {
+<<<<<<< HEAD
                             // KIỂM TRA XEM friendId CÓ TRONG DANH SÁCH BẠN BÈ KHÔNG
                             val isActuallyFriend = friendList.any { it.id == friendId }
 
                             Log.d("FriendsProfile", "Friend list: $friendList")
                             Log.d("FriendsProfile", "isActuallyFriend: $isActuallyFriend, current isFriend: $isFriend")
 
+=======
+                            val isActuallyFriend = friendList.any { it.id == friendId }
+
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                             if (isActuallyFriend != isFriend) {
                                 isFriend = isActuallyFriend
                                 updateButtonUI()
                             }
+<<<<<<< HEAD
 
                             // NẾU LÀ BẠN BÈ THÌ KHÔNG THỂ CÓ LỜI MỜI ĐÃ GỬI
                             if (isFriend) {
@@ -122,6 +162,13 @@ class FriendsProfileActivity : AppCompatActivity() {
                 override fun onFailure(call: Call<FriendListResponse>, t: Throwable) {
                     Log.e("FriendsProfile", "Network error checking friend status", t)
                 }
+=======
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<FriendListResponse>, t: Throwable) {}
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             })
     }
 
@@ -135,7 +182,11 @@ class FriendsProfileActivity : AppCompatActivity() {
         val txtName = findViewById<TextView>(R.id.textView9)
         txtName.text = friendName
 
+<<<<<<< HEAD
         // Hiển thị ảnh
+=======
+        // Hiển thị ảnh (chỉ lấy từ intent khi vào lần đầu)
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         val imgAvatar = findViewById<ImageView>(R.id.imageView9)
         val friendAvatar = intent.getStringExtra("friend_avatar")
 
@@ -154,7 +205,11 @@ class FriendsProfileActivity : AppCompatActivity() {
         // Nút nhắn tin
         btnNhanTin.setOnClickListener {
             if (isFriend) {
+<<<<<<< HEAD
                 // Mở chat nếu là bạn bè
+=======
+                // Mở chat
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                 val intent = Intent(this, ChatActivity::class.java)
                 intent.putExtra("friend_id", friendId)
                 intent.putExtra("friend_name", friendName)
@@ -164,6 +219,7 @@ class FriendsProfileActivity : AppCompatActivity() {
             }
         }
 
+<<<<<<< HEAD
         // Nút kết bạn/hủy kết bạn
         btnKetBan.setOnClickListener {
             if (isFriend) {
@@ -174,6 +230,18 @@ class FriendsProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "Đã gửi lời mời, đang chờ phản hồi", Toast.LENGTH_SHORT).show()
             } else {
                 // CHƯA LÀ BẠN BÈ -> GỬI LỜI MỜI
+=======
+        // Nút kết bạn
+        btnKetBan.setOnClickListener {
+            if (isFriend) {
+                // Đã là bạn bè -> hủy kết bạn
+                showUnfriendDialog()
+            } else if (hasSentRequest) {
+                // Đã gửi lời mời -> thông báo
+                Toast.makeText(this, "Đã gửi lời mời, đang chờ phản hồi", Toast.LENGTH_SHORT).show()
+            } else {
+                // Chưa là bạn bè -> gửi lời mời
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                 sendFriendRequest()
             }
         }
@@ -185,21 +253,37 @@ class FriendsProfileActivity : AppCompatActivity() {
     }
 
     private fun updateButtonUI() {
+<<<<<<< HEAD
         Log.d("FriendsProfile", "Updating button UI - isFriend: $isFriend, hasSentRequest: $hasSentRequest")
 
         if (isFriend) {
             // TRẠNG THÁI 1: ĐÃ LÀ BẠN BÈ
             btnKetBan.text = "Bạn bè"
+=======
+        if (isFriend) {
+            // TRẠNG THÁI 1: ĐÃ LÀ BẠN BÈ
+            btnKetBan.text = "Bạn bè"
+            btnKetBan.setBackgroundColor(getColor(android.R.color.darker_gray))
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             btnKetBan.isEnabled = true
             btnNhanTin.isEnabled = true
         } else if (hasSentRequest) {
             // TRẠNG THÁI 2: ĐÃ GỬI LỜI MỜI
             btnKetBan.text = "Đã gửi lời mời"
+<<<<<<< HEAD
             btnKetBan.isEnabled = false  // Không cho click
+=======
+            btnKetBan.setBackgroundColor(getColor(android.R.color.darker_gray))
+            btnKetBan.isEnabled = false
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             btnNhanTin.isEnabled = false
         } else {
             // TRẠNG THÁI 3: CHƯA LÀ BẠN BÈ
             btnKetBan.text = "Kết bạn"
+<<<<<<< HEAD
+=======
+            btnKetBan.setBackgroundColor(getColor(R.color.background_btn))
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             btnKetBan.isEnabled = true
             btnNhanTin.isEnabled = false
         }
@@ -212,8 +296,11 @@ class FriendsProfileActivity : AppCompatActivity() {
             return
         }
 
+<<<<<<< HEAD
         Log.d("FriendsProfile", "Sending friend request to: $friendId")
 
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         // Hiển thị loading
         btnKetBan.text = "Đang gửi..."
         btnKetBan.isEnabled = false
@@ -226,8 +313,11 @@ class FriendsProfileActivity : AppCompatActivity() {
                     call: Call<ApiMessage>,
                     response: Response<ApiMessage>
                 ) {
+<<<<<<< HEAD
                     Log.d("FriendsProfile", "Send request response: ${response.code()}")
 
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                     if (response.isSuccessful) {
                         // Thành công
                         Toast.makeText(
@@ -247,30 +337,43 @@ class FriendsProfileActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<ApiMessage>, t: Throwable) {
+<<<<<<< HEAD
                     Log.e("FriendsProfile", "Send request failed", t)
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                     Toast.makeText(this@FriendsProfileActivity, "Lỗi kết nối", Toast.LENGTH_SHORT).show()
                     btnKetBan.text = "Kết bạn"
                     btnKetBan.isEnabled = true
                 }
             })
     }
+<<<<<<< HEAD
 
     private fun handleSendError(errorCode: Int) {
         Log.e("FriendsProfile", "Send request error: $errorCode")
 
         val message = when (errorCode) {
             400 -> {
+=======
+    private fun handleSendError(errorCode: Int) {
+        val message = when (errorCode) {
+            400 -> {
+                // Có thể đã là bạn bè, kiểm tra lại
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                 checkFriendStatusFromAPI()
                 "Đã gửi lời mời trước đó"
             }
             403 -> "Bị chặn kết bạn"
             404 -> "Không tìm thấy người dùng"
+<<<<<<< HEAD
             409 -> {
                 // Đã là bạn bè
                 checkFriendStatusFromAPI()
                 "Đã là bạn bè"
             }
             500 -> "Lỗi server"
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             else -> "Lỗi: $errorCode"
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -283,7 +386,11 @@ class FriendsProfileActivity : AppCompatActivity() {
     private fun showUnfriendDialog() {
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Hủy kết bạn")
+<<<<<<< HEAD
             .setMessage("Bạn có chắc muốn hủy kết bạn ")
+=======
+            .setMessage("Bạn có chắc muốn hủy kết bạn với $friendName?")
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
             .setPositiveButton("Có") { dialog, which ->
                 unfriend()
             }
@@ -298,8 +405,11 @@ class FriendsProfileActivity : AppCompatActivity() {
             return
         }
 
+<<<<<<< HEAD
         Log.d("FriendsProfile", "Unfriend: friendId = $friendId")
 
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         val request = UnfriendRequest(friendId = friendId)
 
         ApiClient.apiService.unfriend("Bearer $token", request)
@@ -308,8 +418,11 @@ class FriendsProfileActivity : AppCompatActivity() {
                     call: Call<ApiMessage>,
                     response: Response<ApiMessage>
                 ) {
+<<<<<<< HEAD
                     Log.d("FriendsProfile", "Unfriend response: ${response.code()}")
 
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                     if (response.isSuccessful) {
                         Toast.makeText(
                             this@FriendsProfileActivity,
@@ -322,9 +435,12 @@ class FriendsProfileActivity : AppCompatActivity() {
                         hasSentRequest = false
                         updateButtonUI()
                     } else {
+<<<<<<< HEAD
                         val errorBody = response.errorBody()?.string()
                         Log.e("FriendsProfile", "Unfriend error ${response.code()}: $errorBody")
 
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                         Toast.makeText(
                             this@FriendsProfileActivity,
                             "Lỗi: ${response.code()}",
@@ -334,7 +450,10 @@ class FriendsProfileActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<ApiMessage>, t: Throwable) {
+<<<<<<< HEAD
                     Log.e("FriendsProfile", "Unfriend network error", t)
+=======
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
                     Toast.makeText(this@FriendsProfileActivity, "Lỗi kết nối", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -344,10 +463,15 @@ class FriendsProfileActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
         return sharedPref.getString("access_token", "") ?: ""
     }
+<<<<<<< HEAD
 
     override fun onResume() {
         super.onResume()
 
+=======
+    override fun onResume() {
+        super.onResume()
+>>>>>>> 0705643a61e733822215bae2f9688a863fa0d6c2
         checkFriendStatusFromAPI()
     }
 }
