@@ -208,24 +208,33 @@ const unSavePost = async (req, res) => {
 const getSharedPost = async (req, res) => {
   try {
     const myId = req.user.userId;
+
     const shared = await db.Share.findAll({
-      where: {
-        user_id: myId,
-      },
-      include: {
-        model: db.Post,
-        where: { status: 1 },
-      },
+      where: { user_id: myId },
+      include: [
+        {
+          model: db.Post,
+          where: { status: 1 },
+          include: [
+            {
+              model: db.User,
+              attributes: ["id", "full_name", "avatar"],
+            },
+            { model: db.Location },
+            { model: db.PostMedia },
+          ],
+        },
+      ],
       order: [["createdAt", "DESC"]],
     });
-    return res.json({
-      data: shared,
-    });
+
+    return res.json({ data: shared });
   } catch (error) {
-    console.error(" get  sharedpost error:", error);
+    console.error("get shared post error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 const getSavePost = async (req, res) => {
   try {
     const myId = req.user.userId;
@@ -233,10 +242,26 @@ const getSavePost = async (req, res) => {
       where: {
         user_id: myId,
       },
-      include: {
-        model: db.Post,
-        where: { status: 1 },
-      },
+      include: [
+        // user đang lưu post
+        {
+          model: db.User,
+          attributes: ["id", "full_name", "avatar", "status"],
+        },
+        {
+          model: db.Post,
+          where: { status: 1 },
+          include: [
+            {
+              // chu bai post
+              model: db.User,
+              attributes: ["id", "full_name", "avatar"],
+            },
+            { model: db.Location },
+            { model: db.PostMedia },
+          ],
+        },
+      ],
       order: [["created_at", "DESC"]],
     });
     return res.json({
