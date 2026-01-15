@@ -77,7 +77,7 @@ const AppRoute = (app) => {
   router.post(
     "/interact/like",
     verifyToken,
-    checkBlockedPost,
+    //checkBlockedPost,
     checkCanLike,
     InteractController.likePost
   );
