@@ -6,10 +6,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.ui_doan3tuan.ApiClient
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.FriendRequestAdapter
 import com.example.ui_doan3tuan.model.ApiMessage
@@ -140,8 +138,6 @@ class FriendsProfileActivity : AppCompatActivity() {
 
         // Hiển thị ảnh
         val imgAvatar = findViewById<ImageView>(R.id.imageView9)
-        val friendAvatar = intent.getStringExtra("friend_avatar")
-
         if (!friendAvatar.isNullOrEmpty()) {
             Glide.with(this)
                 .load(friendAvatar)
