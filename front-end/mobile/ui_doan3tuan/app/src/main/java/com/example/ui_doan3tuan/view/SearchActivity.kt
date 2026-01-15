@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -30,6 +32,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class SearchActivity : AppCompatActivity() {
     private val viewModel: SearchViewModel by viewModels()
+    private val viewModel2: NewsletterViewModel by viewModels()
     private lateinit var adapterNewsletter: AdapterNewsletter
     var page: Int = 1
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +45,7 @@ class SearchActivity : AppCompatActivity() {
         }
         val revRecentSearch = findViewById<RecyclerView>(R.id.revRecentSearch)
         revRecentSearch.layoutManager = LinearLayoutManager(this)
-
+        val progressBar = findViewById<ProgressBar>(R.id.progressBarLoadingSearch)
 
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
@@ -53,52 +56,74 @@ class SearchActivity : AppCompatActivity() {
                 intent.putExtra("id", id)
                 startActivity(intent)
             },
-            onLikeClick = { post -> viewModel.isLiked(token, post.id) }
+            onLikeClick = { post, isActionLike ->
+                if (isActionLike) {
+                    viewModel2.likePost(token, post.id)
+                } else {
+                    viewModel2.UnlikePost(token, post.id)
+                }
+            },
+            onShareClick = {post ->
+                viewModel2.sharePost(token, post.id)
+                Toast.makeText(this, "Đang chia sẻ: ${post.content}", Toast.LENGTH_SHORT).show()
+            }
         )
         revRecentSearch.adapter = adapterNewsletter
+
         viewModel.resultSearch.observe(this) { listPosts ->
             if (listPosts != null) {
-                adapterNewsletter.updateData(listPosts)
+                if (page == 1) {
+                    adapterNewsletter.setData(listPosts)
+                } else {
+                    adapterNewsletter.updateData(listPosts)
+                }
             }
         }
-        findViewById<EditText>(R.id.edtSearch).setOnEditorActionListener { v, actionId, event ->
-            // Kiểm tra xem người dùng có nhấn nút Search trên bàn phím không
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val query = findViewById<EditText>(R.id.edtSearch).text.toString()
-                val nestedScrollView2 = findViewById<NestedScrollView>(R.id.myNested)
-                val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-                val token = sharedPref.getString("access_token", null)
-                if (token != null) {
-                    viewModel.searchContent(token,page,query)
-                    viewModel.getListfriends(token)
-                    nestedScrollView2.setOnScrollChangeListener(
-                        NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
-                            if (!v.canScrollVertically(1)) {
-                                Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT)
-                                    .show()
-                                page += 1;
-                                viewModel.searchContent(token, page,query)
-
-                            }
-                        }
-                    )
-                } else {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
+        viewModel.isLoading.observe(this) { isLoading ->
+            if (isLoading) {
+                progressBar.visibility = View.VISIBLE
+                revRecentSearch.visibility = View.GONE
+            } else {
+                progressBar.visibility = View.GONE
+                revRecentSearch.visibility = View.VISIBLE
+            }
+        }
+        val nestedScrollView = findViewById<NestedScrollView>(R.id.myNested)
+        nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, _, _, _, _ ->
+            if (!v.canScrollVertically(1)) {
+                if (!viewModel.isLoading.value!! && !viewModel.isLastPage && token.isNotEmpty()) {
+                    Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT).show()
+                    page += 1
+                    viewModel.searchContent(token, page, viewModel.currentQuery)
                 }
+            }
+        }
 
+        findViewById<EditText>(R.id.edtSearch).setOnEditorActionListener { v, actionId, event ->
+            // v (view):Đây chính là cái EditText mà người dùng đang nhập liệu.Dùng để làm gì: Để bạn lấy dữ liệu trực tiếp từ ô nhập đó mà không cần gọi findViewById lại.
+            // actionId: mã định danh của cái nút mà người dùng vừa bấm trên bàn phím ảo.
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val query = v.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+                    val token = sharedPref.getString("access_token", null)
+                    if (token != null) {
+                        page = 1;
+                        viewModel.isLastPage = false;
+                        viewModel.clearSearchData()
+                        adapterNewsletter.setData(emptyList())
+                        viewModel.searchContent(token, page, query)
+                        nestedScrollView.scrollTo(0, 0)
+                    } else {
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
+                }
                 true
             } else {
                 false
             }
         }
-
-
-
-
-
-
     }
 
 
@@ -122,17 +147,17 @@ class SearchActivity : AppCompatActivity() {
         val txtThongTinSai = view.findViewById<TextView>(R.id.txtThongTinSai)
         val txtVandenhaycam = view.findViewById<TextView>(R.id.txtVandenhaycam)
         txtSpam.setOnClickListener {
-            viewModel.reportPost(token, postId, id, "Spam")
+            viewModel2.reportPost(token, postId, id, "Spam")
             Toast.makeText(this, "Báo cáo thành công spam!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         txtThongTinSai.setOnClickListener {
-            viewModel.reportPost(token, postId, id, "Thông tin sai sự thật")
+            viewModel2.reportPost(token, postId, id, "Thông tin sai sự thật")
             Toast.makeText(this, "Báo cáo thành công thông tin sai!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         txtVandenhaycam.setOnClickListener {
-            viewModel.reportPost(token, postId, id, "Nội dung nhạy cảm")
+            viewModel2.reportPost(token, postId, id, "Nội dung nhạy cảm")
             Toast.makeText(this, "Báo cáo thành công vấn đề nhạy cảm!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
@@ -155,7 +180,7 @@ class SearchActivity : AppCompatActivity() {
         rcvComments.layoutManager = LinearLayoutManager(this)
         rcvComments.adapter = commentAdapter
 
-        viewModel.comments.observe(this) { listComments ->
+        viewModel2.comments.observe(this) { listComments ->
             if (!listComments.isNullOrEmpty()) {
                 commentAdapter.updateData(listComments)
                 rcvComments.scrollToPosition(listComments.size - 1)
@@ -164,17 +189,17 @@ class SearchActivity : AppCompatActivity() {
                 rcvComments.scrollToPosition(listComments.size - 1)
             }
         }
-        viewModel.getCommentsByPostId(post.id, token)
+        viewModel2.getCommentsByPostId(post.id, token)
         btnSend.setOnClickListener {
             val content = edtComment.text.toString()
             if (content.isNotBlank()) {
-                viewModel.sendComment(post.id, content, token)
+                viewModel2.sendComment(post.id, content, token)
                 edtComment.setText("")
-                viewModel.getCommentsByPostId(post.id, token)
+                viewModel2.getCommentsByPostId(post.id, token)
             }
         }
         dialog.setOnDismissListener {
-            viewModel.comments.removeObservers(this)
+            viewModel2.comments.removeObservers(this)
         }
         dialog.setContentView(view)
         dialog.show()

@@ -28,13 +28,15 @@ class UserProfileViewModel: ViewModel() {
         encodeDefaults = true
     }
 
-
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
     private val _postsId = MutableLiveData<List<PostModel>>()
     val postsId: LiveData<List<PostModel>> get() = _postsId
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
     fun getPostID(token: String, id: Int) {
+        _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val req = Request.Builder()
@@ -42,14 +44,12 @@ class UserProfileViewModel: ViewModel() {
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
-
-                Log.e("Lỗi", "${token}")
-                Log.e("Lỗi", "${id}")
+                Log.e("Lỗi", "Vào 1")
                 client.newCall(req).execute().use { resp ->
                     if (!resp.isSuccessful) {
-                        Log.e("API_ERROR", "Lỗi: ${resp.message}")
-                        if (resp.code == 401) {
-                            _error.postValue("Phiên đăng nhập hết hạn, vui lòng login lại.")
+                        Log.e("API_ERROR", "Lỗi: ${resp.code}")
+                        if (resp.code == 401||resp.code == 403) {
+                            _error.postValue("TOKEN_EXPIRED")
                             return@use
                         }
                     }
@@ -58,74 +58,167 @@ class UserProfileViewModel: ViewModel() {
                     val listPostId = response.post
                     slbv = response.post_count
                     slbb = response.friend_count
-
-                    Log.e("ID", "${id}")
-
                     Log.d("Test", "$slbv")
                     Log.d("Test", "$slbb")
 
                     Log.d("listPostId", "$listPostId")
                     _postsId.postValue(listPostId)
                 }
+
             } catch (e: Exception) {
                 Log.e("API_EXCEPTION", "Lỗi mạng: ${e.message}")
                 _error.postValue("Kết nối mạng không ổn định, vui lòng thử lại sau!")
+            }finally {
+                _isLoading.postValue(false)
             }
         }
     }
-
-    fun sendComment(postId: Int, content: String, token: String) {
+    private val _deletePost = MutableLiveData<Boolean>()
+    val deletePost: LiveData<Boolean> get() = _deletePost
+    fun deletePost(postId: Int,token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val commentBody = JSONObject()
-                    .put("postId", postId)
-                    .put("content", content)
+                    .put("status", 0)
                     .toString()
                 val JSON = "application/json;charset=utf-8".toMediaType();
                 val requestBody = commentBody.toRequestBody(JSON);
+                Log.e("Lỗi", "Id lần 2: ${postId}")
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:8989/api/comment")
+                    .url("http://10.0.2.2:8989/api/posts/$postId")
                     .addHeader("Authorization", "Bearer $token")
-                    .post(requestBody)
+                    .delete(requestBody)
                     .build()
                 val response = client.newCall(request).execute()
+                Log.e("Lỗi", "body: ${response.code}")
+                Log.e("Lỗi", "body: ${response.body}")
                 if (response.isSuccessful) {
-                    getCommentsByPostId(postId,token)
+                    Log.e("Lỗi", "Thành công")
+                    _deletePost.postValue(true)
+                }else{
+                    Log.e("Lỗi", "Vô1")
+                    Log.e("Lỗi", "body: ${response.message}")
+                    _deletePost.postValue(false)
                 }
             } catch (e: Exception) {
+                Log.e("Lỗi", "Lỗi mạng: ${e.message}")
                 e.printStackTrace()
             }
         }
 
 
     }
-
-    private val _comments = MutableLiveData<List<CommentModel>>()
-    val comments: LiveData<List<CommentModel>> get() = _comments
-    fun getCommentsByPostId(postId: Int, token: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val request = Request.Builder()
-                    .url("http://10.0.2.2:8989/api/comments/$postId")
-                    .addHeader("Authorization", "Bearer $token")
-                    .get()
-                    .build()
-                client.newCall(request).execute().use { resp ->
-                    if (resp.isSuccessful) {
-                        val jsonString = resp.body?.string()
-                        val listComment =
-                            json.decodeFromString<ListCommentModel>(jsonString ?: "[]")
-                        Log.d("Test", "$listComment")
-                        Log.d("Test", "$postId")
-                        _comments.postValue(listComment.data)
-                    }
-                }
-
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+//    fun likePost(token: String,postId: Int) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                val commentBody = JSONObject()
+//                    .put("postId", postId)
+//                    .toString()
+//                Log.d("Like", "id2 :$postId")
+//                val JSON = "application/json;charset=utf-8".toMediaType();
+//                val requestBody = commentBody.toRequestBody(JSON);
+//                val request = Request.Builder()
+//                    .url("http://10.0.2.2:8989/api/interact/like")
+//                    .addHeader("Authorization", "Bearer $token")
+//                    .post(requestBody)
+//                    .build()
+//                Log.d("Like", "$token")
+//                val response = client.newCall(request).execute()
+//                if (response.isSuccessful) {
+//                    Log.d("Like", "$response")
+//                }else{
+//                    Log.d("Like", "${response.code}")
+//                    Log.d("Like", "Lỗi ${response.message}")
+//                }
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                Log.d("Like", "${e.message}")
+//            }
+//        }
+//
+//
+//    }
+//    fun UnlikePost(token: String,postId: Int) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                val commentBody = JSONObject()
+//                    .put("postId", postId)
+//                    .toString()
+//                val JSON = "application/json;charset=utf-8".toMediaType();
+//                val requestBody = commentBody.toRequestBody(JSON);
+//                val request = Request.Builder()
+//                    .url("http://10.0.2.2:8989/api/interact/like")
+//                    .addHeader("Authorization", "Bearer $token")
+//                    .delete(requestBody)
+//                    .build()
+//                Log.d("Like", "$token")
+//                val response = client.newCall(request).execute()
+//                if (response.isSuccessful) {
+//                    Log.d("Like", "$response")
+//                }else{
+//                    Log.d("Like", "${response.code}")
+//                }
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                Log.d("Like", "${e.message}")
+//            }
+//        }
+//
+//
+//    }
+//
+//    fun sendComment(postId: Int, content: String, token: String) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                val commentBody = JSONObject()
+//                    .put("postId", postId)
+//                    .put("content", content)
+//                    .toString()
+//                val JSON = "application/json;charset=utf-8".toMediaType();
+//                val requestBody = commentBody.toRequestBody(JSON);
+//                val request = Request.Builder()
+//                    .url("http://10.0.2.2:8989/api/comment")
+//                    .addHeader("Authorization", "Bearer $token")
+//                    .post(requestBody)
+//                    .build()
+//                val response = client.newCall(request).execute()
+//                if (response.isSuccessful) {
+//                    getCommentsByPostId(postId,token)
+//                }
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//
+//
+//    }
+//
+//    private val _comments = MutableLiveData<List<CommentModel>>()
+//    val comments: LiveData<List<CommentModel>> get() = _comments
+//    fun getCommentsByPostId(postId: Int, token: String) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                val request = Request.Builder()
+//                    .url("http://10.0.2.2:8989/api/comments/$postId")
+//                    .addHeader("Authorization", "Bearer $token")
+//                    .get()
+//                    .build()
+//                client.newCall(request).execute().use { resp ->
+//                    if (resp.isSuccessful) {
+//                        val jsonString = resp.body?.string()
+//                        val listComment =
+//                            json.decodeFromString<ListCommentModel>(jsonString ?: "[]")
+//                        Log.d("Test", "$listComment")
+//                        Log.d("Test", "$postId")
+//                        _comments.postValue(listComment.data)
+//                    }
+//                }
+//
+//
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
 }
 

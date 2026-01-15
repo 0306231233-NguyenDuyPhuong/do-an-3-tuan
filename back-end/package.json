@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec babel-node server.js"
+    "start": "nodemon --inspect --exec babel-node server.js"
   },
   "author": "",
   "license": "ISC",
@@ -26,16 +26,11 @@
     "multer": "^2.0.2",
     "mysql2": "^3.16.0",
     "nodemailer": "^7.0.12",
+    "nodemon": "^3.1.10",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.3",
-    "socket.io": "^4.8.3",
-    "socket.io-client": "^4.8.3",
-    "ws": "^8.19.0",
     "xlsx": "^0.18.5"
   },
   "keywords": [],
-  "description": "",
-  "devDependencies": {
-    "nodemon": "^3.1.11"
-  }
+  "description": ""
 }

@@ -4,18 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.AdapterComment
 import com.example.ui_doan3tuan.adapter.AdapterNewsletter
@@ -30,6 +35,15 @@ var slbb:Int = 0;
 var slbv:Int = 0;
 class UserProfileActivity : AppCompatActivity() {
     private val viewModel: UserProfileViewModel by viewModels()
+    private val viewModel2: NewsletterViewModel by viewModels()
+    private val editProfileLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            Log.d("Check", "Đã sửa xong, đang load lại data...")
+            viewModel.getPostID(token, userId)
+        }
+    }
     private lateinit var adapterUserProfile: AdapterUserProfile
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +56,10 @@ class UserProfileActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.imgThoatHoSoNguoiDung).setOnClickListener {
             finish()
         }
+
         findViewById<Button>(R.id.btnChinhSuaTrangCaNhan).setOnClickListener {
-            startActivity(Intent(this, EditProfileActivity::class.java))
+            val intent = Intent(this, EditProfileActivity::class.java)
+            editProfileLauncher.launch(intent)
         }
         val txtSoLuongBaiViet = findViewById<TextView>(R.id.txtSoLuongBaiViet)
         val txtSoLuongBanBe = findViewById<TextView>(R.id.txtSoLuongBanBe)
@@ -91,35 +107,85 @@ class UserProfileActivity : AppCompatActivity() {
         adapterUserProfile = AdapterUserProfile(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },
-            onReportClick = { post -> showReportDialog(post) }
+            onReportClick = { post -> showReportDialog(post) },
+            onLikeClick = { post, isActionLike ->
+                if (isActionLike) viewModel2.likePost(token, post.id)
+                else viewModel2.UnlikePost(token, post.id)
+            },
+            onShareClick = { post ->
+                viewModel2.sharePost(token, post.id)
+                Toast.makeText(this, "Đang chia sẻ: ${post.content}", Toast.LENGTH_SHORT).show()
+            }
         )
+        var imgAvatar = findViewById<ImageView>(R.id.imgUserProfile)
+        var txtTenNguoiDung =findViewById<TextView>(R.id.txtTenNguoiDung)
         revDSBaiDang.adapter = adapterUserProfile
         viewModel.postsId.observe(this) { listPostsId ->
             if (listPostsId != null) {
                 adapterUserProfile.updateData(listPostsId)
                 txtSoLuongBanBe.setText(slbb.toString())
                 txtSoLuongBaiViet.setText(slbv.toString())
+                if(listPostsId.get(0).User.avatar == null || listPostsId.get(0).User.avatar == ""){
+                    imgAvatar.load(R.drawable.profile)
+                }else{
+                    imgAvatar.load("http://10.0.2.2:8989/api/images/${listPostsId.get(0).User.avatar}")
+                }
+                txtTenNguoiDung.setText(listPostsId.get(0).User.full_name)
+
             }else{
                 Log.d("Lỗi", "Null")
             }
         }
-        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("access_token", null)
-        if (token != null) {
-            viewModel.getPostID(token,userId)
-        } else {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+        val progressBar2 =  findViewById<ProgressBar>(R.id.progressBarLoadingProfile)
+        viewModel.isLoading.observe(this) { isLoading ->
+            if (isLoading) {
+                progressBar2.visibility = View.VISIBLE
+                revDSBaiDang.visibility = View.GONE
+            } else {
+                progressBar2.visibility = View.GONE
+                revDSBaiDang.visibility = View.VISIBLE
+            }
         }
+        viewModel.error.observe(this) { error ->
+            val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+
+            if (error == "TOKEN_EXPIRED") {
+                sharedPref.edit().remove("access_token").apply()
+                sharedPref.edit().remove("refresh_token").apply()
+                sharedPref.edit().remove("access_token_time").apply()
+                sharedPref.edit().remove("refresh_token_time").apply()
+                Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+
+        viewModel.getPostID(token,userId)
     }
+
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_report_profile, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
+        btnReport.setOnClickListener {
+            viewModel.deletePost(post.id, token)
+            viewModel.deletePost.observe(this) { reported ->
+                if (reported) {
+                    Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
+
+                    viewModel.getPostID(token,userId)
+                }else{
+                    Log.d("Lỗi", "Null")
+                }
+            }
+            Log.e("Lỗi", "Id lần 1: ${post.id}")
+            dialog.dismiss()
+        }
         dialog.setContentView(view)
         dialog.show()
     }
+
     private fun showCommentDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_comment, null)
@@ -132,7 +198,7 @@ class UserProfileActivity : AppCompatActivity() {
         rcvComments.layoutManager = LinearLayoutManager(this)
         rcvComments.adapter = commentAdapter
 
-        viewModel.comments.observe(this) { listComments ->
+        viewModel2.comments.observe(this) { listComments ->
             if (!listComments.isNullOrEmpty()) {
                 commentAdapter.updateData(listComments)
                 rcvComments.scrollToPosition(listComments.size - 1)
@@ -142,19 +208,26 @@ class UserProfileActivity : AppCompatActivity() {
                 rcvComments.scrollToPosition(listComments.size - 1)
             }
         }
-        viewModel.getCommentsByPostId(post.id, token)
+        viewModel2.getCommentsByPostId(post.id, token)
         btnSend.setOnClickListener {
             val content = edtComment.text.toString()
             if (content.isNotBlank()) {
-                viewModel.sendComment(post.id, content, token)
+                viewModel2.sendComment(post.id, content, token)
                 edtComment.setText("")
-                viewModel.getCommentsByPostId(post.id, token)
+                viewModel2.getCommentsByPostId(post.id, token)
             }
         }
         dialog.setOnDismissListener {
-            viewModel.comments.removeObservers(this)
+            viewModel2.comments.removeObservers(this)
         }
         dialog.setContentView(view)
         dialog.show()
     }
+
+
+
+
+
+
+
 }

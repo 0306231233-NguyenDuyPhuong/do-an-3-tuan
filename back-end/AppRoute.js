@@ -72,7 +72,11 @@ const AppRoute = (app) => {
     UserController.update
   );
   router.put("/admin/user/:id", verifyToken, UserController.putUserAdmin);
-
+  router.get(
+    "/interact/like/status/:postId",
+    verifyToken,
+    InteractController.isLiked
+  );
   //INTERACT
   router.post(
     "/interact/like",
