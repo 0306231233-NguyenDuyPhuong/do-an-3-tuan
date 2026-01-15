@@ -75,10 +75,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun xuLyDangNhap() {
-        val username = edtUsername.text.toString().trim()
-        val password = edtPassword.text.toString()
+        val username = "nguyenduyphuong3349@gmail.com"//edtUsername.text.toString().trim()
+        val password = "Password@123"//edtPassword.text.toString()
 
-        if (username.isEmpty()) {
+        /*if (username.isEmpty()) {
             edtUsername.error = "Vui lòng nhập email hoặc số điện thoại"
             return
         }
@@ -86,7 +86,7 @@ class LoginActivity : AppCompatActivity() {
         if (password.isEmpty()) {
             edtPassword.error = "Vui lòng nhập mật khẩu"
             return
-        }
+        }*/
 
 
         btnLogin.text = "Đang đăng nhập..."

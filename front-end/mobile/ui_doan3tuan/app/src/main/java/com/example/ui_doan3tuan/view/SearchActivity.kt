@@ -74,6 +74,7 @@ class SearchActivity : AppCompatActivity() {
             if (listPosts != null) {
                 if (page == 1) {
                     adapterNewsletter.setData(listPosts)
+                    adapterNewsletter.setData(listPosts)
                 } else {
                     adapterNewsletter.updateData(listPosts)
                 }
