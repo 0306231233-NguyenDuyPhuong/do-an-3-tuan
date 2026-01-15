@@ -148,12 +148,12 @@
                         </RelativeLayout>
                     </LinearLayout>
 
-                    <com.google.android.material.button.MaterialButton
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnLogin"
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
                         android:layout_marginTop="24dp"
-                        android:backgroundTint="#FF4C9AFF"
+                       android:background="@drawable/bg_button_blue"
                     android:gravity="center"
                     android:text="@string/login_button"
                     android:textAllCaps="false"
