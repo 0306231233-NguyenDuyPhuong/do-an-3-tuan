@@ -126,7 +126,7 @@ class SignupActivity : AppCompatActivity() {
 
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle(" Thành công!")
-            .setMessage("Tạo tài khoản thành công")
+            .setMessage("Tạo tài khoản thành công cho: ${response.user.full_name}")
             .setPositiveButton("Đăng nhập ngay") { dialog, _ ->
                 dialog.dismiss()
 

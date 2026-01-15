@@ -63,4 +63,8 @@ class RegisterViewModel : ViewModel() {
         })
     }
 
+    // Reset trạng thái
+    fun reset() {
+        _loi.value = ""
+    }
 }

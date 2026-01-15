@@ -9,9 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.model.User
 import com.example.ui_doan3tuan.viewmodel.LoginViewModel
-
-var token: String = ""
-
+var token:String = "";
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var viewModel: LoginViewModel
@@ -30,12 +28,14 @@ class LoginActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         viewModel.init(applicationContext)
 
+
         edtUsername = findViewById(R.id.etEmail)
         edtPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
         tvSignUp = findViewById(R.id.tvSignUp)
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
         ivPasswordToggle = findViewById(R.id.ivPasswordToggle)
+
 
         if (kiemTraDaDangNhap()) {
             chuyenManHinhChinh()
@@ -66,6 +66,7 @@ class LoginActivity : AppCompatActivity() {
             isPasswordVisible = !isPasswordVisible
             if (isPasswordVisible) {
                 edtPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+
             } else {
                 edtPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             }
@@ -87,49 +88,33 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
+
         btnLogin.text = "Đang đăng nhập..."
         btnLogin.isEnabled = false
 
+
         viewModel.login(username, password,
             onSuccess = { accessToken, refreshToken, userData ->
-                xuLyDangNhapThanhCong(accessToken, userData)
+                xuLyDangNhapThanhCong(userData)
             },
             onError = { error ->
+
                 xuLyDangNhapThatBai(error)
             }
         )
     }
 
-    private fun xuLyDangNhapThanhCong(accessToken: String, userData: User) {
-        // Lưu token và user id vào SharedPreferences
-        luuThongTinNguoiDung(accessToken, userData.id)
+    private fun xuLyDangNhapThanhCong(userData: User) {
 
         btnLogin.text = "Đăng nhập"
         btnLogin.isEnabled = true
         chuyenManHinhChinh()
     }
 
-    private fun luuThongTinNguoiDung(accessToken: String, userId: Int) {
-        val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
-        val editor = sharedPref.edit()
-
-        // Lưu token
-        editor.putString("access_token", accessToken)
-
-        // Lưu user id - QUAN TRỌNG
-        editor.putInt("user_id", userId)
-
-        // Có thể lưu thêm thông tin user nếu cần
-        editor.apply()
-
-        // Log để debug
-        println("Đã lưu token: $accessToken")
-        println("Đã lưu user id: $userId")
-    }
-
     private fun xuLyDangNhapThatBai(error: String) {
         btnLogin.text = "Đăng nhập"
         btnLogin.isEnabled = true
+
 
         Toast.makeText(this, error, Toast.LENGTH_LONG).show()
 
@@ -138,7 +123,6 @@ class LoginActivity : AppCompatActivity() {
             edtPassword.requestFocus()
         }
     }
-
     private fun kiemTraDaDangNhap(): Boolean {
         return viewModel.isTokenValid()
     }

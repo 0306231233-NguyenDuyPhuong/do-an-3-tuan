@@ -10,9 +10,8 @@
 
     <FrameLayout
         android:id="@+id/avatarContainer"
-        android:layout_width="97dp"
-        android:layout_height="91dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,8 +19,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgAvatar"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/profile"
             app:shapeAppearanceOverlay="@style/CircleImage" />
@@ -60,7 +59,7 @@
         android:id="@+id/txtName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="68dp"
         android:layout_marginTop="4dp"
         android:text="Nguyễn Văn An"
         android:textColor="@android:color/white"
@@ -69,27 +68,30 @@
         app:layout_constraintStart_toEndOf="@+id/avatarContainer"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/acceptButton"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_buttton_blue"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/background_btn"
         android:text="Chấp nhận"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtName"
+        app:layout_constraintStart_toEndOf="@+id/avatarContainer"
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/rejectButton"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
         android:layout_marginStart="22dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/google_red"
         android:text="Từ chối"
-        android:background="@drawable/bg_buttton_black"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         app:layout_constraintStart_toEndOf="@+id/acceptButton"

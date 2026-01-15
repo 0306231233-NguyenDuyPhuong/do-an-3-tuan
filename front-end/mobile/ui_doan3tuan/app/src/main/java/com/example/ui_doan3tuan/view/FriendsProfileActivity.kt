@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.ui_doan3tuan.ApiClient
 import com.example.ui_doan3tuan.R
+import com.example.ui_doan3tuan.adapter.FriendRequestAdapter
 import com.example.ui_doan3tuan.model.ApiMessage
 import com.example.ui_doan3tuan.model.FriendListResponse
+import com.example.ui_doan3tuan.model.FriendRequest
 import com.example.ui_doan3tuan.model.SendRequest
 import com.example.ui_doan3tuan.model.UnfriendRequest
 import retrofit2.Call
@@ -20,6 +22,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class FriendsProfileActivity : AppCompatActivity() {
+
 
     private lateinit var btnKetBan: Button
     private lateinit var btnNhanTin: Button
