@@ -45,9 +45,11 @@ data class SendRequest(
 
 // Model cho hủy kết bạn
 data class UnfriendRequest(
-    val friendId: Int
+    val friendId: Int,
 )
-
+data class CancelRequest(
+    val to: Int
+)
 
 // Response message
 data class ApiMessage(

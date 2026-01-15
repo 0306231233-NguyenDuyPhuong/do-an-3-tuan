@@ -67,28 +67,27 @@ class LoginViewModel : ViewModel() {
         })
     }
 
-    // Lưu dữ liệu đăng nhập
+
     private fun saveLoginData(response: LoginResponse) {
         val currentTime = System.currentTimeMillis()
         val editor = sharedPref.edit()
 
-        editor.remove("access_token_time")
-        editor.remove("access_token")
+        // Xóa các token cũ nếu có
+        editor.clear()
+
         // Lưu tokens với thời gian
         editor.putString("access_token", response.accessToken)
-        Log.d("token", "login ${response.accessToken} ")
-
-        token = response.accessToken
         editor.putLong("access_token_time", currentTime)
 
         editor.putString("refresh_token", response.refreshToken)
         editor.putLong("refresh_token_time", currentTime)
 
+        // Lưu thông tin user - QUAN TRỌNG
         editor.putInt("user_id", response.user.id)
         editor.putString("user_role", response.user.role)
         editor.putString("full_name", response.user.full_name)
-        editor.apply()
 
+        // Lưu email và phone nếu có
         if (response.user.email != null) {
             editor.putString("email", response.user.email)
         }
@@ -100,7 +99,12 @@ class LoginViewModel : ViewModel() {
         editor.putBoolean("is_logged_in", true)
         editor.putLong("last_login_time", currentTime)
 
-        editor.apply()
+        val success = editor.commit()
+
+        // Log để debug
+        Log.d("LoginViewModel", "Saved user_id: ${response.user.id}")
+        Log.d("LoginViewModel", "Saved token: ${response.accessToken}")
+        Log.d("LoginViewModel", "Save success: $success")
     }
 
     // KIỂM TRA TOKEN CÒN HIỆU LỰC

@@ -1,6 +1,7 @@
 package com.example.ui_doan3tuan.view
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
@@ -14,6 +15,7 @@ import com.example.ui_doan3tuan.model.AcceptRequest
 import com.example.ui_doan3tuan.model.FriendRequest
 import com.example.ui_doan3tuan.model.FriendRequestResponse
 import com.example.ui_doan3tuan.model.RejectRequest
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,7 +66,7 @@ class FriendsAddListActivity : AppCompatActivity() {
         // Kiểm tra xem đã đăng nhập chưa
         if (token.isEmpty()) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
-            finish() // Đóng màn hình nếu chưa đăng nhập
+            finish()
             return
         }
 
@@ -75,7 +77,8 @@ class FriendsAddListActivity : AppCompatActivity() {
                 override fun onResponse(
                     call: Call<FriendRequestResponse>,
                     response: Response<FriendRequestResponse>
-                ) {
+
+                ) {  Log.e("ACCEPT_API", "Response code: ${response.code()}")
                     if (response.isSuccessful) {
                         val data = response.body()
 
@@ -131,9 +134,10 @@ class FriendsAddListActivity : AppCompatActivity() {
             return
         }
 
-        // Tạo request body (gửi id người gửi lời mời)
+        // Tạo request body
         val acceptBody = AcceptRequest(from = request.sender.id)
-
+        Log.e("ACCEPT_API", "TOKEN: Bearer $token")
+        Log.e("ACCEPT_API", "BODY: ${Gson().toJson(acceptBody)}")
         ApiClient.apiService.acceptRequest("Bearer $token", acceptBody)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -141,11 +145,10 @@ class FriendsAddListActivity : AppCompatActivity() {
                         // THÀNH CÔNG
                         Toast.makeText(
                             this@FriendsAddListActivity,
-                            "Đã chấp nhận kết bạn với ${request.sender.full_name}",
+                            "Đã chấp nhận kết bạn ",
                             Toast.LENGTH_SHORT
-                        ).show()
 
-                        // XÓA LỜI MỜI KHỎI DANH SÁCH
+                        ).show()
                         requestList.remove(request)
                         adapter.notifyDataSetChanged()
                     } else {
@@ -178,7 +181,8 @@ class FriendsAddListActivity : AppCompatActivity() {
 
         // Tạo request body (gửi id người gửi lời mời)
         val rejectBody = RejectRequest(from = request.sender.id)
-
+        Log.e("REJECT_API", "BODY: ${Gson().toJson(rejectBody)}")
+        Log.e("REJECT_API", "TOKEN: Bearer $token")
         // GỌI API TỪ CHỐI
         ApiClient.apiService.rejectRequest("Bearer $token", rejectBody)
             .enqueue(object : Callback<Void> {

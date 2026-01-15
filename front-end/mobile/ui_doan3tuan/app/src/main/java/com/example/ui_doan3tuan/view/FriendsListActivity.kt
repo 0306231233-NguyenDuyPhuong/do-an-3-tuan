@@ -87,7 +87,6 @@ class FriendsListActivity : AppCompatActivity() {
         Log.d("API_DEBUG", "Token: $token")
         Log.d("API_DEBUG", "Full token: $fullToken")
 
-        // Sử dụng coroutine để không block main thread
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 Log.d("API_DEBUG", "Đang gọi API...")
