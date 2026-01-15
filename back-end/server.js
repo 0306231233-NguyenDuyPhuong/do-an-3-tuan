@@ -2,7 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import AppRoute from "./AppRoute.js";
-import path from "path";
+import http from "http";
+import initSocket from "./sockets/socket.js";
 
 dotenv.config();
 
@@ -14,15 +15,16 @@ app.use(
     credentials: true,
   })
 );
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-AppRoute(app);
-
 const port = process.env.PORT || 8989;
 
-app.listen(port, "0.0.0.0", () => {
+const server = http.createServer(app);
+initSocket(server);
+AppRoute(app);
+
+server.listen(port, "0.0.0.0", () => {
   console.log(`Server running at http://localhost:${port}`);
 });
