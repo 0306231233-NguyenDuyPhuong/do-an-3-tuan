@@ -131,10 +131,33 @@ const unsharePost = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+const isLiked = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const currentUserId = req.user.userId;
+
+    if (!postId) return res.status(400).json({ message: "postId is required" });
+
+    // kiem tra su ton tai cua post
+    const post = await db.Post.findByPk(postId);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    //kiem tra da like
+    const liked = await db.Like.findOne({
+      where: {
+        post_id: postId,
+        user_id: currentUserId,
+      },
+    });
+    return res.status(409).json({ isLiked: liked ? true : false });
+  } catch (error) {}
+};
 
 export default {
+  
   likePost,
   unlikePost,
   sharePost,
   unsharePost,
+  isLiked,
 };

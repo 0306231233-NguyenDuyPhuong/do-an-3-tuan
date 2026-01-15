@@ -12,7 +12,8 @@ const getPostMediaById = async (req, res) => {
 };
 
 const postPostMedia = async (req, res) => {
-  const {post_id} = req.body;
+  try{
+    const {post_id} = req.body;
   const postCheck = await db.Post.findByPk(post_id)
   if(!postCheck){
     return res.status(404).json({
@@ -23,6 +24,11 @@ const postPostMedia = async (req, res) => {
   return res.status(200).json({ message: "Create post media success",
     data: postData
    });
+  } catch(e){
+    return res.status(500).json({
+      error: e
+    })
+  }
 };
 
 const deletePostMedia = async (req, res) => {
