@@ -109,7 +109,7 @@ const getPostUser = async (req, res) => {
     const { search, sort, date, dateStart, dateEnd } = req.query;
 
     const page = Number(req.query.page) || 1;
-    const limit = 10;
+    const limit = 5;
     const offset = (page - 1) * limit;
     const userId = Number(req.user.userId);
     const userRole = Number(req.user.role);
@@ -232,8 +232,6 @@ const getPostUser = async (req, res) => {
   }
 };
 
-
-
 const getPostAdmin = async (req, res) => {
   const { search, sort,
     status, date, dateStart,
@@ -242,6 +240,7 @@ const getPostAdmin = async (req, res) => {
   const limit = 10;
   const offset = (page - 1) * limit;
   const userRole = Number(req.user.role);
+  
   if (userRole != 1) {
     return res.status(403).json({
       message: "User no access rights"
@@ -389,7 +388,8 @@ const getPostById = async (req, res) => {
 
 
 const postPost = async (req, res) => {
-  const { user_id, location_id } = req.body;
+  try{
+    const { user_id, location_id } = req.body;
   const userCheck = await db.User.findOne({
     where: { id: user_id }
   });
@@ -411,6 +411,11 @@ const postPost = async (req, res) => {
     message: "Insert post success",
     data: postData
   });
+  } catch(e){
+    return res.status(500).json({
+      error: e
+    })
+  }
 };
 
 const putPostUser = async (req, res) => {

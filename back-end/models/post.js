@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       like_count: DataTypes.INTEGER,
       comment_count: DataTypes.INTEGER,
       share_count: DataTypes.INTEGER,
+      is_like: DataTypes.BOOLEAN,
     },
     {
       tableName: "posts",

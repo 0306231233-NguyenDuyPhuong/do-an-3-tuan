@@ -1,24 +1,44 @@
-import { where } from "sequelize";
+import { where, Op } from "sequelize";
 import db from "../models/index.js";
-import { date } from "joi";
 import REPORTSTATUS from "../constants/ReportStatus.js"
-import { stat } from "@babel/core/lib/gensync-utils/fs.js";
 
 const getReport = async (req, res) => {
   try {
-    const {report_type, status, report_id} = req.query;
+    const { report_type, status, report_id, date, dateStart, dateEnd } = req.query;
     const page = Number(req.query.page) || 1;
     const limit = 10;
-    const offset = (page-1)*limit;
+    const offset = (page - 1) * limit;
+    let createdFilter = {};
+
+    if (dateStart && dateEnd) {
+      createdFilter = {
+        [Op.between]: [
+          `${dateStart} 00:00:00`,
+          `${dateEnd} 23:59:59`
+        ]
+      };
+    } else if (date) {
+      createdFilter = {
+        [Op.between]: [
+          `${date} 00:00:00`,
+          `${date} 23:59:59`
+        ]
+      };
+    }
+
+
     const whereReport = {
-      ...(report_type!==undefined && {
-        target_type:report_type
+      ...(report_type && {
+        target_type: report_type
       }),
-      ...(status !== undefined && 
-        {status: Number(status)}
+      ...(status !== undefined &&
+        { status: Number(status) }
       ),
-      ...(report_id !== undefined && {
+      ...(report_id && {
         id: Number(report_id)
+      }),
+      ...(Object.keys(createdFilter).length && {
+        created_at: createdFilter
       })
     }
     const reportData = await db.Report.findAndCountAll({
@@ -26,14 +46,14 @@ const getReport = async (req, res) => {
       limit,
       where: whereReport
     })
-  return res.status(200).json({ 
-    message: "Get report success", 
-    page, 
-    limit,
-    data:reportData 
-  });
+    return res.status(200).json({
+      message: "Get report success",
+      page,
+      limit,
+      data: reportData
+    });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       error: error
     })
   }
@@ -47,36 +67,36 @@ const postReport = async (req, res) => {
   try {
     const { reporter_id, target_id, target_type, reason, description } = req.body;
   let targetCheck;
-  if(target_type == "user"){
+  if (target_type == "user") {
     targetCheck = await db.User.findOne({
-      where: {id: target_id}
+      where: { id: target_id }
     })
-  } else if(target_type == "post"){
+  } else if (target_type == "post") {
     targetCheck = await db.Post.findOne({
-      where: {id: target_id}
+      where: { id: target_id }
     })
-  }  else{
+  } else {
     targetCheck = await db.Comment.findOne({
-      where: {id: target_id}
+      where: { id: target_id }
     })
   }
-  if(!targetCheck){
-      return res.status(404).json({
-        message: "target not found"
-      });
-  } else{
-    const reportData = await db.Report.create({
-        reporter_id,
-        target_type,
-        target_id,
-        reason,
-        description,
-        status: REPORTSTATUS.PENDING
+  if (!targetCheck) {
+    return res.status(404).json({
+      message: "target not found"
     });
-      return res.status(201).json({ 
-        message: "Insert report success",
-        data: reportData 
-   });
+  } else {
+    const reportData = await db.Report.create({
+      reporter_id,
+      target_type,
+      target_id,
+      reason,
+      description,
+      status: REPORTSTATUS.PENDING
+    });
+    return res.status(201).json({
+      message: "Insert report success",
+      data: reportData
+    });
   }
   } catch (error) {
    return res.status(500).json({
@@ -86,31 +106,31 @@ const postReport = async (req, res) => {
 };
 
 const putReport = async (req, res) => {
-    const { id } = req.params;
-    const reportData = await db.Report.findByPk(id);
-    if(!reportData){
-      return res.status(404).json({
-        message:"Report not found"
-      });
-    }
-    await db.Report.update(req.body, {where: {id}})
-    return res.status(200).json({
-      message:"Report update success"
-    })
+  const { id } = req.params;
+  const reportData = await db.Report.findByPk(id);
+  if (!reportData) {
+    return res.status(404).json({
+      message: "Report not found"
+    });
+  }
+  await db.Report.update(req.body, { where: { id } })
+  return res.status(200).json({
+    message: "Report update success"
+  })
 };
 const deleteReport = async (req, res) => {
-      const {id} = req.params;
-      const locationCheck = await db.Report.findByPk(id);
-      if(!locationCheck){
-          return res.status(200).json({
-          message: "Location not found",
-      });
-      } else{
-          await db.Report.destroy({where: {id}});
-          return res.status(200).json({
-          message: "Delete report success",
-          });
-      }
+  const { id } = req.params;
+  const locationCheck = await db.Report.findByPk(id);
+  if (!locationCheck) {
+    return res.status(200).json({
+      message: "Location not found",
+    });
+  } else {
+    await db.Report.destroy({ where: { id } });
+    return res.status(200).json({
+      message: "Delete report success",
+    });
+  }
 };
 
 export default {

@@ -14,16 +14,29 @@ export const postLoginUser = (data) => {
   });
 };
 
-export const fetchUser = (page, search, role)=>{
-  return axios.get(`http://localhost:8989/api/users?page=${page}&search=${search}&role=${role}`, 
+export const fetchUser = ({
+  page=1, 
+  search, 
+  role,
+  status
+})=>{
+  return axios.get(`http://localhost:8989/api/users`, 
     {headers: {
       Authorization: `Bearer ${accessToken}`
-    }}
+    },
+    params: {
+      page, 
+      search,
+      role,
+      status
+    }
+  },
+  
   )
 }
 
 export const fetchUserById = (id)=>{
-  return axios.get(`http://localhost:8989/api/users/${id}`, 
+  return axios.get(`http://localhost:8989/api/admin/users/${id}`, 
     {headers: {
       Authorization: `Bearer ${accessToken}`
     }}

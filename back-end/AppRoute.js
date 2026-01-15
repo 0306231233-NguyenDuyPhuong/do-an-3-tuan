@@ -35,6 +35,8 @@ import CommentController from "./controllers/CommentController.js";
 import checkBlocked from "./middledewares/checkBlocked.js";
 import checkBlockedPost from "./middledewares/checkBlockedPost.js";
 import upload from "./middledewares/ImageUpload.js";
+import checkCanSave from "./middledewares/CheckCanSave.js";
+import ChatController from "./controllers/ChatController.js";
 
 const AppRoute = (app) => {
   router.get("/user", AuthController.getUser);
@@ -48,6 +50,10 @@ const AppRoute = (app) => {
   router.post("/auth/logout", AuthController.logout);
   router.post("/auth/forgot-password", AuthController.forgotPassword);
   router.get("/auth/reset-password", AuthController.resetPassword);
+
+  //Chat
+  router.get("/conversations", verifyToken, ChatController.getConversation);
+  router.get("/messages/:receiverId", verifyToken, ChatController.getMessages);
 
   //User
   router.get(
@@ -75,7 +81,7 @@ const AppRoute = (app) => {
   router.post(
     "/interact/like",
     verifyToken,
-    checkBlockedPost,
+    //checkBlockedPost,
     checkCanLike,
     InteractController.likePost
   );
@@ -98,6 +104,28 @@ const AppRoute = (app) => {
     checkBlockedPost,
     InteractController.unsharePost
   );
+  router.post(
+    "/interact/save",
+    verifyToken,
+    checkBlockedPost,
+    checkCanSave,
+    InteractController.savePost
+  );
+  router.delete(
+    "/interact/unsave",
+    verifyToken,
+    checkBlockedPost,
+    InteractController.unSavePost
+  );
+
+  router.get("/interact/shared", verifyToken, InteractController.getSharedPost);
+  router.get("/interact/saved", verifyToken, InteractController.getSavePost);
+  router.get(
+    "/interact/like/status/:postId",
+    verifyToken,
+    InteractController.isLiked
+  );
+
   //router.get("/interact/count/:postId", InteractController.getCount);
 
   //Comment
@@ -134,7 +162,7 @@ const AppRoute = (app) => {
   router.post(
     "/friends/requests",
     verifyToken,
-    checkBlocked,
+    //checkBlocked,
     FriendController.sendFriendRequest
   );
   router.get(
