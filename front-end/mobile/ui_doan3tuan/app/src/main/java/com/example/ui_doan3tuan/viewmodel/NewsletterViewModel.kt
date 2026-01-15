@@ -60,12 +60,14 @@ class NewsletterViewModel : ViewModel() {
                         val response = json.decodeFromString<PostResponseModel>(body)
                         val current = _posts.value ?: emptyList()
                         val newList = response.data
-                        val updateList = current + newList
+                        val updateList = if(page==1) newList else current + newList
+                        Log.d("NewLetter", "Size ${updateList.size}")
                         Log.d("NewLetter", "Body $body")
                         Log.d("NewLetter", "Cur $current")
                         Log.d("NewLetter", "New $newList")
                         Log.d("NewLetter", "Update $updateList")
-                        _posts.postValue(updateList)
+
+                        _posts.postValue(newList)
                     }
                 }catch (e: Exception){
                     e.printStackTrace()
@@ -146,6 +148,36 @@ class NewsletterViewModel : ViewModel() {
 
 
     }
+    fun sharePost(token: String,postId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val commentBody = JSONObject()
+                    .put("postId", postId)
+                    .toString()
+                Log.d("Share", "id2 :$postId")
+                val JSON = "application/json;charset=utf-8".toMediaType();
+                val requestBody = commentBody.toRequestBody(JSON);
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/interact/share")
+                    .addHeader("Authorization", "Bearer $token")
+                    .post(requestBody)
+                    .build()
+                Log.d("Share", "$token")
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    Log.d("Share", "$response")
+                }else{
+                    Log.d("Share", "${response.code}")
+                    Log.d("Share", "Lỗi ${response.message}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("Share", "${e.message}")
+            }
+        }
+
+
+    }
     fun UnlikePost(token: String,postId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -190,9 +222,7 @@ class NewsletterViewModel : ViewModel() {
                 client.newCall(request).execute().use { resp ->
                     if (resp.isSuccessful) {
                         val jsonString = resp.body?.string()
-                        Log.d("NewLetter", "Response Comment: $jsonString") // Log để kiểm tra JSON trả về
-                        // Sửa chỗ này: Nếu jsonString null thì trả về chuỗi json rỗng hợp lệ với model
-                        // Giả sử ListCommentModel có cấu trúc { data: [] }
+                        Log.d("NewLetter", "Response Comment: $jsonString")
                         try {
                             val listComment = json.decodeFromString<ListCommentModel>(jsonString ?: "{\"data\":[]}")
                             _comments.postValue(listComment.data)
@@ -263,6 +293,9 @@ class NewsletterViewModel : ViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+    fun clearPosts() {
+        _posts.postValue(mutableListOf())
     }
 
 }

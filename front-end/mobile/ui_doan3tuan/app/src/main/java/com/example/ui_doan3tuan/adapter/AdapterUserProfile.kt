@@ -15,7 +15,13 @@ import com.example.ui_doan3tuan.model.PostModel
 import java.time.Duration
 import java.time.Instant
 
-class AdapterUserProfile(private var list: List<PostModel>,val onCommentClick:(PostModel)-> Unit,val onReportClick:(PostModel)-> Unit): RecyclerView.Adapter<AdapterUserProfile.UserProfileViewHolder>() {
+class AdapterUserProfile(
+    private var list: List<PostModel>,
+    val onCommentClick:(PostModel)-> Unit,
+    val onReportClick:(PostModel)-> Unit,
+    val onLikeClick: (PostModel, Boolean) -> Unit,
+    val onShareClick: (PostModel) -> Unit
+): RecyclerView.Adapter<AdapterUserProfile.UserProfileViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -46,20 +52,30 @@ class AdapterUserProfile(private var list: List<PostModel>,val onCommentClick:(P
         holder.txtSoLuongChiaSe.text = list[position].shareCount.toString()
         holder.txtSoLuongBinhLuan.text = list[position].commentCount.toString()
 
-        var isLiked:Boolean  = false;
-        holder.imgThich.setOnClickListener {
-            isLiked=!isLiked;
-            if(isLiked==true){
-                list[position].likeCount = list[position].likeCount+1
-                holder.txtSoLuongThich.text = list[position].likeCount.toString()
-                holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
-                holder.imgThich.setColorFilter(Color.parseColor("#FF0000"))
+        if (list[position].is_liked) {
+            holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
+            holder.imgThich.setColorFilter(Color.parseColor("#FF0000")) // Màu ĐỎ
+        } else {
+            holder.imgThich.setImageResource(R.drawable.baseline_favorite_24) // Hoặc icon viền (border)
+            holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF")) // Màu TRẮNG/Mặc định
+        }
 
-            }else{
-                list[position].likeCount = list[position].likeCount-1
+        holder.imgThich.setOnClickListener {
+            if (list[position].is_liked) {
+                list[position].is_liked = false
+                list[position].likeCount = list[position].likeCount - 1
+
+                holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF")) // Về trắng
                 holder.txtSoLuongThich.text = list[position].likeCount.toString()
-                holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
-                holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF"))
+                onLikeClick(list[position], false)
+
+            } else {
+                list[position].is_liked = true
+                list[position].likeCount = list[position].likeCount + 1
+
+                holder.imgThich.setColorFilter(Color.parseColor("#FF0000")) // Lên đỏ
+                holder.txtSoLuongThich.text = list[position].likeCount.toString()
+                onLikeClick(list[position], true)
             }
         }
 
@@ -85,6 +101,9 @@ class AdapterUserProfile(private var list: List<PostModel>,val onCommentClick:(P
             holder.imgDaiDien.load(fullUrl) {
                 crossfade(true)
             }
+        }
+        holder.imgChiaSe.setOnClickListener {
+            onShareClick(list[position])
         }
 
     }

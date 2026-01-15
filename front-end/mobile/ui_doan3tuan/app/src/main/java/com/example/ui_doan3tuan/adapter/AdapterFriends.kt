@@ -25,8 +25,12 @@ class AdapterFriends(private var listFriend:List<UserModel>): RecyclerView.Adapt
         position: Int
     ) {
         holder.txtTenBaBe.text = listFriend[position].full_name
-        val url ="http://10.0.2.2:8989/api/images/${listFriend[position].avatar}"
-        holder.imgBanBe.load(url)
+        if(listFriend[position].avatar.toString().isNotEmpty()) {
+            val fullUrl = "http://10.0.2.2:8989/api/images/${listFriend[position].avatar}"
+            holder.imgBanBe.load(fullUrl)
+        } else{
+            holder.imgBanBe.setImageResource(R.drawable.profile)
+        }
 
     }
 

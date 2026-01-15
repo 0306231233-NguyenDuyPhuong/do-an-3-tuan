@@ -135,13 +135,8 @@ class CreatePostActivity : AppCompatActivity() {
     }
     fun uriToFile(context: Context, uri: Uri): File? {
         try {
-            // 1. Mở luồng đọc dữ liệu từ URI
             val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-            // 2. Tạo file tạm trong bộ nhớ cache của app (để không cần xin quyền write storage)
-            // Đặt tên file ngẫu nhiên hoặc theo timestamp để tránh trùng
             val tempFile = File(context.cacheDir, "${System.currentTimeMillis()}.jpg")
-
-            // 3. Copy dữ liệu từ luồng đọc sang file tạm
             inputStream?.use { input ->
                 FileOutputStream(tempFile).use { output ->
                     input.copyTo(output)

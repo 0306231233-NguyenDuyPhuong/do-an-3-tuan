@@ -163,7 +163,13 @@ class CreatePostViewModel : ViewModel() {
                 .addHeader("Authorization", "Bearer $token")
                 .post(requestBody)
                 .build()
-            client.newCall(request).execute()
+            client.newCall(request).execute().use {
+                resp ->
+                if (!resp.isSuccessful) {
+                    Log.d("Test", "Request thất bại: ${resp.message}")
+                }
+            }
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
