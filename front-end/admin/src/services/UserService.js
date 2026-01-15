@@ -17,7 +17,8 @@ export const postLoginUser = (data) => {
 export const fetchUser = ({
   page=1, 
   search, 
-  role
+  role,
+  status
 })=>{
   return axios.get(`http://localhost:8989/api/users`, 
     {headers: {
@@ -26,7 +27,8 @@ export const fetchUser = ({
     params: {
       page, 
       search,
-      role
+      role,
+      status
     }
   },
   

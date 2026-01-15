@@ -243,7 +243,8 @@ const getPostById = async (req, res) => {
 };
 
 const postPost = async (req, res) => {
-  const { user_id, location_id } = req.body;
+  try{
+    const { user_id, location_id } = req.body;
   const userCheck = await db.User.findOne({
     where: { id: user_id }
   });
@@ -265,6 +266,11 @@ const postPost = async (req, res) => {
     message: "Insert post success",
     data: postData
   });
+  } catch(e){
+    return res.status(500).json({
+      error: e
+    })
+  }
 };
 
 const putPostUser = async (req, res) => {

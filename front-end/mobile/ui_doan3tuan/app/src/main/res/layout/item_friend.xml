@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="1dp"
-    android:background="@color/black"
+    android:background="#0b141a"
     android:orientation="horizontal"
-
     android:padding="11dp">
 
     <!-- Ảnh đại diện -->
@@ -37,5 +36,25 @@
         android:textSize="20dp"
         app:layout_constraintStart_toEndOf="@+id/imgBanBe"
         app:layout_constraintTop_toTopOf="@+id/imgBanBe" />
+
+    <TextView
+        android:id="@+id/textView34"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Đang hoạt động"
+        android:textColor="@color/success"
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="@+id/txtTenBaBe"
+        app:layout_constraintTop_toBottomOf="@+id/txtTenBaBe" />
+
+    <TextView
+        android:id="@+id/textView35"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_cicler_green"
+        app:layout_constraintBottom_toBottomOf="@+id/imgBanBe"
+        app:layout_constraintEnd_toEndOf="@+id/imgBanBe"
+        app:layout_constraintTop_toBottomOf="@+id/imgBanBe" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

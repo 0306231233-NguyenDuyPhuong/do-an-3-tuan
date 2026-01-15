@@ -26,6 +26,7 @@ const Post = () => {
     search = "",
     sort = "",
     date, 
+    status,
     dateStart, 
     dateEnd
   } = {}) => {
@@ -34,6 +35,7 @@ const Post = () => {
       page,
       search, sort,
       date, 
+      status,
       dateStart,
       dateEnd
     });
@@ -162,11 +164,17 @@ const Post = () => {
               onChange={(e) => {
                 const value = e.target.value;
                 setSort(value);
+                if(value == "treding")
                 getPostAdmin({page: 1, sort: value})
+                else{
+                  getPostAdmin({page: 1, status: Number(value)})
+                }
               }}
             >
               <option value="">date</option>
               <option value="trending">Trending</option>
+              <option value="1">approved</option>
+              <option value="0">delete</option>
             </select>
           </div>
               <div className="flex flex-col items-center justify-center h-18 border px-2 border-gray-300 rounded-md shadow-md">

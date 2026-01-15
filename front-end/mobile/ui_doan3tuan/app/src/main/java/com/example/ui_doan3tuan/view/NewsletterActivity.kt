@@ -28,7 +28,7 @@ import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-var userId: Int = 1;
+var userId: Int = 15;
 
 class NewsletterActivity : AppCompatActivity() {
 

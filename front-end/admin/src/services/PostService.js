@@ -4,6 +4,7 @@ const fetchPostAdmin = ({
     page=1,
     search="",
     sort="", 
+    status,
     date,
     dateStart, 
     dateEnd
@@ -14,7 +15,8 @@ const fetchPostAdmin = ({
         },
         params: {
             page, 
-            search, 
+            search,
+            status, 
             sort, 
             ...(date && {date}),
             ...(dateStart && dateEnd && {
