@@ -10,7 +10,6 @@ const getChartDashboard = async(req, res)=>{
         return res.status(403).json({
         message: "User no access rights"
         })
-        
         }*/
        
     const [userData, postData, reportData, reportByTpype] = await Promise.all([

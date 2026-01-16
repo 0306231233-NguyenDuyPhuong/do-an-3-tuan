@@ -3,9 +3,6 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
 
-    /* ================= USERS RELATED ================= */
-
-    // friendships.user_id -> users.id
     await queryInterface.addConstraint('friendships', {
       fields: ['user_id'],
       type: 'foreign key',
@@ -25,7 +22,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= POSTS ================= */
 
     // posts.user_id -> users.id
     await queryInterface.addConstraint('posts', {
@@ -59,7 +55,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= COMMENTS ================= */
 
     // comments.post_id -> posts.id
     await queryInterface.addConstraint('comments', {
@@ -81,7 +76,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= LIKES ================= */
 
     // likes.post_id -> posts.id
     await queryInterface.addConstraint('likes', {
@@ -103,7 +97,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= SAVED POSTS ================= */
 
     // saved_posts.post_id -> posts.id
     await queryInterface.addConstraint('saved_posts', {
@@ -125,7 +118,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= SHARES ================= */
 
     // shares.post_id -> posts.id
     await queryInterface.addConstraint('shares', {
@@ -147,7 +139,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= REPORTS ================= */
 
     // reports.reporter_id -> users.id
     await queryInterface.addConstraint('reports', {
@@ -159,7 +150,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= REPORT ACTIONS ================= */
 
     // report_actions.report_id -> reports.id
     await queryInterface.addConstraint('report_actions', {
@@ -181,7 +171,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= CONVERSATIONS ================= */
 
     // conversation_members.conversation_id -> conversations.id
     await queryInterface.addConstraint('conversation_members', {
@@ -203,7 +192,6 @@ module.exports = {
       onDelete: 'CASCADE'
     });
 
-    /* ================= MESSAGES ================= */
 
     // messages.conversation_id -> conversations.id
     await queryInterface.addConstraint('messages', {
