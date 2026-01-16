@@ -36,6 +36,10 @@ var slbv:Int = 0;
 class UserProfileActivity : AppCompatActivity() {
     private val viewModel: UserProfileViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
+    private var token: String = ""
+    var userId: Int = 1
+
+
     private val editProfileLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -62,6 +66,9 @@ class UserProfileActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.imgThoatHoSoNguoiDung).setOnClickListener {
             finish()
         }
+        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        token = sharedPref.getString("access_token", "") ?: ""
+        userId = sharedPref.getInt("user_id", 1)
 
 
         findViewById<Button>(R.id.btnChinhSuaTrangCaNhan).setOnClickListener {
@@ -114,7 +121,7 @@ class UserProfileActivity : AppCompatActivity() {
         adapterUserProfile = AdapterUserProfile(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },
-            onReportClick = { post -> showReportDialog(post) },
+            onReportClick = { post -> showReportDialog(post,interact) },
             onLikeClick = { post, isActionLike ->
                 if (isActionLike) viewModel2.likePost(token, post.id)
                 else viewModel2.UnlikePost(token, post.id)
@@ -132,14 +139,17 @@ class UserProfileActivity : AppCompatActivity() {
                 adapterUserProfile.updateData(listPostsId)
                 txtSoLuongBanBe.setText(slbb.toString())
                 txtSoLuongBaiViet.setText(slbv.toString())
-                if(listPostsId.get(0).User.avatar == null || listPostsId.get(0).User.avatar == ""){
-                    imgAvatar.load(R.drawable.profile)
-                }else{
-                    imgAvatar.load("http://10.0.2.2:8989/api/images/${listPostsId.get(0).User.avatar}")
+                if(listPostsId.isNotEmpty()){
+                    if(listPostsId.get(0).User.avatar == null || listPostsId.get(0).User.avatar == ""){
+                        imgAvatar.load(R.drawable.profile)
+                    }else{
+                        imgAvatar.load("http://10.0.2.2:8989/api/images/${listPostsId.get(0).User.avatar}")
+                    }
+                    txtTenNguoiDung.setText(listPostsId.get(0).User.full_name)
                 }
-                txtTenNguoiDung.setText(listPostsId.get(0).User.full_name)
 
             }else{
+
                 Log.d("Lỗi", "Null")
             }
         }
@@ -182,6 +192,7 @@ class UserProfileActivity : AppCompatActivity() {
             adapterUserProfile.setData(emptyList())
             updateIconState(imgAllPost)
             viewModel.getPostID(token, userId)
+            interact = 0
         }
 
         imgPostFav.setOnClickListener {
@@ -193,8 +204,9 @@ class UserProfileActivity : AppCompatActivity() {
 
         imgPostSave.setOnClickListener {
             updateIconState(imgPostSave)
-            viewModel.getListPostSave(token, userId)
             adapterUserProfile.setData(emptyList())
+            viewModel.getListPostSave(token)
+            interact = 2
             Toast.makeText(this, "Đang tải bài viết đã lưu...", Toast.LENGTH_SHORT).show()
         }
         updateIconState(imgAllPost)
@@ -204,20 +216,34 @@ class UserProfileActivity : AppCompatActivity() {
 
     }
 
-    private fun showReportDialog(post: PostModel) {
+    private fun showReportDialog(post: PostModel,interact:Int) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_report_profile, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
         btnReport.setOnClickListener {
-            viewModel.deletePost(post.id, token)
-            viewModel.deletePost.observe(this) { reported ->
-                if (reported) {
-                    Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
-                    viewModel.getPostID(token,userId)
-                }else{
-                    Log.d("Lỗi", "Null")
+            if(interact == 0){
+                viewModel.deletePost(post.id, token)
+                viewModel.deletePost.observe(this) { reported ->
+                    if (reported) {
+                        Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
+                        viewModel.getPostID(token,userId)
+                    }else{
+                        Log.d("Lỗi", "Null")
+                    }
+                }
+            }else{
+                viewModel.unSavePost( token,post.id)
+                viewModel.unSavePost.observe(this) { reported ->
+                    if (reported) {
+                        Toast.makeText(this, "Xoá Lưu thành công!", Toast.LENGTH_SHORT).show()
+                        viewModel.getListPostSave(token)
+
+                    }else{
+                        Log.d("Lỗi", "Null")
+                    }
                 }
             }
+
             Log.e("Lỗi", "Id lần 1: ${post.id}")
             dialog.dismiss()
         }

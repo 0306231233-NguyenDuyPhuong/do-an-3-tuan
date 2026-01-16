@@ -96,7 +96,6 @@ class CreatePostViewModel : ViewModel() {
 
     private fun createPostSuspend(token: String, userId: Int, content: String, privacy: Int): Int? {
         Log.d("Test", "--- BẮT ĐẦU createPostSuspend ---")
-
         try {
             val reportBody = JSONObject()
                 .put("user_id", userId)

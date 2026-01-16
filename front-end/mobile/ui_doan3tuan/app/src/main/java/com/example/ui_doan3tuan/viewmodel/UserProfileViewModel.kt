@@ -78,7 +78,7 @@ class UserProfileViewModel: ViewModel() {
 
 
 
-    fun getListPostSave(token: String, id: Int) {
+    fun getListPostSave(token: String) {
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -119,8 +119,6 @@ class UserProfileViewModel: ViewModel() {
     }
 
 
-
-
     private val _deletePost = MutableLiveData<Boolean>()
     val deletePost: LiveData<Boolean> get() = _deletePost
     fun deletePost(postId: Int,token: String) {
@@ -150,6 +148,41 @@ class UserProfileViewModel: ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.e("Lỗi", "Lỗi mạng: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+
+
+    }
+    private val _unSavePost = MutableLiveData<Boolean>()
+    val unSavePost: LiveData<Boolean> get() = _unSavePost
+    fun unSavePost(token: String,postId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val commentBody = JSONObject()
+                    .put("postId", postId)
+                    .toString()
+                val JSON = "application/json;charset=utf-8".toMediaType();
+                val requestBody = commentBody.toRequestBody(JSON);
+                Log.e("ListSavePost", "Id lần 2: ${postId}")
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/interact/unsave")
+                    .addHeader("Authorization", "Bearer $token")
+                    .delete(requestBody)
+                    .build()
+                val response = client.newCall(request).execute()
+                Log.e("ListSavePost", "body: ${response.code}")
+                Log.e("ListSavePost", "body: ${response.body}")
+                if (response.isSuccessful) {
+                    Log.e("ListSavePost", "Thành công")
+                    _unSavePost.postValue(true)
+                }else{
+                    Log.e("ListSavePost", "Vô1")
+                    Log.e("ListSavePost", "body: ${response.message}")
+                    _unSavePost.postValue(false)
+                }
+            } catch (e: Exception) {
+                Log.e("ListSavePost", "Lỗi mạng: ${e.message}")
                 e.printStackTrace()
             }
         }

@@ -33,8 +33,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class SearchActivity : AppCompatActivity() {
     private val viewModel: SearchViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
+    private var token = "";
     private lateinit var adapterNewsletter: AdapterNewsletter
     var page: Int = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -46,7 +48,8 @@ class SearchActivity : AppCompatActivity() {
         val revRecentSearch = findViewById<RecyclerView>(R.id.revRecentSearch)
         revRecentSearch.layoutManager = LinearLayoutManager(this)
         val progressBar = findViewById<ProgressBar>(R.id.progressBarLoadingSearch)
-
+        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        token = sharedPref.getString("access_token", "") ?: ""
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
 class AdapterSelectImageAndVideo(
-    private val onItemClick: (Uri) -> Unit // Thêm Callback này
+    private val onItemClick: (Uri) -> Unit // Hàm để xóa khi nhấn vào
 ) : ListAdapter<Uri, AdapterSelectImageAndVideo.MediaVH>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaVH {
@@ -33,7 +33,6 @@ class AdapterSelectImageAndVideo(
 
         fun bind(uri: Uri) {
             imageView.setImageURI(uri)
-
             val type = itemView.context.contentResolver.getType(uri)
             videoIcon.visibility = if (type?.startsWith("video") == true) View.VISIBLE else View.GONE
             imgTick.visibility = View.VISIBLE // Luôn hiện tick vì đã chọn
@@ -46,7 +45,9 @@ class AdapterSelectImageAndVideo(
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Uri>() {
+        //Kiểm tra xem 2 đối tượng có phải là cùng một item hay không.
         override fun areItemsTheSame(old: Uri, new: Uri) = old == new
+        //Kiểm tra xem nội dung hiển thị bên trong item đó có thay đổi gì không.
         override fun areContentsTheSame(old: Uri, new: Uri) = old == new
     }
 }
