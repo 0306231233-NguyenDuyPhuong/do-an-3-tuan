@@ -20,6 +20,7 @@ data class PostModel(
     var is_liked: Boolean = false,
     var User: UserModel,
     var Location:LocationModel,
-    var PostMedia: List<PostMediaModel>
+    var PostMedia: List<PostMediaModel>,
+    var isExpanded: Boolean = false
 )
 
