@@ -6,8 +6,10 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.ui_doan3tuan.ApiClient
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.FriendRequestAdapter
 import com.example.ui_doan3tuan.model.ApiMessage
@@ -19,9 +21,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
 class FriendsProfileActivity : AppCompatActivity() {
-
-
     private lateinit var btnKetBan: Button
     private lateinit var btnNhanTin: Button
     private var friendId: Int = -1
@@ -135,7 +136,7 @@ class FriendsProfileActivity : AppCompatActivity() {
         // Hiển thị tên
         val txtName = findViewById<TextView>(R.id.textView9)
         txtName.text = friendName
-
+        val friendAvatar = intent.getStringExtra("friend_avatar")
         // Hiển thị ảnh
         val imgAvatar = findViewById<ImageView>(R.id.imageView9)
         if (!friendAvatar.isNullOrEmpty()) {
@@ -194,7 +195,7 @@ class FriendsProfileActivity : AppCompatActivity() {
         } else if (hasSentRequest) {
             // TRẠNG THÁI 2: ĐÃ GỬI LỜI MỜI
             btnKetBan.text = "Đã gửi lời mời"
-            btnKetBan.isEnabled = false  // Không cho click
+            btnKetBan.isEnabled = false
             btnNhanTin.isEnabled = false
         } else {
             // TRẠNG THÁI 3: CHƯA LÀ BẠN BÈ
@@ -333,7 +334,7 @@ class FriendsProfileActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<ApiMessage>, t: Throwable) {
-                    Log.e("FriendsProfile", "Unfriend network error", t)
+                    Log.e("FriendsProfile", "Unfriend error", t)
                     Toast.makeText(this@FriendsProfileActivity, "Lỗi kết nối", Toast.LENGTH_SHORT).show()
                 }
             })

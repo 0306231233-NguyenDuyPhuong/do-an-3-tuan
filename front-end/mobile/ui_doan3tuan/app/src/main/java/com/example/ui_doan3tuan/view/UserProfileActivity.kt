@@ -26,6 +26,7 @@ import com.example.ui_doan3tuan.adapter.AdapterComment
 import com.example.ui_doan3tuan.adapter.AdapterNewsletter
 import com.example.ui_doan3tuan.adapter.AdapterUserProfile
 import com.example.ui_doan3tuan.model.PostModel
+import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.example.ui_doan3tuan.viewmodel.UserProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -34,6 +35,10 @@ import kotlin.getValue
 var slbb:Int = 0;
 var slbv:Int = 0;
 class UserProfileActivity : AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
+    private lateinit var accessToken: String
+    private var userId: Int = 0
+
     private val viewModel: UserProfileViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
     private val editProfileLauncher = registerForActivityResult(
@@ -41,7 +46,7 @@ class UserProfileActivity : AppCompatActivity() {
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             Log.d("Check", "Đã sửa xong, đang load lại data...")
-            viewModel.getPostID(token, userId)
+            viewModel.getPostID(accessToken, userId)
         }
     }
     private lateinit var adapterUserProfile: AdapterUserProfile
@@ -49,6 +54,21 @@ class UserProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_user_profile)
+        sessionManager = SessionManager(applicationContext)
+
+        val tokenFromSession = sessionManager.getAccessToken()
+        if (tokenFromSession == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+        accessToken = tokenFromSession
+
+        userId = sessionManager.getUser()?.id ?: run {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
 
         findViewById<ImageView>(R.id.imgSetting).setOnClickListener {
             startActivity(Intent(this, SettingActivity::class.java))
@@ -109,11 +129,11 @@ class UserProfileActivity : AppCompatActivity() {
             onCommentClick = { post -> showCommentDialog(post) },
             onReportClick = { post -> showReportDialog(post) },
             onLikeClick = { post, isActionLike ->
-                if (isActionLike) viewModel2.likePost(token, post.id)
-                else viewModel2.UnlikePost(token, post.id)
+                if (isActionLike) viewModel2.likePost(accessToken, post.id)
+                else viewModel2.UnlikePost(accessToken, post.id)
             },
             onShareClick = { post ->
-                viewModel2.sharePost(token, post.id)
+                viewModel2.sharePost(accessToken, post.id)
                 Toast.makeText(this, "Đang chia sẻ: ${post.content}", Toast.LENGTH_SHORT).show()
             }
         )
@@ -161,7 +181,7 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getPostID(token,userId)
+        viewModel.getPostID(accessToken,userId)
     }
 
     private fun showReportDialog(post: PostModel) {
@@ -169,12 +189,12 @@ class UserProfileActivity : AppCompatActivity() {
         val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_report_profile, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
         btnReport.setOnClickListener {
-            viewModel.deletePost(post.id, token)
+            viewModel.deletePost(post.id, accessToken)
             viewModel.deletePost.observe(this) { reported ->
                 if (reported) {
                     Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
 
-                    viewModel.getPostID(token,userId)
+                    viewModel.getPostID(accessToken,userId)
                 }else{
                     Log.d("Lỗi", "Null")
                 }
@@ -208,13 +228,13 @@ class UserProfileActivity : AppCompatActivity() {
                 rcvComments.scrollToPosition(listComments.size - 1)
             }
         }
-        viewModel2.getCommentsByPostId(post.id, token)
+        viewModel2.getCommentsByPostId(post.id, accessToken)
         btnSend.setOnClickListener {
             val content = edtComment.text.toString()
             if (content.isNotBlank()) {
-                viewModel2.sendComment(post.id, content, token)
+                viewModel2.sendComment(post.id, content, accessToken)
                 edtComment.setText("")
-                viewModel2.getCommentsByPostId(post.id, token)
+                viewModel2.getCommentsByPostId(post.id, accessToken)
             }
         }
         dialog.setOnDismissListener {

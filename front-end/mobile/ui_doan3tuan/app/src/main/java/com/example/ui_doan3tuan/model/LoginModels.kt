@@ -8,7 +8,7 @@ data class RegisterRequest(
     val username: String,
     val password: String,
     val rePassword: String,
-    val full_name: String
+    val fullname: String
 )
 
 data class LoginResponse(

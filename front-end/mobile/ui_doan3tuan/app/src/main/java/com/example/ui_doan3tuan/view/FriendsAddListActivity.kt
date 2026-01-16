@@ -39,7 +39,7 @@ class FriendsAddListActivity : AppCompatActivity() {
         loadFriendRequests()
 
         imgBack.setOnClickListener {
-            finish() // Đóng màn hình này
+            finish()
         }
     }
 

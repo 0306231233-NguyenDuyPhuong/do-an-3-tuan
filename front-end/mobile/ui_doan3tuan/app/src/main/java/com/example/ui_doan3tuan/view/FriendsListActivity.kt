@@ -14,6 +14,7 @@ import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.FriendsAdapter
 import com.example.ui_doan3tuan.model.Friend
 import com.example.ui_doan3tuan.model.FriendListResponse
+import com.example.ui_doan3tuan.session.SessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class FriendsListActivity : AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var editTextSearch: EditText
     private lateinit var adapter: FriendsAdapter
@@ -32,6 +34,7 @@ class FriendsListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_friends_list)
         recyclerView = findViewById(R.id.rvFriends)
         editTextSearch = findViewById(R.id.etSearch)
+        sessionManager = SessionManager(applicationContext)
 
         setupRecyclerView()
 
@@ -68,74 +71,56 @@ class FriendsListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
     }
+    private fun logoutgoLogin() {
+        sessionManager.clearSession()
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
 
     private fun loadFriends() {
-        // Lấy token từ SharedPreferences
-        val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
-        val token = sharedPref.getString("access_token", "")
 
-        if (token.isNullOrEmpty()) {
+        if (!sessionManager.isLoggedIn()) {
             Toast.makeText(this, "Vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show()
-            // Có thể chuyển về màn hình login
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+            logoutgoLogin()
+            return
+        }
+
+        val token = sessionManager.getAccessToken()
+        if (token.isNullOrEmpty()) {
+            logoutgoLogin()
             return
         }
 
         val fullToken = "Bearer $token"
-        Log.d("API_DEBUG", "Token: $token")
-        Log.d("API_DEBUG", "Full token: $fullToken")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.d("API_DEBUG", "Đang gọi API...")
-                val response: Response<FriendListResponse> =
+                val response =
                     ApiClient.apiService.getFriendList(fullToken).execute()
 
                 withContext(Dispatchers.Main) {
-                    Log.d("API_DEBUG", "Response code: ${response.code()}")
-
                     if (response.isSuccessful) {
                         val data = response.body()
-                        if (data != null) {
 
-                            if (data.data != null && data.data.isNotEmpty()) {
-                                friendsList.clear()
-                                friendsList.addAll(data.data)
-                                adapter.updateList(friendsList)
-
-                            } else {
-
-                                if (data.message != null) {
-                                    Toast.makeText(
-                                        this@FriendsListActivity,
-                                        data.message,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        this@FriendsListActivity,
-                                        "Bạn chưa có bạn bè nào",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
+                        if (!data?.data.isNullOrEmpty()) {
+                            friendsList.clear()
+                            friendsList.addAll(data!!.data)
+                            adapter.updateList(friendsList)
                         } else {
                             Toast.makeText(
                                 this@FriendsListActivity,
-                                "Không có dữ liệu trả về",
+                                "Bạn chưa có bạn bè nào",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     } else {
-                        // Xử lý lỗi HTTP
-                        handleApiError(response.code(), response.errorBody()?.string())
+                        handleApiError(response.code())
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Log.e("API_ERROR", "Exception: ${e.message}", e)
                     Toast.makeText(
                         this@FriendsListActivity,
                         "Lỗi kết nối: ${e.message}",
@@ -146,33 +131,19 @@ class FriendsListActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleApiError(errorCode: Int, errorBody: String?) {
-        Log.e("API_ERROR", "Error code: $errorCode")
-        Log.e("API_ERROR", "Error body: $errorBody")
-
-        val errorMessage = when (errorCode) {
-            400 -> "Request không hợp lệ"
-            401 -> {
-                // Token hết hạn, chuyển về login
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                "Phiên đăng nhập hết hạn"
+    private fun handleApiError(errorCode: Int) {
+        when (errorCode) {
+            401, 403 -> {
+                Toast.makeText(
+                    this,
+                    "Phiên đăng nhập đã hết hạn",
+                    Toast.LENGTH_SHORT
+                ).show()
+                logoutgoLogin()
             }
-            403 -> {
-                // Không có quyền truy cập
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                "Không có quyền truy cập. Vui lòng đăng nhập lại"
-            }
-            404 -> "API không tồn tại"
-            500 -> "Lỗi server"
-            else -> "Lỗi: $errorCode"
         }
-
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
     }
+
 
     private fun setupBottomNav() {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)

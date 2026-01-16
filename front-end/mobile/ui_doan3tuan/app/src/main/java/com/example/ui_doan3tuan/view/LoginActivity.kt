@@ -4,40 +4,35 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.ui_doan3tuan.R
-import com.example.ui_doan3tuan.model.User
+import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.LoginViewModel
-var token:String = "";
+
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel: LoginViewModel by viewModels()
+    private lateinit var sessionManager: SessionManager
+
     private lateinit var edtUsername: EditText
     private lateinit var edtPassword: EditText
     private lateinit var btnLogin: Button
     private lateinit var tvSignUp: TextView
     private lateinit var tvForgotPassword: TextView
     private lateinit var ivPasswordToggle: ImageView
+
     private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        viewModel.init(applicationContext)
+        sessionManager = SessionManager(applicationContext)
 
+        bindViews()
 
-        edtUsername = findViewById(R.id.etEmail)
-        edtPassword = findViewById(R.id.etPassword)
-        btnLogin = findViewById(R.id.btnLogin)
-        tvSignUp = findViewById(R.id.tvSignUp)
-        tvForgotPassword = findViewById(R.id.tvForgotPassword)
-        ivPasswordToggle = findViewById(R.id.ivPasswordToggle)
-
-
-        if (kiemTraDaDangNhap()) {
+        if (sessionManager.isLoggedIn()) {
             chuyenManHinhChinh()
             return
         }
@@ -45,31 +40,37 @@ class LoginActivity : AppCompatActivity() {
         setupEvents()
     }
 
+    private fun bindViews() {
+        edtUsername = findViewById(R.id.etEmail)
+        edtPassword = findViewById(R.id.etPassword)
+        btnLogin = findViewById(R.id.btnLogin)
+        tvSignUp = findViewById(R.id.tvSignUp)
+        tvForgotPassword = findViewById(R.id.tvForgotPassword)
+        ivPasswordToggle = findViewById(R.id.ivPasswordToggle)
+    }
+
     private fun setupEvents() {
-        // Sự kiện đăng nhập
+
         btnLogin.setOnClickListener {
             xuLyDangNhap()
         }
 
-        // Chuyển sang đăng ký
         tvSignUp.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
         }
 
-        // Quên mật khẩu
         tvForgotPassword.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
 
-        // Ẩn/hiện mật khẩu
         ivPasswordToggle.setOnClickListener {
             isPasswordVisible = !isPasswordVisible
-            if (isPasswordVisible) {
-                edtPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            edtPassword.inputType =
+                if (isPasswordVisible)
+                    InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                else
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
-            } else {
-                edtPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            }
             edtPassword.setSelection(edtPassword.text.length)
         }
     }
@@ -88,48 +89,36 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-
-        btnLogin.text = "Đang đăng nhập..."
         btnLogin.isEnabled = false
+        btnLogin.text = "Đang đăng nhập..."
 
+        viewModel.login(
+            username = username,
+            password = password,
+            onSuccess = { response ->
 
-        viewModel.login(username, password,
-            onSuccess = { accessToken, refreshToken, userData ->
-                xuLyDangNhapThanhCong(userData)
+                sessionManager.saveSession(
+                    accessToken = response.accessToken!!,
+                    refreshToken = response.refreshToken!!,
+                    user = response.user
+                )
+
+                btnLogin.isEnabled = true
+                btnLogin.text = "Đăng nhập"
+
+                chuyenManHinhChinh()
             },
             onError = { error ->
-
-                xuLyDangNhapThatBai(error)
+                btnLogin.isEnabled = true
+                btnLogin.text = "Đăng nhập"
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+                edtPassword.text.clear()
             }
         )
     }
 
-    private fun xuLyDangNhapThanhCong(userData: User) {
-
-        btnLogin.text = "Đăng nhập"
-        btnLogin.isEnabled = true
-        chuyenManHinhChinh()
-    }
-
-    private fun xuLyDangNhapThatBai(error: String) {
-        btnLogin.text = "Đăng nhập"
-        btnLogin.isEnabled = true
-
-
-        Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-
-        if (error.contains("Sai thông tin")) {
-            edtPassword.text.clear()
-            edtPassword.requestFocus()
-        }
-    }
-    private fun kiemTraDaDangNhap(): Boolean {
-        return viewModel.isTokenValid()
-    }
-
     private fun chuyenManHinhChinh() {
-        val intent = Intent(this, NewsletterActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, NewsletterActivity::class.java))
         finish()
     }
 }
