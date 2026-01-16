@@ -1,36 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_container_gray"
-    android:padding="12dp"
-    android:layout_marginHorizontal="10dp"
-    android:layout_marginVertical="10dp"
-    android:rotationX="360">
+    android:background="@color/background"
+    android:padding="12dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imgAvatar"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/profile"
+    <FrameLayout
+        android:id="@+id/avatarContainer"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/CircleImage" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+    </FrameLayout>
 
     <!-- Thông tin người dùng -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="165dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/avatarContainer">
 
 
     </LinearLayout>
@@ -40,13 +45,13 @@
         android:id="@+id/buttonContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
         android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
         android:weightSum="2"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_marginBottom="16dp">
 
     </LinearLayout>
 
@@ -54,38 +59,41 @@
         android:id="@+id/txtName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="4dp"
         android:text="Nguyễn Văn An"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/imgAvatar"
-        app:layout_constraintTop_toTopOf="@+id/imgAvatar" />
+        app:layout_constraintStart_toEndOf="@+id/avatarContainer"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/acceptButton"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
         android:layout_weight="1"
-        android:background="@drawable/bg_button_blue"
+        android:backgroundTint="@color/background_btn"
         android:text="Chấp nhận"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="@+id/txtName"
+        app:layout_constraintStart_toEndOf="@+id/avatarContainer"
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/rejectButton"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="22dp"
         android:layout_weight="1"
-        android:background="@drawable/bg_button_black"
+        android:backgroundTint="@color/google_red"
         android:text="Từ chối"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         app:layout_constraintStart_toEndOf="@+id/acceptButton"
         app:layout_constraintTop_toTopOf="@+id/acceptButton" />
 

@@ -12,13 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -112,8 +106,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:padding="5dp"
-                    app:srcCompat="@drawable/outline_chevron_forward_24"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    app:srcCompat="@drawable/outline_chevron_forward_24" />
             </LinearLayout>
 
             <LinearLayout
@@ -144,8 +138,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:padding="5dp"
-                    app:srcCompat="@drawable/outline_chevron_forward_24"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    app:srcCompat="@drawable/outline_chevron_forward_24" />
             </LinearLayout>
 
             <TextView
@@ -154,9 +148,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
-                android:text="TUỲ CHỌN"
                 android:textColor="#908A8A"
-                android:textSize="15dp" />
+                android:textSize="15dp"
+                android:text="TUỲ CHỌN" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -175,11 +169,11 @@
                     android:id="@+id/textView18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:text="Thông báo"
+                    android:layout_gravity="center"
                     android:textColor="#EDEAEA"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:text="Thông báo" />
 
                 <Switch
                     android:id="@+id/switch1"
@@ -187,7 +181,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:thumbTint="@color/blue"
-                    android:trackTint="@color/white" />
+                    android:trackTint="@color/white"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -207,19 +202,19 @@
                     android:id="@+id/textView19"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:text="Quyền riêng tư"
+                    android:layout_gravity="center"
                     android:textColor="#EDEAEA"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:text="Quyền riêng tư" />
 
                 <ImageView
                     android:id="@+id/imageView16"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:padding="5dp"
-                    app:srcCompat="@drawable/outline_chevron_forward_24"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    app:srcCompat="@drawable/outline_chevron_forward_24"/>
             </LinearLayout>
 
             <LinearLayout
@@ -232,18 +227,18 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:padding="5dp"
-                    app:srcCompat="@drawable/outline_language_24"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    app:srcCompat="@drawable/outline_language_24" />
 
                 <TextView
                     android:id="@+id/textView21"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:text="Ngôn ngữ"
+                    android:layout_gravity="center"
                     android:textColor="#EDEAEA"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:text="Ngôn ngữ" />
 
                 <TextView
                     android:id="@+id/textView22"
@@ -269,9 +264,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
-                android:text="HỖ TRỢ"
                 android:textColor="#908A8A"
-                android:textSize="15dp" />
+                android:textSize="15dp"
+                android:text="HỖ TRỢ" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -283,18 +278,18 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:padding="5dp"
-                    app:srcCompat="@drawable/outline_help_24"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    app:srcCompat="@drawable/outline_help_24" />
 
                 <TextView
                     android:id="@+id/textView24"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:text="Trung tâm hỗ trợ"
+                    android:layout_gravity="center"
                     android:textColor="#EDEAEA"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:text="Trung tâm hỗ trợ" />
 
                 <ImageView
                     android:id="@+id/imageView20"
@@ -315,18 +310,18 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:padding="5dp"
-                    app:srcCompat="@drawable/outline_warning_24"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    app:srcCompat="@drawable/outline_warning_24" />
 
                 <TextView
                     android:id="@+id/textView25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:text="Báo cáo sự cố"
+                    android:layout_gravity="center"
                     android:textColor="#EDEAEA"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:text="Báo cáo sự cố" />
 
                 <ImageView
                     android:id="@+id/imageView22"
@@ -338,13 +333,11 @@
             </LinearLayout>
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <Button
             android:id="@+id/btnDangXuat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:background="@drawable/bg_button_blue"
-            android:text="Đăng xuất"
-            android:textColor="@color/white" />
+            android:text="Đăng xuất" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

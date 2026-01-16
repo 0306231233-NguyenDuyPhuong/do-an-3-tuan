@@ -1,6 +1,7 @@
 package com.example.ui_doan3tuan.view
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,7 @@ import coil.load
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.AdapterSelectImageAndVideo
 import com.example.ui_doan3tuan.model.UserModel
+import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.CreatePostViewModel
 import com.example.ui_doan3tuan.viewmodel.EditProfileViewModel
 import com.example.ui_doan3tuan.viewmodel.UserProfileViewModel
@@ -29,12 +31,14 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import kotlin.getValue
 class EditProfileActivity : AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
+    private lateinit var accessToken: String
+    private var userId: Int = -1
 
     private var selectedImageFile: File? = null
     private lateinit var imgAvatar: ImageView
     private lateinit var txtUserName: EditText
     private var token = "";
-    private var userId: Int = 1
     private val userProfileViewModel: UserProfileViewModel by viewModels()
     private val editProfileViewModel: EditProfileViewModel by viewModels()
 
@@ -51,6 +55,19 @@ class EditProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_edit_profile)
+        sessionManager = SessionManager(applicationContext)
+
+        val tokenFromSession = sessionManager.getAccessToken()
+        val user = sessionManager.getUser()
+
+        if (tokenFromSession == null || user == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
+        accessToken = tokenFromSession
+        userId = user.id
 
 
         imgAvatar = findViewById(R.id.imgAnhDaiDien)
@@ -60,8 +77,8 @@ class EditProfileActivity : AppCompatActivity() {
         userId = sharedPref.getInt("user_id", 1)
         setupObservers()
         setupListeners()
-        if (token.isNotEmpty()) {
-            userProfileViewModel.getPostID(token, userId)
+        if (accessToken.isNotEmpty()) {
+            userProfileViewModel.getPostID(accessToken, userId)
         }
     }
 
@@ -115,7 +132,7 @@ class EditProfileActivity : AppCompatActivity() {
             }
 
             Snackbar.make(it, "Đang lưu...", Snackbar.LENGTH_SHORT).show()
-            editProfileViewModel.updateUserFull(token, fullName, selectedImageFile)
+            editProfileViewModel.updateUserFull(accessToken, fullName, selectedImageFile)
         }
 
         findViewById<TextView>(R.id.txtHuy).setOnClickListener {

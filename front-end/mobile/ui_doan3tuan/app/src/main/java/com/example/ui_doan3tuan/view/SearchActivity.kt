@@ -26,11 +26,14 @@ import com.example.ui_doan3tuan.adapter.AdapterComment
 import com.example.ui_doan3tuan.adapter.AdapterFriends
 import com.example.ui_doan3tuan.adapter.AdapterNewsletter
 import com.example.ui_doan3tuan.model.PostModel
+import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.example.ui_doan3tuan.viewmodel.SearchViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class SearchActivity : AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
+    private lateinit var accessToken: String
     private val viewModel: SearchViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
     private var token = "";
@@ -41,6 +44,16 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
+        sessionManager = SessionManager(applicationContext)
+
+        val tokenFromSession = sessionManager.getAccessToken()
+        if (tokenFromSession == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+        accessToken = tokenFromSession
+
         findViewById<ImageView>(R.id.btnBackSearch).setOnClickListener {
             page = 1;
             finish()
@@ -61,13 +74,13 @@ class SearchActivity : AppCompatActivity() {
             },
             onLikeClick = { post, isActionLike ->
                 if (isActionLike) {
-                    viewModel2.likePost(token, post.id)
+                    viewModel2.likePost(accessToken, post.id)
                 } else {
-                    viewModel2.UnlikePost(token, post.id)
+                    viewModel2.UnlikePost(accessToken, post.id)
                 }
             },
             onShareClick = {post ->
-                viewModel2.sharePost(token, post.id)
+                viewModel2.sharePost(accessToken, post.id)
                 Toast.makeText(this, "Đang chia sẻ: ${post.content}", Toast.LENGTH_SHORT).show()
             }
         )
@@ -95,10 +108,10 @@ class SearchActivity : AppCompatActivity() {
         val nestedScrollView = findViewById<NestedScrollView>(R.id.myNested)
         nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, _, _, _, _ ->
             if (!v.canScrollVertically(1)) {
-                if (!viewModel.isLoading.value!! && !viewModel.isLastPage && token.isNotEmpty()) {
+                if (!viewModel.isLoading.value!! && !viewModel.isLastPage && accessToken.isNotEmpty()) {
                     Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT).show()
                     page += 1
-                    viewModel.searchContent(token, page, viewModel.currentQuery)
+                    viewModel.searchContent(accessToken, page, viewModel.currentQuery)
                 }
             }
         }
@@ -151,17 +164,17 @@ class SearchActivity : AppCompatActivity() {
         val txtThongTinSai = view.findViewById<TextView>(R.id.txtThongTinSai)
         val txtVandenhaycam = view.findViewById<TextView>(R.id.txtVandenhaycam)
         txtSpam.setOnClickListener {
-            viewModel2.reportPost(token, postId, id, "Spam")
+            viewModel2.reportPost(accessToken, postId, id, "Spam")
             Toast.makeText(this, "Báo cáo thành công spam!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         txtThongTinSai.setOnClickListener {
-            viewModel2.reportPost(token, postId, id, "Thông tin sai sự thật")
+            viewModel2.reportPost(accessToken, postId, id, "Thông tin sai sự thật")
             Toast.makeText(this, "Báo cáo thành công thông tin sai!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         txtVandenhaycam.setOnClickListener {
-            viewModel2.reportPost(token, postId, id, "Nội dung nhạy cảm")
+            viewModel2.reportPost(accessToken, postId, id, "Nội dung nhạy cảm")
             Toast.makeText(this, "Báo cáo thành công vấn đề nhạy cảm!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
@@ -193,13 +206,13 @@ class SearchActivity : AppCompatActivity() {
                 rcvComments.scrollToPosition(listComments.size - 1)
             }
         }
-        viewModel2.getCommentsByPostId(post.id, token)
+        viewModel2.getCommentsByPostId(post.id, accessToken)
         btnSend.setOnClickListener {
             val content = edtComment.text.toString()
             if (content.isNotBlank()) {
-                viewModel2.sendComment(post.id, content, token)
+                viewModel2.sendComment(post.id, content, accessToken)
                 edtComment.setText("")
-                viewModel2.getCommentsByPostId(post.id, token)
+                viewModel2.getCommentsByPostId(post.id, accessToken)
             }
         }
         dialog.setOnDismissListener {
