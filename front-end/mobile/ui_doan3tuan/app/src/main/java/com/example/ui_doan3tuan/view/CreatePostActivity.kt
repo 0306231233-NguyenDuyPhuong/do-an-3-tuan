@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.AdapterSelectImageAndVideo
+import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.CreatePostViewModel
 import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -31,6 +32,8 @@ import java.io.InputStream
 import kotlin.getValue
 class CreatePostActivity : AppCompatActivity() {
     private lateinit var adapterChonAnhVideo: AdapterSelectImageAndVideo
+    private lateinit var sessionManager: SessionManager
+
     private var token = "";
     private var userId: Int = 1
     private val viewModel: CreatePostViewModel by viewModels()
@@ -48,15 +51,12 @@ class CreatePostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_create_post)
-        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        token = sharedPref.getString("access_token", "") ?: ""
-        userId = sharedPref.getInt("user_id", 1)
-
         adapterChonAnhVideo = AdapterSelectImageAndVideo { uriToDelete ->
             val newList = adapterChonAnhVideo.currentList.toMutableList()
             newList.remove(uriToDelete)
             adapterChonAnhVideo.submitList(newList)
         }
+        sessionManager = SessionManager(applicationContext)
 
         setupDropdownStatus()
 
@@ -66,12 +66,17 @@ class CreatePostActivity : AppCompatActivity() {
 
 
         findViewById<Button>(R.id.btnChonAnhVideo).setOnClickListener {
-            // mở trình chọn ảnh/video của hệ thống
             pickMedia.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
             )
         }
-        Log.d("token", "$token")
+        val accessToken = sessionManager.getAccessToken()
+        if (accessToken == null) {
+            Toast.makeText(this, "Vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
         viewModel.postResult.observe(this) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(this, "Đăng bài thành công!", Toast.LENGTH_SHORT).show()
@@ -115,8 +120,15 @@ class CreatePostActivity : AppCompatActivity() {
                 }
             }
 
-            viewModel.publishFullPost(token, userId, content.text.toString(), privacy, listFiles)
-            Log.d("token", "test $token")
+            viewModel.publishFullPost(
+                accessToken,
+                userId,
+                content.text.toString(),
+                privacy,
+                listFiles
+            )
+
+            Log.d("token", "test $accessToken")
         }
 
 

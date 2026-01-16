@@ -14,51 +14,34 @@ import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.FriendsAdapter
 import com.example.ui_doan3tuan.model.Friend
 import com.example.ui_doan3tuan.model.FriendListResponse
+import com.example.ui_doan3tuan.session.SessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class FriendsListActivity : AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var editTextSearch: EditText
     private lateinit var adapter: FriendsAdapter
-    private var friendsList = mutableListOf<Friend>()
+    private val friendsList = mutableListOf<Friend>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friends_list)
-
         recyclerView = findViewById(R.id.rvFriends)
         editTextSearch = findViewById(R.id.etSearch)
+        sessionManager = SessionManager(applicationContext)
+
         setupRecyclerView()
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.nav_friend
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    startActivity(Intent(this, NewsletterActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-                    return@setOnItemSelectedListener false
-                }
-                R.id.nav_friend -> {
-                    return@setOnItemSelectedListener true
-                }
-                R.id.nav_add -> {
-                    startActivity(Intent(this, CreatePostActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-                    return@setOnItemSelectedListener false
-                }
-                R.id.nav_notification -> {
-                    startActivity(Intent(this, NotificationActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-                    return@setOnItemSelectedListener false
-                }
-                R.id.nav_profile -> {
-                    startActivity(Intent(this, UserProfileActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-                    return@setOnItemSelectedListener false
-                }
-            }
-            false
-        }
+
+        // Load danh sách bạn bè
         loadFriends()
+
+        // Xử lý nút thoát
         findViewById<ImageView>(R.id.imgThoatLF).setOnClickListener {
             finish()
         }
@@ -68,8 +51,11 @@ class FriendsListActivity : AppCompatActivity() {
             val intent = Intent(this, FriendsAddListActivity::class.java)
             startActivity(intent)
         }
-
-//        setupBottomNav()
+        setupBottomNav()
+    }
+    override fun onResume() {
+        super.onResume()
+        loadFriends()
     }
 
     private fun setupRecyclerView() {
@@ -85,76 +71,108 @@ class FriendsListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
     }
+    private fun logoutgoLogin() {
+        sessionManager.clearSession()
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
 
     private fun loadFriends() {
-        // Lấy token từ SharedPreferences
-        val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
-        val token = sharedPref.getString("access_token", "")
 
-
-        if (token.isNullOrEmpty()) {
+        if (!sessionManager.isLoggedIn()) {
             Toast.makeText(this, "Vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show()
+            logoutgoLogin()
+            return
+        }
+
+        val token = sessionManager.getAccessToken()
+        if (token.isNullOrEmpty()) {
+            logoutgoLogin()
             return
         }
 
         val fullToken = "Bearer $token"
-        Log.d("test"," load thành công")
 
-        ApiClient.apiService.getFriendList(fullToken).enqueue(object : Callback<FriendListResponse> {
-            override fun onResponse(
-                call: Call<FriendListResponse>,
-                response: Response<FriendListResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val data = response.body()
-                    if (data != null && data.data.isNotEmpty()) {
-                        friendsList.clear()
-                        friendsList.addAll(data.data)
-                        adapter.notifyDataSetChanged()
-                        Log.d("test"," load thành công")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response =
+                    ApiClient.apiService.getFriendList(fullToken).execute()
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val data = response.body()
+
+                        if (!data?.data.isNullOrEmpty()) {
+                            friendsList.clear()
+                            friendsList.addAll(data!!.data)
+                            adapter.updateList(friendsList)
+                        } else {
+                            Toast.makeText(
+                                this@FriendsListActivity,
+                                "Bạn chưa có bạn bè nào",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     } else {
-                        Toast.makeText(this@FriendsListActivity, "Bạn chưa có bạn bè nào", Toast.LENGTH_SHORT).show()
+                        handleApiError(response.code())
                     }
-                } else {
-                    Toast.makeText(this@FriendsListActivity, "Lỗi: ${response.code()}", Toast.LENGTH_SHORT).show()
-                    Log.d("test"," load lỗi")
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@FriendsListActivity,
+                        "Lỗi kết nối: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-
-            override fun onFailure(call: Call<FriendListResponse>, t: Throwable) {
-                Toast.makeText(this@FriendsListActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        }
     }
 
-//    private fun setupBottomNav() {
-//        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-//        bottomNav.selectedItemId = R.id.nav_friend
-//
-//        bottomNav.setOnItemSelectedListener { item ->
-//            when (item.itemId) {
-//                R.id.nav_home -> {
-//                    startActivity(Intent(this, NewsletterActivity::class.java))
-//                    true
-//                }
-//                R.id.nav_friend -> {
-//                    // Đã ở trang bạn bè
-//                    true
-//                }
-//                R.id.nav_add -> {
-//                    startActivity(Intent(this, CreatePostActivity::class.java))
-//                    true
-//                }
-//                R.id.nav_notification -> {
-//                    startActivity(Intent(this, NotificationActivity::class.java))
-//                    true
-//                }
-//                R.id.nav_profile -> {
-//                    startActivity(Intent(this, UserProfileActivity::class.java))
-//                    true
-//                }
-//                else -> false
-//            }
-//        }
-//    }
+    private fun handleApiError(errorCode: Int) {
+        when (errorCode) {
+            401, 403 -> {
+                Toast.makeText(
+                    this,
+                    "Phiên đăng nhập đã hết hạn",
+                    Toast.LENGTH_SHORT
+                ).show()
+                logoutgoLogin()
+            }
+        }
+    }
+
+
+    private fun setupBottomNav() {
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav.selectedItemId = R.id.nav_friend
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    startActivity(Intent(this, NewsletterActivity::class.java))
+                    true
+                }
+                R.id.nav_friend -> {
+                    // Đã ở trang bạn bè
+                    true
+                }
+                R.id.nav_add -> {
+                    startActivity(Intent(this, CreatePostActivity::class.java))
+                    true
+                }
+                R.id.nav_notification -> {
+                    startActivity(Intent(this, NotificationActivity::class.java))
+                    true
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, UserProfileActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+    }
 }

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ui_doan3tuan.view.ConversationActivity
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.AdapterComment
 import com.example.ui_doan3tuan.adapter.AdapterFriends
@@ -31,6 +32,7 @@ class NewsletterActivity : AppCompatActivity() {
     private val viewModel: NewsletterViewModel by viewModels()
     private lateinit var adapterNewsletter: AdapterNewsletter
     private lateinit var adapterFriends: AdapterFriends
+    private lateinit var imgChat: ImageView
 
     private var token: String = ""
     private var page: Int = 1
@@ -52,8 +54,13 @@ class NewsletterActivity : AppCompatActivity() {
         val revHienBaiDang = findViewById<RecyclerView>(R.id.revHienBaiDang)
         val revDSBanBe = findViewById<RecyclerView>(R.id.revDSBanBe)
         val progressBar = findViewById<ProgressBar>(R.id.progressBarLoadingNewletter)
+        imgChat = findViewById(R.id.imgChat)
 
+        imgChat.setOnClickListener {
+            val intent = Intent(this, ConversationActivity::class.java)
 
+            startActivity(intent)
+        }
         revHienBaiDang.layoutManager = LinearLayoutManager(this)
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),

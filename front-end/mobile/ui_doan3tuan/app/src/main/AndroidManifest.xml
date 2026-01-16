@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Ui_doan3tuan"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".view.ConversationActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.SearchActivity"
             android:exported="false" />
         <activity

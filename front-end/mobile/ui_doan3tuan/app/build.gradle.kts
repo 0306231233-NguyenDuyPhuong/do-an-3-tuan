@@ -74,4 +74,7 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
 }

@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-
+import db from "../models";
 const checkBlocked = async (req, res, next) => {
   try {
     const body = req.body || {};

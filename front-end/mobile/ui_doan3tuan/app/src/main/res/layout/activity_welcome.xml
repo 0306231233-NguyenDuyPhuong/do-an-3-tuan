@@ -65,13 +65,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvWelcomeTitle" />
 
-            <com.google.android.material.button.MaterialButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnCreateAccount"
-                style="@style/Widget.Material3.Button"
                 android:layout_width="357dp"
                 android:layout_height="63dp"
                 android:layout_marginTop="48dp"
-                android:backgroundTint="@color/background_btn"
+                android:background="@drawable/bg_button_blue"
+                android:textColor="@color/white"
                 android:gravity="center"
                 android:text="@string/create_account"
                 android:textAllCaps="false"

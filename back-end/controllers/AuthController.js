@@ -5,8 +5,9 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import createTransporter from "../config/mailer.js";
 import dotenv from "dotenv";
-
 dotenv.config();
+import { redisClient } from "../config/redis.js";
+
 //0: inactive, 1: active, 2: banned
 const login = async (req, res) => {
   try {
@@ -60,13 +61,9 @@ const login = async (req, res) => {
         expiresIn: "7d",
       }
     );
-    //update refresh_token vao DB
-
-    const hashedRefreshToken = await argon2.hash(refreshToken);
-    await db.User.update(
-      { refresh_token: hashedRefreshToken },
-      { where: { id: user.id } }
-    );
+    await redisClient.set(`refresh_token:${user.id}`, refreshToken, {
+      EX: 7 * 24 * 60 * 60,
+    });
     return res.status(200).json({
       message: "Login successful",
       accessToken,
@@ -214,9 +211,10 @@ const refresh = async (req, res) => {
       return res.status(401).json({ message: "Missing refresh token" });
 
     // Verify JWT để lấy userId
+    const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET.trim();
     let decoded;
     try {
-      decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+      decoded = jwt.verify(refreshToken, REFRESH_SECRET);
     } catch (err) {
       return res
         .status(403)
@@ -226,15 +224,13 @@ const refresh = async (req, res) => {
     const userId = decoded.userId;
 
     // Lấy user theo userId
-    const user = await db.User.findByPk(userId);
-
-    if (!user || !user.refresh_token)
-      return res.status(403).json({ message: "Refresh token not found" });
-
-    // So sánh hash refresh token
-    const isMatch = await argon2.verify(user.refresh_token, refreshToken);
-    if (!isMatch)
+    const refresh_token = await redisClient.get(`refresh_token:${userId}`);
+    if (!refresh_token)
+      return res.status(404).json({ message: "Refresh token not found" });
+    // So sánh  refresh token
+    if (refresh_token !== refreshToken)
       return res.status(403).json({ message: "Invalid refresh token" });
+    const user = await db.User.findByPk(userId);
 
     // Tạo access token mới
     const newAccessToken = jwt.sign(
@@ -266,17 +262,17 @@ const logout = async (req, res) => {
     }
     // Lấy user theo userId
     const userId = decoded.userId;
-    const user = await db.User.findByPk(userId);
-    if (!user || !user.refresh_token)
-      return res.status(403).json({ message: "Refresh token not found" });
+    //get token from redis
+    const refresh_token = await redisClient.get(`refresh_token:${userId}`);
 
-    // So sánh hash refresh token
-    const isMatch = await argon2.verify(user.refresh_token, refreshToken);
-    if (!isMatch)
+    if (!refresh_token)
+      return res.status(404).json({ message: "Refresh token not found" });
+
+    // so sanh refresh token
+    if (refresh_token !== refreshToken)
       return res.status(403).json({ message: "Invalid refresh token" });
-    // Xóa refresh token
-    await db.User.update({ refresh_token: null }, { where: { id: userId } });
 
+    await redisClient.del(`refresh_token:${userId}`);
     return res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.error("LOGOUT ERROR:", error);
