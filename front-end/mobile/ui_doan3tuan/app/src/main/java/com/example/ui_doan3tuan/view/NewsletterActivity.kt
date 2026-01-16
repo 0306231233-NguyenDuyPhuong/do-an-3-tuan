@@ -26,7 +26,6 @@ import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-var userId: Int = 15
 
 class NewsletterActivity : AppCompatActivity() {
 
@@ -37,6 +36,8 @@ class NewsletterActivity : AppCompatActivity() {
 
     private var token: String = ""
     private var page: Int = 1
+    var userId: Int = 1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +46,8 @@ class NewsletterActivity : AppCompatActivity() {
 
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
         token = sharedPref.getString("access_token", "") ?: ""
+        userId = sharedPref.getInt("user_id", 1)
+
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         val nestedScrollView = findViewById<NestedScrollView>(R.id.myNestedScrollView)
@@ -194,6 +197,14 @@ class NewsletterActivity : AppCompatActivity() {
             showDetailReportDialog(post.User.id, post.id)
             dialog.dismiss()
         }
+        val btnSavePost = view.findViewById<LinearLayout>(R.id.btnSavePost)
+        btnSavePost.setOnClickListener {
+            viewModel.savePost(token, post.id)
+            Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+
+
         dialog.setContentView(view)
         dialog.show()
     }

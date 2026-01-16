@@ -178,6 +178,36 @@ class NewsletterViewModel : ViewModel() {
 
 
     }
+    fun savePost(token: String,postId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val commentBody = JSONObject()
+                    .put("postId", postId)
+                    .toString()
+                Log.d("save", "id2 :$postId")
+                val JSON = "application/json;charset=utf-8".toMediaType();
+                val requestBody = commentBody.toRequestBody(JSON);
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/interact/save")
+                    .addHeader("Authorization", "Bearer $token")
+                    .post(requestBody)
+                    .build()
+                Log.d("save", "$token")
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    Log.d("save", "$response")
+                }else{
+                    Log.d("save", "${response.code}")
+                    Log.d("save", "Lỗi ${response.message}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("save", "${e.message}")
+            }
+        }
+
+
+    }
     fun UnlikePost(token: String,postId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

@@ -208,46 +208,171 @@ const unSavePost = async (req, res) => {
 const getSharedPost = async (req, res) => {
   try {
     const myId = req.user.userId;
-    const shared = await db.Share.findAll({
-      where: {
-        user_id: myId,
-      },
-      include: {
-        model: db.Post,
-        where: { status: 1 },
-      },
+
+        const shared = await db.Share.findAll({
+      where: { user_id: myId },
+      include: [
+        {
+          model: db.Post,
+          where: { status: 1 },
+              attributes: {
+                include: [
+                  [
+                    db.sequelize.literal(`(
+                      SELECT CASE
+                        WHEN COUNT(*) > 0 THEN true
+                        ELSE false
+                      END
+                      FROM Likes
+                      WHERE Likes.post_id = Post.id
+                      AND Likes.user_id = ${myId}
+                    )`),
+                    "isLiked"
+                  ]
+                ]
+          },
+          include: [
+            {
+              model: db.User,
+              attributes: ["id", "full_name", "avatar"],
+            },
+            { model: db.Location },
+            { model: db.PostMedia },
+          ],
+        },
+      ],
       order: [["createdAt", "DESC"]],
     });
-    return res.json({
-      data: shared,
-    });
+
+
+
+
+
+    return res.json({ data: shared });
   } catch (error) {
-    console.error(" get  sharedpost error:", error);
+    console.error("get shared post error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+// const getSavePost = async (req, res) => {
+//   try {
+//     const myId = req.user.userId;
+//     const saved = await db.SavedPost.findAll({
+//       where: {
+//         user_id: myId,
+//       },
+//       include: [
+//         // user đang lưu post
+//         {
+//           model: db.User,
+//           attributes: ["id", "full_name", "avatar", "status"],
+//         },
+//         {
+//           model: db.Post,
+//           where: { status: 1 },
+//            attributes: {
+//                 include: [
+//                   [
+//                     db.sequelize.literal(`(
+//                       SELECT CASE
+//                         WHEN COUNT(*) > 0 THEN true
+//                         ELSE false
+//                       END
+//                       FROM Likes
+//                       WHERE Likes.post_id = Post.id
+//                       AND Likes.user_id = ${myId}
+//                     )`),
+//                     "is_liked"
+//                   ]
+//                 ]
+//           },
+//           include: [
+//             {
+//               // chu bai post
+//               model: db.User,
+//               attributes: ["id", "full_name", "avatar"],
+//             },
+//             { model: db.Location },
+//             { model: db.PostMedia },
+//           ],
+//         },
+//       ],
+//       order: [["created_at", "DESC"]],
+//     });
+//     return res.json({
+//       data: saved,
+//     });
+//   } catch (error) {
+//     console.error(" get  sharedpost error:", error);
+//     return res.status(500).json({ message: "Internal server error" });
+//   }
+// };
 const getSavePost = async (req, res) => {
   try {
     const myId = req.user.userId;
+
+    // 1. Phần Query Database (Giữ nguyên)
     const saved = await db.SavedPost.findAll({
       where: {
         user_id: myId,
       },
-      include: {
-        model: db.Post,
-        where: { status: 1 },
-      },
+      include: [
+        {
+          model: db.User, // User đang lưu (chủ sở hữu bản ghi save)
+          attributes: ["id", "full_name", "avatar", "status"],
+        },
+        {
+          model: db.Post,
+          required: true, // Chỉ lấy nếu bài viết còn tồn tại
+          where: { status: 1 },
+          attributes: {
+            include: [
+              [
+                db.sequelize.literal(`(
+                  SELECT CASE
+                    WHEN COUNT(*) > 0 THEN true
+                    ELSE false
+                  END
+                  FROM Likes
+                  WHERE Likes.post_id = Post.id
+                  AND Likes.user_id = ${myId}
+                )`),
+                "is_liked"
+              ]
+            ]
+          },
+          include: [
+            {
+              model: db.User, // Tác giả bài viết
+              attributes: ["id", "full_name", "avatar"],
+            },
+            { model: db.Location },
+            { model: db.PostMedia },
+          ],
+        },
+      ],
       order: [["created_at", "DESC"]],
     });
-    return res.json({
-      data: saved,
+
+    const finalData = saved.map((item) => {
+      const savedItem = item.get({ plain: true });
+
+      if (savedItem.Post) {
+        savedItem.Post.is_liked = (savedItem.Post.is_liked === 1 || savedItem.Post.is_liked === true);
+      }
+
+      return savedItem;
     });
+
+    return res.json({
+      data: finalData,
+    });
+
   } catch (error) {
-    console.error(" get  sharedpost error:", error);
+    console.error("Get saved post error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 export default {
   likePost,
   unlikePost,

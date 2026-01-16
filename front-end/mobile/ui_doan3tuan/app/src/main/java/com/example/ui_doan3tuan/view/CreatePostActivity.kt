@@ -31,7 +31,10 @@ import java.io.InputStream
 import kotlin.getValue
 class CreatePostActivity : AppCompatActivity() {
     private lateinit var adapterChonAnhVideo: AdapterSelectImageAndVideo
+    private var token = "";
+    private var userId: Int = 1
     private val viewModel: CreatePostViewModel by viewModels()
+    // Cho phép người dùng chọn nhiều ảnh cùng lúc
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
             if (uris.isNotEmpty()) {
@@ -45,6 +48,10 @@ class CreatePostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_create_post)
+        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        token = sharedPref.getString("access_token", "") ?: ""
+        userId = sharedPref.getInt("user_id", 1)
+
         adapterChonAnhVideo = AdapterSelectImageAndVideo { uriToDelete ->
             val newList = adapterChonAnhVideo.currentList.toMutableList()
             newList.remove(uriToDelete)
@@ -59,6 +66,7 @@ class CreatePostActivity : AppCompatActivity() {
 
 
         findViewById<Button>(R.id.btnChonAnhVideo).setOnClickListener {
+            // mở trình chọn ảnh/video của hệ thống
             pickMedia.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
             )

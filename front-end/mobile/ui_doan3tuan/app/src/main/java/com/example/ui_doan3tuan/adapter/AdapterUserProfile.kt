@@ -16,7 +16,7 @@ import java.time.Duration
 import java.time.Instant
 
 class AdapterUserProfile(
-    private var list: List<PostModel>,
+    private var list: MutableList<PostModel>,
     val onCommentClick:(PostModel)-> Unit,
     val onReportClick:(PostModel)-> Unit,
     val onLikeClick: (PostModel, Boolean) -> Unit,
@@ -126,9 +126,15 @@ class AdapterUserProfile(
         var imgReport = itemView.findViewById<ImageView>(R.id.imgReport)
 
     }
-    fun updateData(newList: List<PostModel>) {
-        this.list = newList
+    fun setData(newList: List<PostModel>) {
+        this.list.clear()
+        this.list.addAll(newList)
         notifyDataSetChanged()
     }
+    fun updateData(newList: List<PostModel>) {
+        this.list.addAll(newList)
+        notifyDataSetChanged()
+    }
+
 
 }
