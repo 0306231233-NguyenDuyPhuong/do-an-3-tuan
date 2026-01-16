@@ -354,21 +354,16 @@ const getSavePost = async (req, res) => {
       order: [["created_at", "DESC"]],
     });
 
-    // 2. XỬ LÝ DỮ LIỆU (QUAN TRỌNG)
     const finalData = saved.map((item) => {
-      // Chuyển từ Sequelize Instance sang Object thuần JSON để sửa dữ liệu
       const savedItem = item.get({ plain: true });
 
-      // Đi vào bên trong Post để sửa is_liked thành true/false
       if (savedItem.Post) {
         savedItem.Post.is_liked = (savedItem.Post.is_liked === 1 || savedItem.Post.is_liked === true);
       }
 
-      // TRẢ VỀ: Trả về nguyên cục SavedItem (bao gồm cả id của SavedPost và Post bên trong)
       return savedItem;
     });
 
-    // 3. Trả về data đã xử lý
     return res.json({
       data: finalData,
     });
