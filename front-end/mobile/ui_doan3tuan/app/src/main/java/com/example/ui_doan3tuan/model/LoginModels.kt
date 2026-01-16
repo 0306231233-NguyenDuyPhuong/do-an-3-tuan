@@ -59,7 +59,7 @@ data class ForgotPasswordResponse(
     @SerializedName("message")
     val message: String,
     @SerializedName("token")
-    val token: String
+    val token: String? = null // Token không còn cần thiết khi API tự tạo và gửi mật khẩu mới
 )
 
 sealed class ForgotPasswordState {

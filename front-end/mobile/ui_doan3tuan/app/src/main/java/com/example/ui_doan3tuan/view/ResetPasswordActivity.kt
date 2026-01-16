@@ -23,7 +23,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         binding = ActivityResetPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Lấy token từ Intent
+        // Lấy token từ Intent -> lưu trong share
         resetToken = intent.getStringExtra("RESET_TOKEN") ?: ""
 
         // Validate token

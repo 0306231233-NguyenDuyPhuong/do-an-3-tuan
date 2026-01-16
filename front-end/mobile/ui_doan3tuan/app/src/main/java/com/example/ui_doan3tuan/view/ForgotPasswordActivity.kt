@@ -1,10 +1,7 @@
 package com.example.ui_doan3tuan.view
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.ui_doan3tuan.databinding.ActivityForgotPasswordBinding
@@ -60,12 +57,12 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 result.fold(
                     onSuccess = { response ->
                         showLoading(false)
-                        // Success: Navigate to ResetPasswordActivity with token
-                        val intent = Intent(this@ForgotPasswordActivity, ResetPasswordActivity::class.java)
-                        intent.putExtra("RESET_TOKEN", response.token)
-                        startActivity(intent)
-                        // Optionally finish this activity
-                        // finish()
+                        // Success: Hiển thị thông báo và quay về LoginActivity
+                        showSuccessMessage(response.message ?: "Mật khẩu mới đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.")
+                        // Tự động quay về LoginActivity sau 2 giây
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            finish()
+                        }, 2000)
                     },
                     onFailure = { error ->
                         showLoading(false)
@@ -81,7 +78,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
     private fun validateUsername(username: String): String? {
         return when {
-            username.isEmpty() -> "Email/SĐT là bắt buộc"
+            username.isEmpty() -> "Email là bắt buộc"
             username.contains("@") -> {
                 if (android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
                     null
@@ -89,14 +86,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                     "Email không hợp lệ"
                 }
             }
-            username.matches(Regex("\\d+")) -> {
-                if (username.length in 10..11) {
-                    null
-                } else {
-                    "SĐT phải có 10-11 số"
-                }
-            }
-            else -> "Email hoặc SĐT không hợp lệ"
+            else -> "Vui lòng nhập email để nhận mật khẩu mới"
         }
     }
 
@@ -116,8 +106,8 @@ class ForgotPasswordActivity : AppCompatActivity() {
         val errorMessage = when (error) {
             is ApiException -> {
                 when (error.code) {
-                    400 -> "Vui lòng nhập đầy đủ thông tin"
-                    404 -> "Không tìm thấy tài khoản với email/SĐT này"
+                    400 -> error.message ?: "Vui lòng nhập email hợp lệ"
+                    404 -> error.message ?: "Không tìm thấy tài khoản với email này"
                     500 -> "Lỗi server, vui lòng thử lại sau"
                     else -> error.message ?: "Đã xảy ra lỗi"
                 }
@@ -133,6 +123,12 @@ class ForgotPasswordActivity : AppCompatActivity() {
             .setAction("THỬ LẠI") {
                 handleForgotPassword()
             }
+            .show()
+    }
+
+    private fun showSuccessMessage(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .setBackgroundTint(Color.GREEN)
             .show()
     }
 }

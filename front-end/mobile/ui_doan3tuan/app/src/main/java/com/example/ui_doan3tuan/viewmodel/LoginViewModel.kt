@@ -229,7 +229,7 @@ class AuthRepository {
                             val json = JSONObject(responseBody)
                             val forgotPasswordResponse = ForgotPasswordResponse(
                                 message = json.getString("message"),
-                                token = json.getString("token")
+                                token = json.optString("token").takeIf { it.isNotEmpty() }
                             )
                             Result.success(forgotPasswordResponse)
                         }

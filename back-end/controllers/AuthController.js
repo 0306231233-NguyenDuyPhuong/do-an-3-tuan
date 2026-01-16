@@ -3,6 +3,7 @@ import {Op} from "sequelize";
 import crypto from "crypto";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken"
+import { sendPasswordResetEmail } from "../helpers/emailService.js"
 
 const login = async (req, res) => {
   try {
@@ -257,30 +258,93 @@ const logout = async (req, res) => {
 };
 
 const forgotPassword = async (req,res)=>{
-  const { username } = req.body;
-  if (!username) return res.status(400).json({ message: "Username is required" });
-   //find user in database
+  try {
+    const { username } = req.body;
+    if (!username) return res.status(400).json({ message: "Username is required" });
+    
+    // Kiểm tra username phải là email (không hỗ trợ phone cho tính năng này)
+    if (!username.includes("@")) {
+      return res.status(400).json({ 
+        message: "Vui lòng nhập email để nhận mật khẩu mới" 
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(username)) {
+      return res.status(400).json({ message: "Email không hợp lệ" });
+    }
+
+    // Find user in database by email
     const user = await db.User.findOne({
-      where: {
-        [Op.or]: [
-          { email: username },
-          { phone: username }
-        ]
-      }
+      where: { email: username }
     });
+
     // if not found user 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy tài khoản với email này" });
+    }
 
-     const resetToken = crypto.randomBytes(16).toString("hex");
-     const expire = Date.now() + 15 * 60 * 1000;
+    // Generate new random password
+    // Mật khẩu phải đáp ứng yêu cầu: chữ hoa, chữ thường, số, ký tự đặc biệt, ít nhất 8 ký tự
+    const generateRandomPassword = () => {
+      const lowercase = "abcdefghijklmnopqrstuvwxyz";
+      const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const numbers = "0123456789";
+      const special = "!@#$%^&*";
+      
+      // Đảm bảo có ít nhất 1 ký tự mỗi loại
+      let password = 
+        lowercase[Math.floor(Math.random() * lowercase.length)] +
+        uppercase[Math.floor(Math.random() * uppercase.length)] +
+        numbers[Math.floor(Math.random() * numbers.length)] +
+        special[Math.floor(Math.random() * special.length)];
+      
+      // Thêm các ký tự ngẫu nhiên để đủ 12 ký tự
+      const allChars = lowercase + uppercase + numbers + special;
+      for (let i = password.length; i < 12; i++) {
+        password += allChars[Math.floor(Math.random() * allChars.length)];
+      }
+      
+      // Shuffle password
+      return password.split("").sort(() => Math.random() - 0.5).join("");
+    };
 
+    const newPassword = generateRandomPassword();
+    
+    // Hash password mới
+    const hashedPassword = await argon2.hash(newPassword);
+
+    // Update password trong database và xóa reset token cũ nếu có
     await db.User.update(
-      { reset_token: resetToken, reset_token_expire: expire },
+      { 
+        password: hashedPassword,
+        reset_token: null,
+        reset_token_expire: null
+      },
       { where: { id: user.id } }
     );
 
-    // trả token trực tiếp (thay vì gửi email)
-    return res.status(200).json({ message: "Token generated", token: resetToken });
+    // Gửi email chứa mật khẩu mới
+    try {
+      await sendPasswordResetEmail(user.email, newPassword);
+      return res.status(200).json({ 
+        message: "Mật khẩu mới đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư." 
+      });
+    } catch (emailError) {
+      console.error("Email sending error:", emailError);
+      // Nếu gửi email thất bại, rollback password (không update)
+      // Hoặc có thể log lỗi và vẫn trả về thành công (tùy yêu cầu)
+      return res.status(500).json({ 
+        message: "Đã tạo mật khẩu mới nhưng không thể gửi email. Vui lòng liên hệ hỗ trợ." 
+      });
+    }
+  } catch (error) {
+    console.error("FORGOT PASSWORD ERROR:", error);
+    return res.status(500).json({ 
+      error: error.message || "Đã xảy ra lỗi khi xử lý yêu cầu" 
+    });
+  }
 }
 
 
