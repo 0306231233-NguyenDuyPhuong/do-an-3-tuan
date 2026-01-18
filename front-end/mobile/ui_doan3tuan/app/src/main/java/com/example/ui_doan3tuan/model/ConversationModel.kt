@@ -27,7 +27,6 @@ data class MessageModel(
     val conversation_id: Int,
     val sender_id: Int,
     val content: String,
-    val created_at: String
 )
 
 @Serializable
