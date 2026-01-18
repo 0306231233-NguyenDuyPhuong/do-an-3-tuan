@@ -46,10 +46,10 @@ class UserProfileViewModel: ViewModel() {
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
-                Log.e("Lỗi", "Vào 1")
+                Log.e("Get Post ID", "Vào 1")
                 client.newCall(req).execute().use { resp ->
                     if (!resp.isSuccessful) {
-                        Log.e("API_ERROR", "Lỗi: ${resp.code}")
+                        Log.e("Get Post ID", "Lỗi: ${resp.code}")
                         if (resp.code == 401||resp.code == 403) {
                             _error.postValue("TOKEN_EXPIRED")
                             return@use
@@ -60,15 +60,15 @@ class UserProfileViewModel: ViewModel() {
                     val listPostId = response.post
                     slbv = response.post_count
                     slbb = response.friend_count
-                    Log.d("Test", "$slbv")
-                    Log.d("Test", "$slbb")
+                    Log.d("Get Post ID", "$slbv")
+                    Log.d("Get Post ID", "$slbb")
 
-                    Log.d("", "$listPostId")
+                    Log.d("Get Post ID", "$listPostId")
                     _postsId.postValue(listPostId)
                 }
 
             } catch (e: Exception) {
-                Log.e("API_EXCEPTION", "Lỗi mạng: ${e.message}")
+                Log.e("Get Post ID", "Lỗi mạng: ${e.message}")
                 _error.postValue("Kết nối mạng không ổn định, vui lòng thử lại sau!")
             }finally {
                 _isLoading.postValue(false)

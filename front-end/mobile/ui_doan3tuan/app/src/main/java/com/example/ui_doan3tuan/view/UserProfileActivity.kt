@@ -147,22 +147,37 @@ class UserProfileActivity : AppCompatActivity() {
         var txtTenNguoiDung =findViewById<TextView>(R.id.txtTenNguoiDung)
         revDSBaiDang.adapter = adapterUserProfile
         viewModel.postsId.observe(this) { listPostsId ->
-            if (listPostsId != null) {
-                adapterUserProfile.updateData(listPostsId)
-                txtSoLuongBanBe.setText(slbb.toString())
-                txtSoLuongBaiViet.setText(slbv.toString())
-                if(listPostsId.isNotEmpty() && interact == 0){
-                    if(listPostsId.get(0).User.avatar == null || listPostsId.get(0).User.avatar == ""){
-                        imgAvatar.load(R.drawable.profile)
-                    }else{
-                        imgAvatar.load("http://10.0.2.2:8989/api/images/${listPostsId.get(0).User.avatar}")
-                    }
-                    txtTenNguoiDung.setText(listPostsId.get(0).User.full_name)
+            Log.d("Get Post ID", "Vô lắng nghe")
+            Log.d("Get Post ID", "Chuoi moi ${listPostsId.size}")
+            Log.d("Get Post ID", "Chuoi moi ${listPostsId}")
+            adapterUserProfile.setData(listPostsId)
+//            adapterUserProfile.updateData(listPostsId)
+            txtSoLuongBanBe.setText(slbb.toString())
+            txtSoLuongBaiViet.setText(slbv.toString())
+            if(listPostsId.isNotEmpty() && interact == 0){
+                if(listPostsId.get(0).User.avatar == null || listPostsId.get(0).User.avatar == ""){
+                    imgAvatar.load(R.drawable.profile)
+                }else{
+                    imgAvatar.load("http://10.0.2.2:8989/api/images/${listPostsId.get(0).User.avatar}")
                 }
+                txtTenNguoiDung.setText(listPostsId.get(0).User.full_name)
+            }
+        }
+        viewModel.deletePost.observe(this) { isDeleted ->
+            if (isDeleted) {
+                if(interact==0){
+                    Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
+                    interact = 0
+                    viewModel.getPostID(accessToken,userId)
 
+                }else if (interact ==2 ){
+                    Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
+                    interact = 2
+                    viewModel.getListPostSave(accessToken)
+                }
             }else{
-
                 Log.d("Lỗi", "Null")
+
             }
         }
         val progressBar2 =  findViewById<ProgressBar>(R.id.progressBarLoadingProfile)
@@ -191,7 +206,6 @@ class UserProfileActivity : AppCompatActivity() {
             imgAllPost.setColorFilter(colorUnselected)
             imgPostFav.setColorFilter(colorUnselected)
             imgPostSave.setColorFilter(colorUnselected)
-
             selectedIcon.setColorFilter(colorSelected)
         }
         imgAllPost.setOnClickListener {
@@ -228,15 +242,6 @@ class UserProfileActivity : AppCompatActivity() {
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
         btnReport.setOnClickListener {
             viewModel.deletePost(post.id, accessToken)
-            viewModel.deletePost.observe(this) { reported ->
-                if (reported) {
-                    Toast.makeText(this, "Xoá thành công!", Toast.LENGTH_SHORT).show()
-
-                    viewModel.getPostID(accessToken,userId)
-                }else{
-                    Log.d("Lỗi", "Null")
-                }
-            }
             Log.e("Lỗi", "Id lần 1: ${post.id}")
             dialog.dismiss()
         }

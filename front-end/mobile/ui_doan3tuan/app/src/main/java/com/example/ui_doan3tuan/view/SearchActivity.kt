@@ -109,7 +109,8 @@ class SearchActivity : AppCompatActivity() {
                 if (!viewModel.isLoading.value!! && !viewModel.isLastPage && accessToken.isNotEmpty()) {
                     Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT).show()
                     page += 1
-                    viewModel.searchContent(accessToken, page, viewModel.currentQuery)
+                    viewModel.searchContent(accessToken,page, viewModel.currentQuery)
+                    Log.d("Search", " page $page")
                 }
             }
         }

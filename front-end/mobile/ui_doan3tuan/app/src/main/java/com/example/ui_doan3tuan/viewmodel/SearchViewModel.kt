@@ -72,7 +72,7 @@ class SearchViewModel: ViewModel() {
                             return@use
                         }
                         val updatedList = currentList + newList
-                        _resultSearch.postValue(updatedList)
+                        _resultSearch.postValue(newList)
                         Log.d("Search", "thanh cong")
                         Log.d("Search", "data $newList")
                         Log.d("Search", "data $updatedList")
