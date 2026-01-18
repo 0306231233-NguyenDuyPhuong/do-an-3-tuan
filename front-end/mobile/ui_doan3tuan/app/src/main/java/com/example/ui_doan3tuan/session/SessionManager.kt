@@ -36,9 +36,9 @@ class SessionManager(context: Context) {
     fun getRefreshToken(): String? =
         pref.getString("refresh_token", null)
 
-    fun getUser(): User? {
+    fun getUser(): User {
         val id = pref.getInt("user_id", -1)
-        if (id == -1) return null
+        if (id == -1) return User(-1, "", "", "", "")
 
         return User(
             id = id,
