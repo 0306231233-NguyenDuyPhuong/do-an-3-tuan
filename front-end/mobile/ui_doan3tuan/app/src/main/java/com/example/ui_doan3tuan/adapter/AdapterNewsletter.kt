@@ -41,7 +41,6 @@ class AdapterNewsletter(
         }
 
         holder.txtTen.text = list[position].User.full_name ?: "Nguyên Dương"
-        holder.txtNoiDung.text = list[position].content
         holder.txtThoiGian.text = hienThiThoiGian
         holder.txtSoLuongThich.text = list[position].likeCount.toString()
         holder.txtSoLuongChiaSe.text = list[position].shareCount.toString()
@@ -69,21 +68,20 @@ class AdapterNewsletter(
             holder.txtNoiDung.text = content
             holder.txtXemThem.visibility = View.GONE
         }
-        if (list[position].is_liked) {
-            holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
-            holder.imgThich.setColorFilter(Color.parseColor("#FF0000")) // Màu ĐỎ
-        } else {
-            holder.imgThich.setImageResource(R.drawable.baseline_favorite_24) // Hoặc icon viền (border)
-            holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF")) // Màu TRẮNG/Mặc định
-        }
         holder.txtXemThem.setOnClickListener {
-            list[position].isExpanded = !list[position].isExpanded   // 👈 CHỖ SET TRUE / FALSE
+            list[position].isExpanded = !list[position].isExpanded
             notifyItemChanged(position)
         }
 
+        if (list[position].is_liked) {
+            holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
+            holder.imgThich.setColorFilter(Color.parseColor("#FF0000"))
+        } else {
+            holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
+            holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF"))
+        }
         holder.imgThich.setOnClickListener {
             if (list[position].is_liked) {
-                // Đang like -> Bỏ like
                 list[position].is_liked = false
                 list[position].likeCount = list[position].likeCount - 1
 
@@ -118,7 +116,6 @@ class AdapterNewsletter(
             val fullUrl = "http://10.0.2.2:8989/api/images/${list[position].User.avatar}"
             holder.imgDaiDien.load(fullUrl) {
                 crossfade(true)
-                // Nên thêm placeholder và error
                 error(R.drawable.profile)
                 placeholder(R.drawable.profile)
             }

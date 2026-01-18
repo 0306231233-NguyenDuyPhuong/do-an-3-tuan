@@ -11,11 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.ui_doan3tuan.R
+import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.LogoutViewModel
 import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import kotlin.getValue
 
 class SettingActivity : AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
     private val viewModel: LogoutViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -32,10 +34,9 @@ class SettingActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btnDangXuat).setOnClickListener {
-            val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-            val accessToken = sharedPref.getString("access_token", "")
-            val refreshToken = sharedPref.getString("refresh_token", "")
-            sharedPref.edit().clear().apply()
+            sessionManager = SessionManager(applicationContext)
+            val accessToken = sessionManager.getAccessToken()
+            val refreshToken = sessionManager.getRefreshToken()
             if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
                 viewModel.logout("Bearer $accessToken", refreshToken)
             }

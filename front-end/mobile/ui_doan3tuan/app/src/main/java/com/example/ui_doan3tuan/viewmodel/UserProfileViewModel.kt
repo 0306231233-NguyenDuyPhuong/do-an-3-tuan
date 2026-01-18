@@ -63,7 +63,7 @@ class UserProfileViewModel: ViewModel() {
                     Log.d("Test", "$slbv")
                     Log.d("Test", "$slbb")
 
-                    Log.d("listPostId", "$listPostId")
+                    Log.d("", "$listPostId")
                     _postsId.postValue(listPostId)
                 }
 

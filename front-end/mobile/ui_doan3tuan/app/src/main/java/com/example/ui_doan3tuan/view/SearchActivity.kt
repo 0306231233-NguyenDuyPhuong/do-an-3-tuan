@@ -36,7 +36,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var accessToken: String
     private val viewModel: SearchViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
-    private var token = "";
     private lateinit var adapterNewsletter: AdapterNewsletter
     var page: Int = 1
 
@@ -61,8 +60,7 @@ class SearchActivity : AppCompatActivity() {
         val revRecentSearch = findViewById<RecyclerView>(R.id.revRecentSearch)
         revRecentSearch.layoutManager = LinearLayoutManager(this)
         val progressBar = findViewById<ProgressBar>(R.id.progressBarLoadingSearch)
-        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        token = sharedPref.getString("access_token", "") ?: ""
+
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },
@@ -122,14 +120,12 @@ class SearchActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = v.text.toString().trim()
                 if (query.isNotEmpty()) {
-                    val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-                    val token = sharedPref.getString("access_token", null)
-                    if (token != null) {
+                    if (accessToken != null) {
                         page = 1;
                         viewModel.isLastPage = false;
                         viewModel.clearSearchData()
                         adapterNewsletter.setData(emptyList())
-                        viewModel.searchContent(token, page, query)
+                        viewModel.searchContent(accessToken, page, query)
                         nestedScrollView.scrollTo(0, 0)
                     } else {
                         startActivity(Intent(this, LoginActivity::class.java))
