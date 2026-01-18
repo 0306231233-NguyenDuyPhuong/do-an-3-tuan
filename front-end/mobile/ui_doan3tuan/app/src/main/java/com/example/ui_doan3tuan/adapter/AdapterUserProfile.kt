@@ -46,11 +46,38 @@ class AdapterUserProfile(
         }
 
         holder.txtTen.text = list[position].User.full_name ?:"NGuyên Dương"
-        holder.txtNoiDung.text = list[position].content
         holder.txtThoiGian.text =hienThiThoiGian
         holder.txtSoLuongThich.text = list[position].likeCount.toString()
         holder.txtSoLuongChiaSe.text = list[position].shareCount.toString()
         holder.txtSoLuongBinhLuan.text = list[position].commentCount.toString()
+
+        val content = list[position].content
+        val wordCount = content.trim().split("\\s+".toRegex()).size
+
+        if (wordCount > 100) {
+            holder.txtXemThem.visibility = View.VISIBLE
+
+            if (list[position].isExpanded) {
+                holder.txtNoiDung.text = content
+                holder.txtXemThem.text = "Thu gọn"
+            } else {
+                holder.txtNoiDung.text = getShortContent(content)
+                holder.txtXemThem.text = "Xem thêm"
+            }
+
+            holder.txtXemThem.setOnClickListener {
+                list[position].isExpanded = !list[position].isExpanded
+                notifyItemChanged(position)
+            }
+        } else {
+            holder.txtNoiDung.text = content
+            holder.txtXemThem.visibility = View.GONE
+        }
+        holder.txtXemThem.setOnClickListener {
+            list[position].isExpanded = !list[position].isExpanded
+            notifyItemChanged(position)
+        }
+
 
         if (list[position].is_liked) {
             holder.imgThich.setImageResource(R.drawable.baseline_favorite_24)
@@ -65,7 +92,7 @@ class AdapterUserProfile(
                 list[position].is_liked = false
                 list[position].likeCount = list[position].likeCount - 1
 
-                holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF")) // Về trắng
+                holder.imgThich.setColorFilter(Color.parseColor("#FFFFFFFF"))
                 holder.txtSoLuongThich.text = list[position].likeCount.toString()
                 onLikeClick(list[position], false)
 
@@ -73,7 +100,7 @@ class AdapterUserProfile(
                 list[position].is_liked = true
                 list[position].likeCount = list[position].likeCount + 1
 
-                holder.imgThich.setColorFilter(Color.parseColor("#FF0000")) // Lên đỏ
+                holder.imgThich.setColorFilter(Color.parseColor("#FF0000"))
                 holder.txtSoLuongThich.text = list[position].likeCount.toString()
                 onLikeClick(list[position], true)
             }
@@ -100,6 +127,8 @@ class AdapterUserProfile(
             val fullUrl = "http://10.0.2.2:8989/api/images/${list[position].User.avatar}"
             holder.imgDaiDien.load(fullUrl) {
                 crossfade(true)
+                error(R.drawable.profile)
+                placeholder(R.drawable.profile)
             }
         }
         holder.imgChiaSe.setOnClickListener {
@@ -124,7 +153,7 @@ class AdapterUserProfile(
         var revHienBaiDang = itemView.findViewById<RecyclerView>(R.id.revHienBaiDang)
         var imgDaiDien = itemView.findViewById<ImageView>(R.id.imgAnhDaiDien_Home)
         var imgReport = itemView.findViewById<ImageView>(R.id.imgReport)
-
+        val txtXemThem: TextView = itemView.findViewById(R.id.txtXemThem)
     }
     fun setData(newList: List<PostModel>) {
         this.list.clear()
@@ -134,6 +163,10 @@ class AdapterUserProfile(
     fun updateData(newList: List<PostModel>) {
         this.list.addAll(newList)
         notifyDataSetChanged()
+    }
+    private fun getShortContent(text: String, maxWords: Int = 100): String {
+        val words = text.trim().split("\\s+".toRegex())
+        return words.take(maxWords).joinToString(" ") + "..."
     }
 
 

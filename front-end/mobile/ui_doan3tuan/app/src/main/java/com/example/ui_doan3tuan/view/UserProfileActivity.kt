@@ -41,6 +41,8 @@ class UserProfileActivity : AppCompatActivity() {
 
     private val viewModel: UserProfileViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
+    private lateinit var adapterUserProfile: AdapterUserProfile
+    private var interact: Int = 0;
     private val editProfileLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -49,13 +51,16 @@ class UserProfileActivity : AppCompatActivity() {
             viewModel.getPostID(accessToken, userId)
         }
     }
-    private lateinit var adapterUserProfile: AdapterUserProfile
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_user_profile)
-        sessionManager = SessionManager(applicationContext)
 
+        val imgAllPost = findViewById<ImageView>(R.id.imgAllPost)
+        val imgPostFav = findViewById<ImageView>(R.id.imgPostFav)
+        val imgPostSave = findViewById<ImageView>(R.id.imgPostSave)
+
+        sessionManager = SessionManager(applicationContext)
         val tokenFromSession = sessionManager.getAccessToken()
         if (tokenFromSession == null) {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -65,7 +70,8 @@ class UserProfileActivity : AppCompatActivity() {
         accessToken = tokenFromSession
 
         userId = sessionManager.getUser()?.id ?: run {
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java));
+            Log.d("Null", "Null id ")
             finish()
             return
         }
@@ -145,14 +151,17 @@ class UserProfileActivity : AppCompatActivity() {
                 adapterUserProfile.updateData(listPostsId)
                 txtSoLuongBanBe.setText(slbb.toString())
                 txtSoLuongBaiViet.setText(slbv.toString())
-                if(listPostsId.get(0).User.avatar == null || listPostsId.get(0).User.avatar == ""){
-                    imgAvatar.load(R.drawable.profile)
-                }else{
-                    imgAvatar.load("http://10.0.2.2:8989/api/images/${listPostsId.get(0).User.avatar}")
+                if(listPostsId.isNotEmpty() && interact == 0){
+                    if(listPostsId.get(0).User.avatar == null || listPostsId.get(0).User.avatar == ""){
+                        imgAvatar.load(R.drawable.profile)
+                    }else{
+                        imgAvatar.load("http://10.0.2.2:8989/api/images/${listPostsId.get(0).User.avatar}")
+                    }
+                    txtTenNguoiDung.setText(listPostsId.get(0).User.full_name)
                 }
-                txtTenNguoiDung.setText(listPostsId.get(0).User.full_name)
 
             }else{
+
                 Log.d("Lỗi", "Null")
             }
         }
@@ -167,13 +176,7 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
         viewModel.error.observe(this) { error ->
-            val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-
             if (error == "TOKEN_EXPIRED") {
-                sharedPref.edit().remove("access_token").apply()
-                sharedPref.edit().remove("refresh_token").apply()
-                sharedPref.edit().remove("access_token_time").apply()
-                sharedPref.edit().remove("refresh_token_time").apply()
                 Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -181,7 +184,42 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getPostID(accessToken,userId)
+        fun updateIconState(selectedIcon: ImageView) {
+            val colorUnselected = getColor(R.color.gray)
+            val colorSelected = getColor(R.color.white)
+
+            imgAllPost.setColorFilter(colorUnselected)
+            imgPostFav.setColorFilter(colorUnselected)
+            imgPostSave.setColorFilter(colorUnselected)
+
+            selectedIcon.setColorFilter(colorSelected)
+        }
+        imgAllPost.setOnClickListener {
+            adapterUserProfile.setData(emptyList())
+            updateIconState(imgAllPost)
+            viewModel.getPostID(accessToken, userId)
+            interact = 0
+        }
+
+        imgPostFav.setOnClickListener {
+            updateIconState(imgPostFav)
+//            viewModel.getListPostSave(token, userId)
+            adapterUserProfile.setData(emptyList())
+            Toast.makeText(this, "Đang tải bài viết đã thích...", Toast.LENGTH_SHORT).show()
+        }
+
+        imgPostSave.setOnClickListener {
+            updateIconState(imgPostSave)
+            adapterUserProfile.setData(emptyList())
+            viewModel.getListPostSave(accessToken)
+            interact = 2
+            Toast.makeText(this, "Đang tải bài viết đã lưu...", Toast.LENGTH_SHORT).show()
+        }
+        updateIconState(imgAllPost)
+        if(interact == 0){
+            viewModel.getPostID(accessToken, userId)
+        }
+
     }
 
     private fun showReportDialog(post: PostModel) {

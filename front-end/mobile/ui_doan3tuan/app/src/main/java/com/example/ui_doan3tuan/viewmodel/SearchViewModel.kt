@@ -68,9 +68,14 @@ class SearchViewModel: ViewModel() {
                         } else {
                             _resultSearch.value ?: emptyList()
                         }
+                        if(newList.isEmpty()){
+                            return@use
+                        }
                         val updatedList = currentList + newList
                         _resultSearch.postValue(updatedList)
-                        Log.d("Search", "tanh cong")
+                        Log.d("Search", "thanh cong")
+                        Log.d("Search", "data $newList")
+                        Log.d("Search", "data $updatedList")
                         if (newList.isEmpty() && page == 1) {
                             _error.postValue("Không tìm thấy kết quả")
                         }

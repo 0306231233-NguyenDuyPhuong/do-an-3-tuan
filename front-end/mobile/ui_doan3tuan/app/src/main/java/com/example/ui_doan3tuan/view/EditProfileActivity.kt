@@ -38,7 +38,6 @@ class EditProfileActivity : AppCompatActivity() {
     private var selectedImageFile: File? = null
     private lateinit var imgAvatar: ImageView
     private lateinit var txtUserName: EditText
-    private var token = "";
     private val userProfileViewModel: UserProfileViewModel by viewModels()
     private val editProfileViewModel: EditProfileViewModel by viewModels()
 
@@ -72,9 +71,6 @@ class EditProfileActivity : AppCompatActivity() {
 
         imgAvatar = findViewById(R.id.imgAnhDaiDien)
         txtUserName = findViewById(R.id.edtTenCSHS)
-        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        token = sharedPref.getString("access_token", "") ?: ""
-        userId = sharedPref.getInt("user_id", 1)
         setupObservers()
         setupListeners()
         if (accessToken.isNotEmpty()) {
