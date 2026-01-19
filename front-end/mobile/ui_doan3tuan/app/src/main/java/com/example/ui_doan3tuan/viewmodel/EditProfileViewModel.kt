@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ui_doan3tuan.view.avatarUrl2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -43,7 +44,9 @@ class EditProfileViewModel : ViewModel() {
                         _updateUser.postValue(false)
                         return@launch
                     }
+                    avatarUrl2 = avatarUrl
                 }
+
                 updateUserAPI(token, full_name, avatarUrl)
                 _updateUser.postValue(true)
 
@@ -65,8 +68,6 @@ class EditProfileViewModel : ViewModel() {
             if (avatar != null) {
                 jsonObject.put("avatar", avatar)
             }
-
-
             val requestBodyString = jsonObject.toString()
             val mediaType = "application/json;charset=utf-8".toMediaType()
             val requestBody = requestBodyString.toRequestBody(mediaType)

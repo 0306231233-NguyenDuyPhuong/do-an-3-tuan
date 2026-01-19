@@ -24,6 +24,7 @@ class SessionManager(context: Context) {
             putString("full_name", user.full_name)
             putString("email", user.email)
             putString("phone", user.phone)
+            putString("avatar", user.avatar)
 
             putBoolean("is_logged_in", true)
             apply()
@@ -38,15 +39,22 @@ class SessionManager(context: Context) {
 
     fun getUser(): User {
         val id = pref.getInt("user_id", -1)
-        if (id == -1) return User(-1, "", "", "", "")
+        if (id == -1) return User(-1, "", "", "", "","")
 
         return User(
             id = id,
             email = pref.getString("email", null),
             phone = pref.getString("phone", null),
             full_name = pref.getString("full_name", "")?: "",
-            role = pref.getString("user_role", "")?: ""
+            role = pref.getString("user_role", "")?: "",
+            avatar = pref.getString("avatar", null)?:""
         )
+    }
+    fun updateAvatar(newAvatarUrl: String) {
+        pref.edit().putString("avatar", newAvatarUrl).apply()
+    }
+    fun updateUserName(newUserName: String) {
+        pref.edit().putString("full_name", newUserName).apply()
     }
 
     fun isLoggedIn(): Boolean =

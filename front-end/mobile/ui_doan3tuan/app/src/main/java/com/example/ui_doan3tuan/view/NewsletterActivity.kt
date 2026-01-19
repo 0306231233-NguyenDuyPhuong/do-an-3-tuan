@@ -22,6 +22,8 @@ import com.example.ui_doan3tuan.adapter.AdapterComment
 import com.example.ui_doan3tuan.adapter.AdapterFriends
 import com.example.ui_doan3tuan.adapter.AdapterNewsletter
 import com.example.ui_doan3tuan.model.PostModel
+import com.example.ui_doan3tuan.model.User
+import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -33,10 +35,9 @@ class NewsletterActivity : AppCompatActivity() {
     private lateinit var adapterNewsletter: AdapterNewsletter
     private lateinit var adapterFriends: AdapterFriends
     private lateinit var imgChat: ImageView
-
-    private var token: String = ""
+    private lateinit var sessionManager: SessionManager
+    private var token: String? = ""
     private var page: Int = 1
-    var userId: Int = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +45,8 @@ class NewsletterActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_newsletter)
 
-        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        token = sharedPref.getString("access_token", "") ?: ""
-        userId = sharedPref.getInt("user_id", 1)
+        sessionManager = SessionManager(applicationContext)
+        token = sessionManager.getAccessToken()
 
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -72,11 +72,11 @@ class NewsletterActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onLikeClick = { post, isActionLike ->
-                if (isActionLike) viewModel.likePost(token, post.id)
-                else viewModel.UnlikePost(token, post.id)
+                if (isActionLike) viewModel.likePost(token!!, post.id)
+                else viewModel.UnlikePost(token!!, post.id)
             },
             onShareClick = { post ->
-                viewModel.sharePost(token, post.id)
+                viewModel.sharePost(token!!, post.id)
                 Toast.makeText(this, "Đang chia sẻ: ${post.content}", Toast.LENGTH_SHORT).show()
             }
         )
@@ -115,7 +115,7 @@ class NewsletterActivity : AppCompatActivity() {
 
         viewModel.error.observe(this) { error ->
             if (error == "TOKEN_EXPIRED") {
-                sharedPref.edit().clear().apply()
+                sessionManager.clearSession()
                 Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -150,6 +150,9 @@ class NewsletterActivity : AppCompatActivity() {
             }
             false
         }
+        findViewById<ImageView>(R.id.imgChat).setOnClickListener {
+            startActivity(Intent(this, ConversationActivity::class.java))
+        }
 
         // Xử lý khi đang ở Home mà bấm lại icon Home (Refresh)
         bottomNav.setOnItemReselectedListener { item ->
@@ -163,16 +166,16 @@ class NewsletterActivity : AppCompatActivity() {
             if (!v.canScrollVertically(1)) {
                 Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT).show()
                 page += 1
-                viewModel.getPost(token, page)
+                viewModel.getPost(token!!, page)
             }
         }
 
         findViewById<ImageView>(R.id.imgSearch).setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
-        if (token.isNotEmpty()) {
-            viewModel.getPost(token, page)
-            viewModel.getListfriends(token)
+        if (token!!.isNotEmpty()) {
+            viewModel.getPost(token!!, page)
+            viewModel.getListfriends(token!!)
         } else {
             Toast.makeText(this, "Lỗi: Không tìm thấy Token đăng nhập", Toast.LENGTH_SHORT).show()
         }
@@ -184,8 +187,8 @@ class NewsletterActivity : AppCompatActivity() {
         //Xóa dữ liệu cũ trong ViewModel (Màn hình sẽ trắng/loading)
         viewModel.clearPosts()
         page = 1
-        viewModel.getPost(token, page)
-        viewModel.getListfriends(token)
+        viewModel.getPost(token!!, page)
+        viewModel.getListfriends(token!!)
     }
 
 
@@ -199,7 +202,7 @@ class NewsletterActivity : AppCompatActivity() {
         }
         val btnSavePost = view.findViewById<LinearLayout>(R.id.btnSavePost)
         btnSavePost.setOnClickListener {
-            viewModel.savePost(token, post.id)
+            viewModel.savePost(token!!, post.id)
             Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
@@ -217,7 +220,7 @@ class NewsletterActivity : AppCompatActivity() {
         val txtVandenhaycam = view.findViewById<TextView>(R.id.txtVandenhaycam)
 
         fun sendReport(reason: String) {
-            viewModel.reportPost(token, postId, id, reason)
+            viewModel.reportPost(token!!, postId, id, reason)
             Toast.makeText(this, "Đã báo cáo: $reason", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
@@ -251,12 +254,12 @@ class NewsletterActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getCommentsByPostId(post.id, token)
+        viewModel.getCommentsByPostId(post.id, token!!)
 
         btnSend.setOnClickListener {
             val content = edtComment.text.toString()
             if (content.isNotBlank()) {
-                viewModel.sendComment(post.id, content, token)
+                viewModel.sendComment(post.id, content, token!!)
                 edtComment.setText("")
             }
         }

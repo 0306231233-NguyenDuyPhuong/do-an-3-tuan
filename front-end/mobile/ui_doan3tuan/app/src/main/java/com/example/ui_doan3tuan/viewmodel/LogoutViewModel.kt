@@ -6,10 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ui_doan3tuan.model.PostModel
-import com.example.ui_doan3tuan.model.PostResponseIDModel
-import com.example.ui_doan3tuan.view.slbb
-import com.example.ui_doan3tuan.view.slbv
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json

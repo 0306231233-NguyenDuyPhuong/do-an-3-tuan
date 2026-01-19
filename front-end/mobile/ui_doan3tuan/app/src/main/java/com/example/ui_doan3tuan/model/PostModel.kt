@@ -19,7 +19,8 @@ data class PostModel(
     @SerialName("user_id") var userId: Int,
     var is_liked: Boolean = false,
     var User: UserModel,
-    var Location:LocationModel,
-    var PostMedia: List<PostMediaModel>
+    var Location:LocationModel?,
+    var PostMedia: List<PostMediaModel>,
+    var isExpanded: Boolean = false
 )
 

@@ -34,7 +34,6 @@ class CreatePostActivity : AppCompatActivity() {
     private lateinit var adapterChonAnhVideo: AdapterSelectImageAndVideo
     private lateinit var sessionManager: SessionManager
 
-    private var token = "";
     private var userId: Int = 1
     private val viewModel: CreatePostViewModel by viewModels()
     // Cho phép người dùng chọn nhiều ảnh cùng lúc
@@ -57,6 +56,7 @@ class CreatePostActivity : AppCompatActivity() {
             adapterChonAnhVideo.submitList(newList)
         }
         sessionManager = SessionManager(applicationContext)
+        val accessToken = sessionManager.getAccessToken()
 
         setupDropdownStatus()
 
@@ -70,7 +70,6 @@ class CreatePostActivity : AppCompatActivity() {
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
             )
         }
-        val accessToken = sessionManager.getAccessToken()
         if (accessToken == null) {
             Toast.makeText(this, "Vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, LoginActivity::class.java))
