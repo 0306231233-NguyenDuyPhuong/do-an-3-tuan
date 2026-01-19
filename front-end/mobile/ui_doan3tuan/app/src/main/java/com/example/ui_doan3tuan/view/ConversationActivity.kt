@@ -22,7 +22,7 @@ class ConversationActivity : AppCompatActivity(), ApdaterConversation.OnClickIte
     private val client = OkHttpClient()
     private val conversationViewModel = ConversationViewModel(client)
     private lateinit var rcvConversation: RecyclerView
-    private var conversationList = mutableListOf<ConversationMemberModel>()
+    private var conversationList = mutableListOf<ConversationModel>()
     private lateinit var sharedPref: SharedPreferences
     private var token: String = ""
 
@@ -36,7 +36,6 @@ class ConversationActivity : AppCompatActivity(), ApdaterConversation.OnClickIte
         rcvConversation = findViewById(R.id.rcvConversation)
 
         lifecycleScope.launch {
-            Log.d("token", token)
             conversationList.addAll(conversationViewModel.getConversation(token))
             rcvConversation.layoutManager = LinearLayoutManager(this@ConversationActivity)
             rcvConversation.adapter = ApdaterConversation(conversationList, this@ConversationActivity)
@@ -45,9 +44,10 @@ class ConversationActivity : AppCompatActivity(), ApdaterConversation.OnClickIte
 
     override fun onClickItem(postion: Int) {
         val intent = Intent(this, ChatActivity::class.java)
-        intent.putExtra("id", conversationList[postion].User.id)
-        intent.putExtra("full_name", conversationList[postion].User.full_name)
-        intent.putExtra("avatar", conversationList[postion].User.avatar)
+        intent.putExtra("conversation_id", conversationList[postion].id)
+        intent.putExtra("id", conversationList[postion].members[1].User.id)
+        intent.putExtra("full_name", conversationList[postion].members[1].User.full_name)
+        intent.putExtra("avatar", conversationList[postion].members[1].User.avatar)
         startActivity(intent)
     }
 }

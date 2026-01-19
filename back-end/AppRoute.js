@@ -54,6 +54,7 @@ const AppRoute = (app) => {
   //Chat
   router.get("/conversations", verifyToken, ChatController.getConversation);
   router.get("/messages/:receiverId", verifyToken, ChatController.getMessages);
+  router.post("/messages", verifyToken, ChatController.postMessage)
 
   //User
   router.get(

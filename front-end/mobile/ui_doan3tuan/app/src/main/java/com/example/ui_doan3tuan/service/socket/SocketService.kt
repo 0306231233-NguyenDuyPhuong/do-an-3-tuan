@@ -28,13 +28,14 @@ class SocketService {
         socket.connect()
     }
 
-    fun sendMessage(conversation_id:Int, sender_id:Int, content:String){
+    fun sendMessage(receiverId: Int, content: String) {
         val json = JSONObject()
-        json.put("conversation_id", conversation_id)
-        json.put("sender_id", sender_id)
+        json.put("receiverId", receiverId)
         json.put("content", content)
-        socket.emit("send_message_to_user",json)
+        socket.emit("send_message_to_user", json)
     }
+
+
 
     fun onMessage(callback: (JSONObject) -> Unit) {
         socket.on("receive_message") {
@@ -46,5 +47,6 @@ class SocketService {
             callback(data.getJSONObject("message"))
         }
     }
+
 
 }

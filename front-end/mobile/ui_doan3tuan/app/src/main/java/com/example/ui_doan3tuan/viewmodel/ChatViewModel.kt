@@ -7,45 +7,45 @@ import com.example.ui_doan3tuan.model.MessageModel
 import com.example.ui_doan3tuan.service.socket.SocketService
 import org.json.JSONObject
 import kotlin.collections.mutableListOf
-
 class ChatViewModel(
     private val repo: ChatRepository
-): ViewModel() {
-    val messages = MutableLiveData<MutableList<MessageModel>>()
+) : ViewModel() {
 
-    fun connectSocket(token:String, myUserId:Int){
-        messages.value = mutableListOf()
-        repo.connect(token){ json->
+    val messages = MutableLiveData<MutableList<MessageModel>>(mutableListOf())
+
+    fun connectSocket(token: String) {
+        repo.connect(token) { json ->
             val message = MessageModel(
                 id = json.getInt("id"),
-                conversation_id = json.getInt("conversation_id"),
-                sender_id = json.getInt("sender_id"),
-                content = json.getString("content"),
+                conversation_id = json.getInt("conversationId"),
+                sender_id = json.getInt("senderId"),
+                content = json.getString("content")
             )
 
-            val list = messages.value?:mutableListOf()
+            val list = messages.value ?: mutableListOf()
             list.add(message)
             messages.postValue(list)
         }
     }
 
-    fun sendMessage(conversation_id:Int, sender_id:Int, content:String) {
-        repo.sendMessage(conversation_id, sender_id, content)
+    fun sendMessage(receiverId: Int, content: String) {
+        repo.sendMessage(receiverId, content)
     }
 }
 
 class ChatRepository(
     private val socketService: SocketService
-){
-    fun connect(token:String, onMessage:(JSONObject)-> Unit){
+) {
+    fun connect(token: String, onMessage: (JSONObject) -> Unit) {
         socketService.connect(token)
         socketService.onMessage(onMessage)
     }
 
-    fun sendMessage(conversation_id:Int, sender_id:Int, content:String){
-        socketService.sendMessage(conversation_id, sender_id, content )
+    fun sendMessage(receiverId: Int, content: String) {
+        socketService.sendMessage(receiverId, content)
     }
 }
+
 
 class ChatViewModelFactory(
     private val repo: ChatRepository
