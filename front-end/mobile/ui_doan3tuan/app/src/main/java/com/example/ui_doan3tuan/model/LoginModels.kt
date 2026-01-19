@@ -23,13 +23,14 @@ data class RegisterResponse(
     val user: User
 )
 
-    data class User(
-        val id: Int,
-        val email: String?,
-        val phone: String?,
-        val full_name: String,
-        val role: String
-    )
+data class User(
+    val id: Int,
+    val email: String?,
+    val phone: String?,
+    var full_name: String,
+    val role: String,
+    var avatar:String?
+)
 
 data class ErrorResponse(
     val message: String

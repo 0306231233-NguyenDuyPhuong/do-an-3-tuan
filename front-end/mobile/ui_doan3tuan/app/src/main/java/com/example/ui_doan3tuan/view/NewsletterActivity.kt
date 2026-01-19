@@ -115,6 +115,7 @@ class NewsletterActivity : AppCompatActivity() {
 
         viewModel.error.observe(this) { error ->
             if (error == "TOKEN_EXPIRED") {
+                sessionManager.clearSession()
                 Toast.makeText(this, "Phiên đăng nhập đã hết hạn", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

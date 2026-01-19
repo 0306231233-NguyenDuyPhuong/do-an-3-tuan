@@ -30,14 +30,18 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import kotlin.getValue
+var avatarUrl2: String? = null
 class EditProfileActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
     private lateinit var accessToken: String
     private var userId: Int = -1
-
     private var selectedImageFile: File? = null
     private lateinit var imgAvatar: ImageView
     private lateinit var txtUserName: EditText
+    private lateinit var btnLuu: TextView
+    private lateinit var btnHuy: TextView
+    private lateinit var btnEditImage: TextView
+
     private val userProfileViewModel: UserProfileViewModel by viewModels()
     private val editProfileViewModel: EditProfileViewModel by viewModels()
 
@@ -69,13 +73,19 @@ class EditProfileActivity : AppCompatActivity() {
         userId = user.id
 
 
-        imgAvatar = findViewById(R.id.imgAnhDaiDien)
-        txtUserName = findViewById(R.id.edtTenCSHS)
+        initViews()
         setupObservers()
         setupListeners()
         if (accessToken.isNotEmpty()) {
             userProfileViewModel.getPostID(accessToken, userId)
         }
+    }
+    private fun initViews(){
+        imgAvatar = findViewById(R.id.imgAnhDaiDien)
+        txtUserName = findViewById(R.id.edtTenCSHS)
+        btnHuy = findViewById(R.id.txtHuy)
+        btnLuu = findViewById(R.id.txtLuu)
+        btnEditImage = findViewById(R.id.txtChinhSuaImage)
     }
 
     private fun setupObservers() {
@@ -98,9 +108,14 @@ class EditProfileActivity : AppCompatActivity() {
                 }
             }
         }
-
         editProfileViewModel.updateUser.observe(this) { isSuccess ->
             if (isSuccess) {
+                var currentUser = sessionManager.getUser()
+                var newName = txtUserName.text.toString().trim()
+                currentUser.full_name = newName
+                currentUser.avatar = avatarUrl2
+                sessionManager.updateAvatar(avatarUrl2 ?: "")
+                sessionManager.updateUserName(newName)
                 Snackbar.make(txtUserName, "Cập nhật thành công!", Snackbar.LENGTH_SHORT).show()
                 setResult(RESULT_OK)
                 finish()
@@ -114,28 +129,23 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        findViewById<TextView>(R.id.txtChinhSuaImage).setOnClickListener {
+        btnEditImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-
         // Nút Lưu
-        findViewById<TextView>(R.id.txtLuu).setOnClickListener {
+        btnLuu.setOnClickListener {
             val fullName = txtUserName.text.toString().trim()
-
             if (fullName.isEmpty()) {
                 Snackbar.make(it, "Tên không được để trống", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             Snackbar.make(it, "Đang lưu...", Snackbar.LENGTH_SHORT).show()
             editProfileViewModel.updateUserFull(accessToken, fullName, selectedImageFile)
         }
-
-        findViewById<TextView>(R.id.txtHuy).setOnClickListener {
+        btnHuy.setOnClickListener {
             finish()
         }
     }
-
     private fun uriToFile(context: Context, uri: Uri): File? {
         try {
             val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
