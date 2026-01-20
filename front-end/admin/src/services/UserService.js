@@ -31,7 +31,6 @@ export const fetchUser = ({
       status
     }
   },
-  
   )
 }
 

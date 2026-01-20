@@ -176,11 +176,9 @@ const getPostUser = async (req, res) => {
         order,
         subQuery: false,
         where: wherePost,
-        // --- PHẦN THÊM MỚI: Tính toán field is_liked ---
         attributes: {
           include: [
             [
-              // Subquery kiểm tra trong bảng likes xem có record nào khớp post_id và user_id không
               db.sequelize.literal(`(
                 SELECT COUNT(*)
                 FROM likes
@@ -191,7 +189,6 @@ const getPostUser = async (req, res) => {
             ]
           ]
         },
-        // ------------------------------------------------
         include: [
           { model: db.User, attributes: ["id", "full_name", "avatar"], required: false },
           { model: db.PostMedia },
@@ -210,10 +207,8 @@ const getPostUser = async (req, res) => {
       })
     ]);
 
-    // Chuyển đổi kết quả (1/0) từ SQL thành Boolean (true/false)
     const formattedData = postData.map(post => {
       const p = post.toJSON();
-      // MySQL count trả về 1 hoặc 0, ta ép kiểu về boolean
       p.is_liked = Boolean(p.is_liked); 
       return p;
     });
@@ -223,7 +218,7 @@ const getPostUser = async (req, res) => {
       total: postTotal,
       page,
       limit,
-      data: formattedData // Trả về data đã format
+      data: formattedData 
     });
 
   } catch (error) {
@@ -369,22 +364,6 @@ const getPostById = async (req, res) => {
     data: postData
   });
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 const postPost = async (req, res) => {

@@ -65,6 +65,7 @@ dependencies {
 // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.identity.doctypes.jvm)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -76,5 +77,8 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("io.socket:socket.io-client:2.1.0") {
+
+    }
 
 }

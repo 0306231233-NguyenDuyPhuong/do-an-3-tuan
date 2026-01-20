@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ui_doan3tuan.model.ConversationMemberModel
 import com.example.ui_doan3tuan.R
+import com.example.ui_doan3tuan.model.ConversationModel
 
 class ApdaterConversation(
-    private val conversatitonList: MutableList<ConversationMemberModel>,
+    private val conversatitonList: MutableList<ConversationModel>,
     private val listener: OnClickItemConversation
 ): RecyclerView.Adapter<ApdaterConversation.ConverstationViewHolder>() {
     override fun onCreateViewHolder(
@@ -27,9 +28,10 @@ class ApdaterConversation(
         position: Int
     ) {
         val item = conversatitonList[position]
-        holder.txtNameUserConversation.setText(item.User.full_name)
+        holder.txtNameUserConversation.setText(item.members[1].User.full_name)
+        holder.txtMessageUser.setText(item.messages[0].content)
         Glide.with(holder.itemView.context)
-            .load("http://10.0.2.2:8989/api/images/${item.User.avatar}")
+            .load("http://10.0.2.2:8989/api/images/${item.members[1].User.avatar}")
             .into(holder.imgUserConverstation)
         holder.itemView.setOnClickListener {
             listener.onClickItem(position)
@@ -44,5 +46,6 @@ class ApdaterConversation(
     class ConverstationViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val imgUserConverstation = itemView.findViewById<ImageView>(R.id.imgUserConverstation)
         val txtNameUserConversation = itemView.findViewById<TextView>(R.id.txtNameUserConversation)
+        val txtMessageUser = itemView.findViewById<TextView>(R.id.txtMessageUser)
     }
 }

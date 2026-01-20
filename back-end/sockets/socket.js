@@ -14,22 +14,26 @@ const initSocket = (server) => {
   });
 
   io.use((socket, next) => {
-    try {
-      const token =
-        socket.handshake.auth?.token || socket.handshake.query?.token;
+  try {
+    let token =
+      socket.handshake.auth?.token || socket.handshake.query?.token;
 
-      console.log("TOKEN:", token);
+    if (!token) return next(new Error("No token"));
 
-      if (!token) return next(new Error("No token"));
-
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-      socket.user = decoded;
-      next();
-    } catch (err) {
-      console.log("AUTH ERROR:", err.message);
-      next(new Error("Unauthorized"));
+    // ✅ FIX QUAN TRỌNG
+    if (token.startsWith("Bearer ")) {
+      token = token.split(" ")[1];
     }
-  });
+
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    socket.user = decoded;
+    next();
+  } catch (err) {
+    console.log("AUTH ERROR:", err.message);
+    next(new Error("Unauthorized"));
+  }
+});
+
 
   const userSockets = new Map();
 
