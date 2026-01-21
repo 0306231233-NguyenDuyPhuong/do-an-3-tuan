@@ -25,45 +25,51 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var  avatar: String
     private lateinit var accessToken: String
     private lateinit var refreshToken: String
+    private lateinit var btnDangXuat: Button
+    private lateinit var txtNamSetting: TextView
+    private lateinit var imgThoatCaiDat: ImageView
+    private lateinit var imgAvatarSetting: ImageView
     private val viewModel: LogoutViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_setting)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        findViewById<ImageView>(R.id.imgThoatCaiDat).setOnClickListener {
-            finish()
-        }
+        initViews()
         sessionManager = SessionManager(applicationContext)
         userName = sessionManager.getUser()?.full_name.toString()
         avatar = sessionManager.getUser()?.avatar.toString()
         Log.d("User", "$userName")
         Log.d("User", "avatar: $avatar")
+        txtNamSetting.setText(userName)
+        setupListener()
+        setupObserve()
+    }
+    override fun onResume(){
+        super.onResume()
+        loadData()
 
-        val imgAvatarSetting = findViewById<ImageView>(R.id.imgAvatarSetting)
-        findViewById<TextView>(R.id.txtNamSetting).setText(userName)
+    }
+    private fun initViews(){
+        btnDangXuat = findViewById(R.id.btnDangXuat)
+        imgThoatCaiDat = findViewById(R.id.imgThoatCaiDat)
+        txtNamSetting = findViewById(R.id.txtNamSetting)
+        imgAvatarSetting = findViewById(R.id.imgAvatarSetting)
+
+    }
+    private fun loadData(){
         if(avatar==null || avatar == ""){
             imgAvatarSetting.load(R.drawable.profile)
         }else{
-            imgAvatarSetting.load("http://10.0.2.2:8989/api/images/$avatar")
-
-        }
-
-        findViewById<Button>(R.id.btnDangXuat).setOnClickListener {
-            accessToken = sessionManager.getAccessToken().toString()
-            refreshToken = sessionManager.getRefreshToken().toString()
-            Log.d("User", "$accessToken")
-            Log.d("User", "$refreshToken")
-            if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
-                viewModel.logout(accessToken, refreshToken)
+            imgAvatarSetting.load("http://10.0.2.2:8989/api/images/$avatar"){
+                placeholder(R.drawable.profile)
+                error(R.drawable.profile)
+                crossfade(true)
             }
 
         }
+    }
+    private fun setupObserve(){
         viewModel.logout.observe(this) { isSuccess ->
             if (isSuccess) {
                 sessionManager.clearSession()
@@ -73,6 +79,19 @@ class SettingActivity : AppCompatActivity() {
                 finish()
             }
         }
-
+    }
+    private fun setupListener(){
+        btnDangXuat.setOnClickListener {
+            accessToken = sessionManager.getAccessToken().toString()
+            refreshToken = sessionManager.getRefreshToken().toString()
+            Log.d("User", "$accessToken")
+            Log.d("User", "$refreshToken")
+            if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
+                viewModel.logout(accessToken, refreshToken)
+            }
+        }
+        imgThoatCaiDat.setOnClickListener {
+            finish()
+        }
     }
 }

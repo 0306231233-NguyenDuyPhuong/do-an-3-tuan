@@ -50,7 +50,7 @@ class EditProfileActivity : AppCompatActivity() {
             imgAvatar.setImageURI(uri)
             selectedImageFile = uriToFile(this, uri)
         } else {
-            Log.d("PhotoPicker", "No media selected")
+            Log.d("Test", "No media selected")
         }
     }
 
@@ -71,7 +71,6 @@ class EditProfileActivity : AppCompatActivity() {
 
         accessToken = tokenFromSession
         userId = user.id
-
 
         initViews()
         setupObservers()
@@ -113,8 +112,10 @@ class EditProfileActivity : AppCompatActivity() {
                 var currentUser = sessionManager.getUser()
                 var newName = txtUserName.text.toString().trim()
                 currentUser.full_name = newName
-                currentUser.avatar = avatarUrl2
-                sessionManager.updateAvatar(avatarUrl2 ?: "")
+                if (avatarUrl2 != null){
+                    currentUser.avatar = avatarUrl2
+                    sessionManager.updateAvatar(avatarUrl2 ?: "")
+                }
                 sessionManager.updateUserName(newName)
                 Snackbar.make(txtUserName, "Cập nhật thành công!", Snackbar.LENGTH_SHORT).show()
                 setResult(RESULT_OK)

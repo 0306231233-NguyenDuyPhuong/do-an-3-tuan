@@ -57,7 +57,6 @@ class EditProfileViewModel : ViewModel() {
         }
     }
 
-    // 2. Hàm gọi API /user/update
     private fun updateUserAPI(token: String, full_name: String, avatar: String?) {
         Log.d("Test", "--- BẮT ĐẦU updateUserAPI ---")
         try {

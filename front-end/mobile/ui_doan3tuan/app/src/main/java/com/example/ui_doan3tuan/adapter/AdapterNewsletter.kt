@@ -50,7 +50,11 @@ class AdapterNewsletter(
         holder.txtSoLuongBinhLuan.text = currentItem.commentCount.toString()
 
         val content = currentItem.content
-        val wordCount = content.trim().split("\\s+".toRegex()).size
+        val wordCount = content.trim()
+            .takeIf { it.isNotEmpty() }
+            ?.split("\\s+".toRegex())
+            ?.size ?: 0
+
 
         if (wordCount > 100) {
             holder.txtXemThem.visibility = View.VISIBLE
@@ -115,7 +119,7 @@ class AdapterNewsletter(
 
             //Setup SnapHelper (Lướt từng ảnh)
             val snapHelper = PagerSnapHelper()
-            holder.revHienBaiDang.onFlingListener = null // Tránh lỗi "Instance already set"
+            holder.revHienBaiDang.onFlingListener = null
             snapHelper.attachToRecyclerView(holder.revHienBaiDang) //Gắn PagerSnapHelper vào RecyclerView
 
             val totalImages = listMedia.size

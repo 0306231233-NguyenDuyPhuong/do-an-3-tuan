@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.ui_doan3tuan.view.ConversationActivity
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.AdapterComment
@@ -25,20 +26,32 @@ import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.User
 import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.NewsletterViewModel
+import com.example.ui_doan3tuan.viewmodel.UserProfileViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class NewsletterActivity : AppCompatActivity() {
 
-    private val viewModel: NewsletterViewModel by viewModels()
+
     private lateinit var adapterNewsletter: AdapterNewsletter
     private lateinit var adapterFriends: AdapterFriends
     private lateinit var imgChat: ImageView
     private lateinit var sessionManager: SessionManager
+    private lateinit var bottomNav: BottomNavigationView
+
+    private lateinit var nestedScrollView: NestedScrollView
+    private lateinit var revHienBaiDang: RecyclerView
+    private lateinit var revDSBanBe: RecyclerView
+    private lateinit var revMessengerContacts: RecyclerView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var imgSearch: ImageView
+
+    private val viewModel: NewsletterViewModel by viewModels()
+
     private var token: String? = ""
     private var page: Int = 1
-
+    private var userId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,45 +60,59 @@ class NewsletterActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(applicationContext)
         token = sessionManager.getAccessToken()
+        val user = sessionManager.getUser()
+        userId = user.id
 
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        val nestedScrollView = findViewById<NestedScrollView>(R.id.myNestedScrollView)
-        val revHienBaiDang = findViewById<RecyclerView>(R.id.revHienBaiDang)
-        val revDSBanBe = findViewById<RecyclerView>(R.id.revDSBanBe)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBarLoadingNewletter)
-        imgChat = findViewById(R.id.imgChat)
-
-        imgChat.setOnClickListener {
-            val intent = Intent(this, ConversationActivity::class.java)
-
-            startActivity(intent)
-        }
-        revHienBaiDang.layoutManager = LinearLayoutManager(this)
-        adapterNewsletter = AdapterNewsletter(
-            mutableListOf(),
-            onCommentClick = { post -> showCommentDialog(post) },
-            onReportClick = { post -> showReportDialog(post) },
-            onImageClick = { id ->
-                val intent = Intent(this, FriendsProfileActivity::class.java)
-                intent.putExtra("id", id)
-                startActivity(intent)
-            },
-            onLikeClick = { post, isActionLike ->
-                if (isActionLike) viewModel.likePost(token!!, post.id)
-                else viewModel.UnlikePost(token!!, post.id)
-            },
-            onShareClick = { post ->
-                viewModel.sharePost(token!!, post.id)
-                Toast.makeText(this, "Đang chia sẻ: ${post.content}", Toast.LENGTH_SHORT).show()
+        initViews()
+        setupListeners()
+        setupRecyclerView()
+        setupObservers()
+        setupBottomNav()
+        // Xử lý khi đang ở Home mà bấm lại icon Home (Refresh)
+        bottomNav.setOnItemReselectedListener { item ->
+            if (item.itemId == R.id.nav_home) {
+                Toast.makeText(this, "Đang làm mới...", Toast.LENGTH_SHORT).show()
+                loadFreshData(nestedScrollView)
             }
-        )
-        revHienBaiDang.adapter = adapterNewsletter
+        }
 
-        revDSBanBe.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        adapterFriends = AdapterFriends(mutableListOf())
-        revDSBanBe.adapter = adapterFriends
+        nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, _, _, _, _ ->
+            if (!v.canScrollVertically(1)) {
+                Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT).show()
+                page += 1
+                viewModel.getPost(token!!, page)
+            }
+        }
+//        loadPostData()
 
+
+    }
+    override fun onResume(){
+        super.onResume()
+//        loadFreshData(nestedScrollView)
+        loadPostData()
+        bottomNav.menu.findItem(R.id.nav_home).isChecked = true
+    }
+    private fun loadPostData(){
+        if (token!!.isNotEmpty()) {
+            viewModel.getPost(token!!, page)
+            viewModel.getListfriends(token!!)
+        } else {
+            Toast.makeText(this, "Lỗi: Không tìm thấy Token đăng nhập", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun initViews(){
+        bottomNav = findViewById(R.id.bottom_navigation)
+        nestedScrollView = findViewById(R.id.myNestedScrollView)
+        revHienBaiDang = findViewById(R.id.revHienBaiDang)
+        revDSBanBe = findViewById(R.id.revDSBanBe)
+        progressBar = findViewById(R.id.progressBarLoadingNewletter)
+        imgChat = findViewById(R.id.imgChat)
+        imgSearch = findViewById(R.id.imgSearch)
+
+    }
+    private fun setupObservers(){
         viewModel.posts.observe(this) { listPosts ->
             if (listPosts != null) {
                 if (page == 1) {
@@ -122,65 +149,62 @@ class NewsletterActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-
-
+    }
+    private fun setupListeners(){
+        imgChat.setOnClickListener {
+            val intent = Intent(this, ConversationActivity::class.java)
+            startActivity(intent)
+        }
+        imgSearch.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
+        }
+    }
+    private fun setupBottomNav() {
         bottomNav.selectedItemId = R.id.nav_home
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> {
-                    loadFreshData(nestedScrollView)
-                    return@setOnItemSelectedListener true
-                }
-                R.id.nav_friend -> {
-                    startActivity(Intent(this, FriendsListActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-                    return@setOnItemSelectedListener false
-                }
-                R.id.nav_add -> {
-                    startActivity(Intent(this, CreatePostActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-                    return@setOnItemSelectedListener false
-                }
-                R.id.nav_notification -> {
-                    startActivity(Intent(this, NotificationActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-                    return@setOnItemSelectedListener false
-                }
-                R.id.nav_profile -> {
-                    startActivity(Intent(this, UserProfileActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-                    return@setOnItemSelectedListener false
-                }
+                R.id.nav_home -> true
+                R.id.nav_friend -> navigateTo(FriendsListActivity::class.java)
+                R.id.nav_add -> navigateTo(CreatePostActivity::class.java)
+                R.id.nav_notification -> navigateTo(NotificationActivity::class.java)
+                R.id.nav_profile -> navigateTo(UserProfileActivity::class.java)
+                else -> false
             }
-            false
-        }
-        findViewById<ImageView>(R.id.imgChat).setOnClickListener {
-            startActivity(Intent(this, ConversationActivity::class.java))
-        }
-
-        // Xử lý khi đang ở Home mà bấm lại icon Home (Refresh)
-        bottomNav.setOnItemReselectedListener { item ->
-            if (item.itemId == R.id.nav_home) {
-                Toast.makeText(this, "Đang làm mới...", Toast.LENGTH_SHORT).show()
-                loadFreshData(nestedScrollView)
-            }
-        }
-
-        nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, _, _, _, _ ->
-            if (!v.canScrollVertically(1)) {
-                Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT).show()
-                page += 1
-                viewModel.getPost(token!!, page)
-            }
-        }
-
-        findViewById<ImageView>(R.id.imgSearch).setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
-        }
-        if (token!!.isNotEmpty()) {
-            viewModel.getPost(token!!, page)
-            viewModel.getListfriends(token!!)
-        } else {
-            Toast.makeText(this, "Lỗi: Không tìm thấy Token đăng nhập", Toast.LENGTH_SHORT).show()
         }
     }
-
+    private fun setupRecyclerView(){
+        revHienBaiDang.layoutManager = LinearLayoutManager(this)
+        adapterNewsletter = AdapterNewsletter(
+            mutableListOf(),
+            onCommentClick = { post -> showCommentDialog(post) },
+            onReportClick = { post -> showReportDialog(post) },
+            onImageClick = { id ->
+                val intent = Intent(this, FriendsProfileActivity::class.java)
+                intent.putExtra("id", id)
+                startActivity(intent)
+            },
+            onLikeClick = { post, isActionLike ->
+                if (isActionLike) viewModel.likePost(token!!, post.id)
+                else viewModel.UnlikePost(token!!, post.id)
+            },
+            onShareClick = { post ->
+                showShareDialog(post)
+//                viewModel.sharePost(token!!, post.id)
+//                Toast.makeText(this, "Đang chia sẻ: ${post.content}", Toast.LENGTH_SHORT).show()
+            }
+        )
+        revHienBaiDang.adapter = adapterNewsletter
+        revDSBanBe.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        adapterFriends = AdapterFriends(mutableListOf())
+        revDSBanBe.adapter = adapterFriends
+    }
+    private fun navigateTo(cls: Class<*>) : Boolean {
+        val intent = Intent(this, cls)
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+        return false
+    }
     private fun loadFreshData(scrollView: NestedScrollView) {
         // Cuộn lên đầu
         scrollView.smoothScrollTo(0, 0)
@@ -190,28 +214,60 @@ class NewsletterActivity : AppCompatActivity() {
         viewModel.getPost(token!!, page)
         viewModel.getListfriends(token!!)
     }
-
-
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_report, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
-        btnReport.setOnClickListener {
-            showDetailReportDialog(post.User.id, post.id)
-            dialog.dismiss()
-        }
         val btnSavePost = view.findViewById<LinearLayout>(R.id.btnSavePost)
+
+        if(post.User.id == userId) {
+            btnReport.visibility = View.GONE
+        }else{
+            btnReport.visibility = View.VISIBLE
+            btnReport.setOnClickListener {
+                showDetailReportDialog(post.User.id, post.id)
+            }
+         dialog.dismiss()
+        }
+
         btnSavePost.setOnClickListener {
             viewModel.savePost(token!!, post.id)
             Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
-
-
         dialog.setContentView(view)
         dialog.show()
     }
+    private fun showShareDialog(post: PostModel) {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_share, null)
+        revMessengerContacts = view.findViewById(R.id.revMessengerContacts)
+        val tvUserName = view.findViewById<TextView>(R.id.tvUserName)
+        val tvTitleMessenger = view.findViewById<TextView>(R.id.tvTitleMessenger)
+        val imgCurrentUserAvatar = view.findViewById<ImageView>(R.id.imgCurrentUserAvatar)
+        val user = sessionManager.getUser()
+        tvUserName.text = user.full_name
+        if (user.avatar.toString().isNotEmpty()) {
+            val fullUrl = "http://10.0.2.2:8989/api/images/${user.avatar}"
+            imgCurrentUserAvatar.load(fullUrl) {
+                crossfade(true)
+                error(R.drawable.profile)
+                placeholder(R.drawable.profile)
+            }
+        } else {
+            imgCurrentUserAvatar.load(R.drawable.profile)
+        }
 
+
+
+
+
+        revMessengerContacts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        val currentFriends = viewModel.friends.value ?: mutableListOf()
+        revMessengerContacts.adapter = AdapterFriends(currentFriends)
+        dialog.setContentView(view)
+        dialog.show()
+    }
     private fun showDetailReportDialog(id: Int, postId: Int) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_detail_report, null)
@@ -232,7 +288,6 @@ class NewsletterActivity : AppCompatActivity() {
         dialog.setContentView(view)
         dialog.show()
     }
-
     private fun showCommentDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_comment, null)

@@ -34,33 +34,49 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class SearchActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
     private lateinit var accessToken: String
+    private lateinit var adapterNewsletter: AdapterNewsletter
+    private lateinit var btnBackSearch: ImageView
+    private lateinit var revRecentSearch: RecyclerView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var edtSearch: EditText
+    private lateinit var nestedScrollView: NestedScrollView
+
     private val viewModel: SearchViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
-    private lateinit var adapterNewsletter: AdapterNewsletter
+
     var page: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
-        sessionManager = SessionManager(applicationContext)
 
+        sessionManager = SessionManager(applicationContext)
         val tokenFromSession = sessionManager.getAccessToken()
+
         if (tokenFromSession == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
         }
         accessToken = tokenFromSession
+        initViews()
+        setupRecyclerView()
+        setupObservers()
+        setupListeners()
 
-        findViewById<ImageView>(R.id.btnBackSearch).setOnClickListener {
-            page = 1;
-            finish()
-        }
-        val revRecentSearch = findViewById<RecyclerView>(R.id.revRecentSearch)
+
+
+    }
+    private fun initViews(){
+        btnBackSearch = findViewById(R.id.btnBackSearch)
+        progressBar = findViewById(R.id.progressBarLoadingSearch)
+        revRecentSearch = findViewById(R.id.revRecentSearch)
+        edtSearch =  findViewById(R.id.edtSearch)
+        nestedScrollView = findViewById(R.id.myNested)
+    }
+    private fun setupRecyclerView() {
         revRecentSearch.layoutManager = LinearLayoutManager(this)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBarLoadingSearch)
-
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
             onCommentClick = { post -> showCommentDialog(post) },
@@ -84,6 +100,8 @@ class SearchActivity : AppCompatActivity() {
         )
         revRecentSearch.adapter = adapterNewsletter
 
+    }
+    private fun setupObservers(){
         viewModel.resultSearch.observe(this) { listPosts ->
             if (listPosts != null) {
                 if (page == 1) {
@@ -103,7 +121,12 @@ class SearchActivity : AppCompatActivity() {
                 revRecentSearch.visibility = View.VISIBLE
             }
         }
-        val nestedScrollView = findViewById<NestedScrollView>(R.id.myNested)
+    }
+    private fun setupListeners(){
+        btnBackSearch.setOnClickListener {
+            page = 1;
+            finish()
+        }
         nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, _, _, _, _ ->
             if (!v.canScrollVertically(1)) {
                 if (!viewModel.isLoading.value!! && !viewModel.isLastPage && accessToken.isNotEmpty()) {
@@ -114,8 +137,7 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         }
-
-        findViewById<EditText>(R.id.edtSearch).setOnEditorActionListener { v, actionId, event ->
+        edtSearch.setOnEditorActionListener { v, actionId, event ->
             // v (view):Đây chính là cái EditText mà người dùng đang nhập liệu.Dùng để làm gì: Để bạn lấy dữ liệu trực tiếp từ ô nhập đó mà không cần gọi findViewById lại.
             // actionId: mã định danh của cái nút mà người dùng vừa bấm trên bàn phím ảo.
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -148,6 +170,12 @@ class SearchActivity : AppCompatActivity() {
         btnReport.setOnClickListener {
             showDetailReportDialog(post.User.id, post.id)
 
+            dialog.dismiss()
+        }
+        val btnSavePost = view.findViewById<LinearLayout>(R.id.btnSavePost)
+        btnSavePost.setOnClickListener {
+            viewModel2.savePost(accessToken!!, post.id)
+            Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
         dialog.setContentView(view)
