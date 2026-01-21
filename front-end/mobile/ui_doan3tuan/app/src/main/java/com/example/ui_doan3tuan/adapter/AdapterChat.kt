@@ -4,13 +4,18 @@ import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.ui_doan3tuan.model.MessageModel
 import com.example.ui_doan3tuan.R
+import com.example.ui_doan3tuan.model.UserModel
 
 class AdapterChat(
     private val messagesList: MutableList<MessageModel>,
+    private val userId: Int,
+    private val friendAvatar: String
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -19,7 +24,8 @@ class AdapterChat(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(messagesList[position].sender_id == 1) TYPE_RIGHT else TYPE_LEFT
+
+        return if(messagesList[position].sender_id == userId) TYPE_RIGHT else TYPE_LEFT
     }
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -45,6 +51,9 @@ class AdapterChat(
             holder.txtMessage.setText(message.content)
         } else if(holder is LeftViewHolder){
             holder.txtMessage.setText(message.content)
+            Glide.with(holder.itemView.context)
+                .load("http://10.0.2.2:8989/api/images/${friendAvatar}")
+                .into(holder.imgUserChat)
         }
     }
 
@@ -53,10 +62,10 @@ class AdapterChat(
 
     class RightViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val txtMessage: TextView = itemView.findViewById(R.id.txtMessage)
-
     }
 
     class LeftViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val txtMessage: TextView = itemView.findViewById(R.id.txtMessage)
+        val imgUserChat: ImageView = itemView.findViewById(R.id.imgUserChat)
     }
 }

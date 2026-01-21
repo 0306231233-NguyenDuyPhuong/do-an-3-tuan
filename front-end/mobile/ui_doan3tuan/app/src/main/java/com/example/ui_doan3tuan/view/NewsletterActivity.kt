@@ -3,6 +3,7 @@ package com.example.ui_doan3tuan.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -55,13 +56,13 @@ class NewsletterActivity : AppCompatActivity() {
         val revHienBaiDang = findViewById<RecyclerView>(R.id.revHienBaiDang)
         val revDSBanBe = findViewById<RecyclerView>(R.id.revDSBanBe)
         val progressBar = findViewById<ProgressBar>(R.id.progressBarLoadingNewletter)
-        //imgChat = findViewById(R.id.imgChat)
+        imgChat = findViewById(R.id.imgChat)
 
-//        imgChat.setOnClickListener {
-//            val intent = Intent(this, ConversationActivity::class.java)
-//
-//            startActivity(intent)
-//        }
+        imgChat.setOnClickListener {
+            val intent = Intent(this, ConversationActivity::class.java)
+
+            startActivity(intent)
+        }
         revHienBaiDang.layoutManager = LinearLayoutManager(this)
         adapterNewsletter = AdapterNewsletter(
             mutableListOf(),
@@ -151,9 +152,10 @@ class NewsletterActivity : AppCompatActivity() {
             }
             false
         }
-//        findViewById<ImageView>(R.id.imgChat).setOnClickListener {
-//            startActivity(Intent(this, ConversationActivity::class.java))
-//        }
+        imgChat.setOnClickListener {
+            Log.d("Chat", "Click")
+            startActivity(Intent(this, ConversationActivity::class.java))
+        }
 
         // Xử lý khi đang ở Home mà bấm lại icon Home (Refresh)
         bottomNav.setOnItemReselectedListener { item ->

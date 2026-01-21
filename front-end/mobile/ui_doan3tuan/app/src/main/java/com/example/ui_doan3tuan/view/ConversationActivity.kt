@@ -45,9 +45,9 @@ class ConversationActivity : AppCompatActivity(), ApdaterConversation.OnClickIte
     override fun onClickItem(postion: Int) {
         val intent = Intent(this, ChatActivity::class.java)
         intent.putExtra("conversation_id", conversationList[postion].id)
-        intent.putExtra("id", conversationList[postion].members[1].User.id)
-        intent.putExtra("full_name", conversationList[postion].members[1].User.full_name)
-        intent.putExtra("avatar", conversationList[postion].members[1].User.avatar)
+        intent.putExtra("id", conversationList[postion].members[0].User.id)
+        intent.putExtra("full_name", conversationList[postion].members[0].User.full_name)
+        intent.putExtra("avatar", conversationList[postion].members[0].User.avatar)
         startActivity(intent)
     }
 }
