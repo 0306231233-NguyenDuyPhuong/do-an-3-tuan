@@ -3,9 +3,9 @@ class InsertLocatioinRequest{
     constructor(data){
         this.user_id = data.user_id,
         this.content = data.content || "",
-        this.privacy = data.privacy || "public",
+        this.privacy = data.privacy || 0,
         this.location_id = data.location_id,
-        this.status = data.status || "approved"
+        this.status = data.status || 1
     };
 
     static validate(data){
