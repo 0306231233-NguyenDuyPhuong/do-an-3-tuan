@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="text"
-                android:text="Nguyễn Tấn Dương"
+                android:text="Nguyễn Tấn Toàn"
                 android:textColor="#E6E2E2" />
 
             <TextView
