@@ -28,10 +28,10 @@ class ApdaterConversation(
         position: Int
     ) {
         val item = conversatitonList[position]
-        holder.txtNameUserConversation.setText(item.members[1].User.full_name)
+        holder.txtNameUserConversation.setText(item.members[0].User.full_name)
         holder.txtMessageUser.setText(item.messages[0].content)
         Glide.with(holder.itemView.context)
-            .load("http://10.0.2.2:8989/api/images/${item.members[1].User.avatar}")
+            .load("http://10.0.2.2:8989/api/images/${item.members[0].User.avatar}")
             .into(holder.imgUserConverstation)
         holder.itemView.setOnClickListener {
             listener.onClickItem(position)

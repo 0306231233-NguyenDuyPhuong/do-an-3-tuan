@@ -18,6 +18,7 @@ import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.AdapterChat
 import com.example.ui_doan3tuan.model.MessageModel
 import com.example.ui_doan3tuan.service.socket.SocketService
+import com.example.ui_doan3tuan.session.SessionManager
 import com.example.ui_doan3tuan.viewmodel.ChatRepository
 import com.example.ui_doan3tuan.viewmodel.ChatViewModel
 import com.example.ui_doan3tuan.viewmodel.ChatViewModelFactory
@@ -36,6 +37,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var chatRecyclerView: RecyclerView
     private lateinit var viewModel: ChatViewModel
     private lateinit var adapter: AdapterChat
+    private lateinit var sessionManager: SessionManager
     private val client = OkHttpClient()
     private var messageViewModel = MessageViewModel(client)
     private var messageList = mutableListOf<MessageModel>()
@@ -52,15 +54,14 @@ class ChatActivity : AppCompatActivity() {
         val avatar = intent.getStringExtra("avatar")
         txtFullNameChat = findViewById(R.id.txtFullNameChat)
         imgAvatarChat = findViewById(R.id.imgAvatarChat)
+        sessionManager = SessionManager(this)
 
         val socketService = SocketService()
         val repository = ChatRepository(socketService)
         val factory = ChatViewModelFactory(repository)
         val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val userId = 1
         val receiverId = intent.getIntExtra("id", 0)
-        val conversationId = intent.getIntExtra("conversation_id", 0)
-        Log.d("conversation_id", conversationId.toString())
+        val userId = sessionManager.getUser().id
 
         token = sharedPref.getString("access_token", "") ?: ""
 
@@ -68,7 +69,7 @@ class ChatActivity : AppCompatActivity() {
             .get(ChatViewModel::class.java)
         viewModel.connectSocket(token)
         chatRecyclerView.layoutManager = LinearLayoutManager(this@ChatActivity)
-        adapter = AdapterChat(messageList)
+        adapter = AdapterChat(messageList, userId, avatar.toString())
         chatRecyclerView.adapter = adapter
 
         Glide.with(this)
@@ -81,7 +82,7 @@ class ChatActivity : AppCompatActivity() {
         imgExitChat.setOnClickListener {finish()}
 
         viewModel.messages.observe(this) { list ->
-            messageList.clear()
+            //messageList.clear()
             messageList.addAll(list)
             adapter.notifyDataSetChanged()
 
@@ -91,7 +92,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            messageList.clear()
+            //messageList.clear()
             messageList.addAll(messageViewModel.getMessage(token, receiverId))
             adapter.notifyDataSetChanged()
         }
