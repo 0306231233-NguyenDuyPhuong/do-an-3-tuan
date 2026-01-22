@@ -1,5 +1,6 @@
 package com.example.ui_doan3tuan.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,8 @@ import com.example.ui_doan3tuan.model.ConversationModel
 
 class ApdaterConversation(
     private val conversatitonList: MutableList<ConversationModel>,
-    private val listener: OnClickItemConversation
+    private val listener: OnClickItemConversation,
+    private val userId: Int
 ): RecyclerView.Adapter<ApdaterConversation.ConverstationViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -28,10 +30,16 @@ class ApdaterConversation(
         position: Int
     ) {
         val item = conversatitonList[position]
-        holder.txtNameUserConversation.setText(item.members[0].User.full_name)
-        holder.txtMessageUser.setText(item.messages[0].content)
+
+        val otherMember = item.members.first{it.User.id != userId}
+        val lastMessage = item.messages.lastOrNull()
+        Log.d("Friend", otherMember.toString())
+        Log.d("Friend", item.toString())
+
+        holder.txtNameUserConversation.setText(otherMember.User.full_name)
+        holder.txtMessageUser.setText(lastMessage?.content?:"")
         Glide.with(holder.itemView.context)
-            .load("http://10.0.2.2:8989/api/images/${item.members[0].User.avatar}")
+            .load("http://10.0.2.2:8989/api/images/${otherMember.User.avatar}")
             .into(holder.imgUserConverstation)
         holder.itemView.setOnClickListener {
             listener.onClickItem(position)

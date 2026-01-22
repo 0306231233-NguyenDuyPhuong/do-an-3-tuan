@@ -169,6 +169,4 @@ class FriendsListActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }

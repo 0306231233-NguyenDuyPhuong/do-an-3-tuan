@@ -141,8 +141,8 @@ private fun loadFriendPosts() {
             }
 
             startActivity(Intent(this, ChatActivity::class.java).apply {
-                putExtra("friend_id", friendId)
-                putExtra("friend_name", friendName)
+                putExtra("id", friendId)
+                putExtra("full_name", friendName)
             })
         }
 
