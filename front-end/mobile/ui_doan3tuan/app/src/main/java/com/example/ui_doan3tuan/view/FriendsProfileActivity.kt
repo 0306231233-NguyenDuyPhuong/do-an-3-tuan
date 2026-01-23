@@ -49,7 +49,6 @@ class FriendsProfileActivity : AppCompatActivity() {
 
     private fun getDataFromIntent() {
         friendId = intent.getIntExtra("friend_id", -1)
-        friendName = intent.getStringExtra("friend_name") ?: "Chưa có tên"
         isFriend = intent.getBooleanExtra("from_friends_list", false)
     }
 
@@ -70,7 +69,7 @@ class FriendsProfileActivity : AppCompatActivity() {
             .into(imgAvatar)
     }
 
-    // ================= FRIEND STATUS =================
+
 
     private fun checkFriendStatusFromAPI() {
         val token = getToken()
@@ -100,46 +99,46 @@ class FriendsProfileActivity : AppCompatActivity() {
             })
     }
 
-private fun loadFriendPosts() {
-    val token = getToken()
-    if (token.isEmpty()) return
+    private fun loadFriendPosts() {
+        val token = getToken()
+        if (token.isEmpty()) return
 
-    ApiClient.apiService
-        .getPostsByUser("Bearer $token", friendId)
-        .enqueue(object : Callback<UserPostResponse> {
+        ApiClient.apiService
+            .getPostsByUser("Bearer $token", friendId)
+            .enqueue(object : Callback<UserPostResponse> {
 
-            override fun onResponse(
-                call: Call<UserPostResponse>,
-                response: Response<UserPostResponse>
-            ) {
-                // 🔥 LOG KIỂM TRA
-                Log.d("API_CHECK", "code = ${response.code()}")
-                Log.d("API_CHECK", "raw error = ${response.errorBody()?.string()}")
-                Log.d("API_CHECK", "body = ${response.body()}")
+                override fun onResponse(
+                    call: Call<UserPostResponse>,
+                    response: Response<UserPostResponse>
+                ) {
+                    if (!response.isSuccessful) return
 
-                if (response.isSuccessful) {
-                    val posts = response.body()?.posts ?: emptyList()
-                    Log.d("API_CHECK", "posts size = ${posts.size}")
+                    val body = response.body() ?: return
 
-                    postAdapter.setData(posts)
+
+                    val user = body.user
+                    friendName = user.full_name ?: ""
+
+                    findViewById<TextView>(R.id.textView9).text = friendName
+
+                    Glide.with(this@FriendsProfileActivity)
+                        .load(user.avatar)
+                        .placeholder(R.drawable.profile)
+                        .into(findViewById(R.id.imageView9))
+
+                    postAdapter.setData(body.posts ?: emptyList())
                 }
-            }
 
-            override fun onFailure(call: Call<UserPostResponse>, t: Throwable) {
-                Log.e("API_CHECK", "API FAIL", t)
-            }
-        })
-}
+                override fun onFailure(call: Call<UserPostResponse>, t: Throwable) {
+                    Log.e("FriendsProfile", "Load posts fail", t)
+                }
+            })
+    }
 
     private fun setupButtons() {
         updateButtonUI()
 
         btnNhanTin.setOnClickListener {
-            if (!isFriend) {
-                Toast.makeText(this, "Cần kết bạn trước", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
             startActivity(Intent(this, ChatActivity::class.java).apply {
                 putExtra("friend_id", friendId)
                 putExtra("friend_name", friendName)

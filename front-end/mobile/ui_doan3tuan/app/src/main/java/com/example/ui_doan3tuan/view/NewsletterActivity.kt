@@ -180,7 +180,7 @@ class NewsletterActivity : AppCompatActivity() {
             onReportClick = { post -> showReportDialog(post) },
             onImageClick = { id ->
                 val intent = Intent(this, FriendsProfileActivity::class.java)
-                intent.putExtra("id", id)
+                intent.putExtra("friend_id", id.toInt())
                 startActivity(intent)
             },
             onLikeClick = { post, isActionLike ->
