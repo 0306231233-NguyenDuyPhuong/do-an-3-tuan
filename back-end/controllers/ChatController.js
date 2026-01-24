@@ -4,7 +4,7 @@ import db, { Sequelize } from "../models";
 const getConversation = async (req, res) => {
   try {
    // const currentUserId = req.user.userId;
-    const currentUserId = 1;
+    const currentUserId = 4;
     const conversations = await db.Conversation.findAll({
       where: {
         type: 0, // private
@@ -62,7 +62,9 @@ const getMessages = async (req, res) => {
     if (Number(currentUserId) === Number(receiverId))
       return res
         .status(400)
-        .json({ message: "Don't have message by yourself" });
+        .json({
+          message: "Don't have message by yourself"
+         });
     if (!receiver) return res.status(404).json({ message: "User not found" });
 
     const existingConversion = await db.Conversation.findOne({
@@ -114,7 +116,30 @@ const getMessages = async (req, res) => {
   }
 };
 
+const postMessage = async(req,res)=>{
+  try {
+      const {conversation_id, sender_id} = req.body;
+  const [conversationCheck, senderCheck] = await Promise.all([
+    db.Conversation.findOne({id:conversation_id}),
+    db.User.findOne({id:sender_id})
+  ])
+  if(!conversationCheck && !senderCheck){
+    return res.status(404).json({
+      message:"Conversation or user not found"
+    })
+  } 
+  await db.Message.create(req.body)
+  return res.status(201).json({
+    message: "Insert message success"
+  })
+  } catch (error) {
+    return res.status(500).json({
+      error: error
+    })
+  }
+}
 export default {
   getConversation,
   getMessages,
+  postMessage
 };

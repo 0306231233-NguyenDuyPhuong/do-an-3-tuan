@@ -50,7 +50,6 @@ const Report = () => {
         report_type,
         report_id
       });
-      console.log(">>>>>>>>", res)
       if (res && res.data) {
         setCurrentPage(page);
         setTotal(res?.data?.count ?? 0);
@@ -89,12 +88,10 @@ const Report = () => {
 
   const handleReportComment = async (comment) => {
     await fetchCommentData(comment.id);
-    // const postId = comment.post_id;
-    // console.log(">>>>>>>>>>", postId)
   }
 
 
-  if (!Array.isArray(listReport)) {
+  if (!listReport) {
     return <div>Loading...</div>;
   }
 

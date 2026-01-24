@@ -53,6 +53,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: UnfriendRequest
     ): Call<ApiMessage>
+
+    @GET("/api/users/{userId}")
+    fun getPostsByUser(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: Int
+    ): Call<UserPostResponse>
 }
 
 object ApiClient {

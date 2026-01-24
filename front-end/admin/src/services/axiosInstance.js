@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   withCredentials: true
 });
 
-/* ===== Request: gắn token ===== */
+// Request: gắn token
 axiosInstance.interceptors.request.use(
   config => {
     const token = localStorage.getItem("accessToken");
@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
   error => Promise.reject(error)
 );
 
-/* ===== Response: refresh token ===== */
+// Response: refresh token
 let isRefreshing = false;
 let failedQueue = [];
 

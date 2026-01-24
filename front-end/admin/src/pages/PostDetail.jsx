@@ -13,7 +13,7 @@ const PostDetail = () => {
   const [postDetailData, setPostDetailData] = useState(null);
   const [commentsList, setCommentsList] = useState([]);
   const [totalComment, setTotalComment] = useState(0);
-  const {state} = useLocation();4
+  const {state} = useLocation();
   const [openId, setOpenId] = useState(false);
   const reportId = state?.reportId;
   const statusPost = {

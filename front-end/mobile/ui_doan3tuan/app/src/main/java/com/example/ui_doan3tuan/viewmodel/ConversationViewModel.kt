@@ -1,6 +1,7 @@
 package com.example.ui_doan3tuan.viewmodel
 
 import com.example.ui_doan3tuan.model.ConversationMemberModel
+import com.example.ui_doan3tuan.model.ConversationModel
 import com.example.ui_doan3tuan.model.ConversationResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,8 +13,8 @@ class ConversationViewModel(
     private val client: OkHttpClient,
     private val json: Json = Json { ignoreUnknownKeys = true }
 ) {
-    suspend fun getConversation(token:String): MutableList<ConversationMemberModel> = withContext(Dispatchers.IO){
-        val conversatitonList = mutableListOf<ConversationMemberModel>()
+    suspend fun getConversation(token:String): MutableList<ConversationModel> = withContext(Dispatchers.IO){
+        val conversatitonList = mutableListOf<ConversationModel>()
         val url = "http://10.0.2.2:8989/api/conversations"
         val request = Request.Builder()
             .url(url)
@@ -26,7 +27,7 @@ class ConversationViewModel(
                 throw Exception(response.message)
             }
             val conversation = json.decodeFromString<ConversationResponse>(bodyString)
-            conversatitonList.addAll(conversation.data[0].members)
+            conversatitonList.addAll(conversation.data)
             return@use conversatitonList
         }
     }

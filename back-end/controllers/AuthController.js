@@ -74,6 +74,7 @@ const login = async (req, res) => {
         phone: user.phone,
         full_name: user.full_name,
         role: user.role,
+        avater: user.avatar
       },
     });
   } catch (error) {

@@ -12,6 +12,11 @@ data class ConversationModel(
 )
 
 @Serializable
+data class ConversationResponse(
+    val data:List<ConversationModel>
+)
+
+@Serializable
 data class ConversationMemberModel(
     val id: Int,
     val conversation_id: Int,
@@ -23,15 +28,13 @@ data class ConversationMemberModel(
 
 @Serializable
 data class MessageModel(
-    val id: Int,
+    val id: Int?,
     val conversation_id: Int,
     val sender_id: Int,
     val content: String,
-    val created_at: String
 )
 
 @Serializable
-data class ConversationResponse(
-    val message: String,
-    val data: List<ConversationModel>
+data class MessageResponse(
+    val data:List<MessageModel>
 )
