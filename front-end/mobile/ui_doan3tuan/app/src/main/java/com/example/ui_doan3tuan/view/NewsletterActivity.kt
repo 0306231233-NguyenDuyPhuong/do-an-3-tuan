@@ -179,8 +179,12 @@ class NewsletterActivity : AppCompatActivity() {
             onCommentClick = { post -> showCommentDialog(post) },
             onReportClick = { post -> showReportDialog(post) },
             onImageClick = { id ->
+                if(id.toInt()==userId){
+                    startActivity(Intent(this, UserProfileActivity::class.java))
+                    return@AdapterNewsletter
+                }
                 val intent = Intent(this, FriendsProfileActivity::class.java)
-                intent.putExtra("id", id)
+                intent.putExtra("id", id.toInt())
                 startActivity(intent)
             },
             onLikeClick = { post, isActionLike ->
@@ -257,11 +261,6 @@ class NewsletterActivity : AppCompatActivity() {
         } else {
             imgCurrentUserAvatar.load(R.drawable.profile)
         }
-
-
-
-
-
         revMessengerContacts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         val currentFriends = viewModel.friends.value ?: mutableListOf()
         revMessengerContacts.adapter = AdapterFriends(currentFriends)
@@ -295,6 +294,7 @@ class NewsletterActivity : AppCompatActivity() {
         val rcvComments = view.findViewById<RecyclerView>(R.id.rvListComments)
         val edtComment = view.findViewById<EditText>(R.id.edtCommentContent)
         val btnSend = view.findViewById<ImageView>(R.id.btnSendComment)
+        var commentCount = findViewById<TextView>(R.id.txtSLBinhLuan_BaiDang)
 
         val commentAdapter = AdapterComment(emptyList())
         rcvComments.layoutManager = LinearLayoutManager(this)
@@ -315,6 +315,8 @@ class NewsletterActivity : AppCompatActivity() {
             val content = edtComment.text.toString()
             if (content.isNotBlank()) {
                 viewModel.sendComment(post.id, content, token!!)
+                var tmpCount: Int = post.commentCount + 1
+                commentCount.text = tmpCount.toString()
                 edtComment.setText("")
             }
         }

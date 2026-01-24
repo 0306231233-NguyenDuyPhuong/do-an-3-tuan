@@ -241,7 +241,7 @@ class NewsletterViewModel : ViewModel() {
     val comments: LiveData<List<CommentModel>> get() = _comments
     fun getCommentsByPostId(postId: Int, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("NewLetter", "Goi get comment postId: $postId")
+            Log.d("Get Comment", "Goi get comment postId: $postId")
             try {
                 val request = Request.Builder()
                     .url("http://10.0.2.2:8989/api/comments/$postId")
@@ -252,20 +252,20 @@ class NewsletterViewModel : ViewModel() {
                 client.newCall(request).execute().use { resp ->
                     if (resp.isSuccessful) {
                         val jsonString = resp.body?.string()
-                        Log.d("NewLetter", "Response Comment: $jsonString")
+                        Log.d("Get Comment", "Response Comment: $jsonString")
                         try {
                             val listComment = json.decodeFromString<ListCommentModel>(jsonString ?: "{\"data\":[]}")
                             _comments.postValue(listComment.data)
                         } catch (e: Exception) {
-                            Log.e("NewLetter", "Lỗi Parse JSON Comment: ${e.message}")
+                            Log.e("Get Comment", "Lỗi Parse JSON Comment: ${e.message}")
                         }
                     } else {
-                        Log.e("NewLetter", "Lỗi API Get Comment: code ${resp.code}")
+                        Log.e("Get Comment", "Lỗi API Get Comment: code ${resp.code}")
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.e("NewLetter", "Lỗi Crash Get Comment: ${e.message}")
+                Log.e("Get Comment", "Lỗi Crash Get Comment: ${e.message}")
             }
         }
     }

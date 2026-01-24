@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.adapter.AdapterComment
+import com.example.ui_doan3tuan.adapter.AdapterFriends
 import com.example.ui_doan3tuan.adapter.AdapterUserProfile
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.session.SessionManager
@@ -37,7 +38,6 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var accessToken: String
     private var userId: Int = 0
     private lateinit var adapterUserProfile: AdapterUserProfile
-
     private val viewModel: UserProfileViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
 
@@ -49,6 +49,7 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var imgPostFav: ImageView
     private lateinit var imgPostSave: ImageView
     private lateinit var revDSBaiDang: RecyclerView
+    private lateinit var revMessengerContacts: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var bottomNav: BottomNavigationView
 
@@ -131,12 +132,12 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     private fun loadPostData() {
+        viewModel2.getListfriends(accessToken)
         if (interact == 0) {
             viewModel.getPostID(accessToken, userId)
         } else if (interact == 2) {
             viewModel.getListPostSave(accessToken)
         }
-//        txtSoLuongBanBe.text = slbb.toString()
     }
 
     private fun setupRecyclerView() {
@@ -150,8 +151,7 @@ class UserProfileActivity : AppCompatActivity() {
                 else viewModel2.UnlikePost(accessToken, post.id)
             },
             onShareClick = { post ->
-                viewModel2.sharePost(accessToken, post.id)
-                Toast.makeText(this, "Đang chia sẻ: ${post.content}", Toast.LENGTH_SHORT).show()
+                showShareDialog(post)
             }
         )
         revDSBaiDang.adapter = adapterUserProfile
@@ -194,7 +194,6 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun setupListeners() {
         findViewById<ImageView>(R.id.imgSetting).setOnClickListener {
             startActivity(Intent(this, SettingActivity::class.java))
@@ -233,7 +232,6 @@ class UserProfileActivity : AppCompatActivity() {
         // Set mặc định icon state
         updateIconState(imgAllPost)
     }
-
     private fun updateIconState(selectedIcon: ImageView) {
         val colorUnselected = getColor(R.color.gray)
         val colorSelected = getColor(R.color.white)
@@ -242,7 +240,6 @@ class UserProfileActivity : AppCompatActivity() {
         imgPostSave.setColorFilter(colorUnselected)
         selectedIcon.setColorFilter(colorSelected)
     }
-
     private fun setupBottomNav() {
         bottomNav.selectedItemId = R.id.nav_profile
         bottomNav.setOnItemSelectedListener { item ->
@@ -256,7 +253,33 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
     }
+    private fun showShareDialog(post: PostModel) {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_share, null)
+        revMessengerContacts = view.findViewById(R.id.revMessengerContacts)
+        val tvUserName = view.findViewById<TextView>(R.id.tvUserName)
+        val tvTitleMessenger = view.findViewById<TextView>(R.id.tvTitleMessenger)
+        val imgCurrentUserAvatar = view.findViewById<ImageView>(R.id.imgCurrentUserAvatar)
+        val user = sessionManager.getUser()
+        tvUserName.text = user.full_name
+        if (user.avatar.toString().isNotEmpty()) {
+            val fullUrl = "http://10.0.2.2:8989/api/images/${user.avatar}"
+            imgCurrentUserAvatar.load(fullUrl) {
+                crossfade(true)
+                error(R.drawable.profile)
+                placeholder(R.drawable.profile)
+            }
+        } else {
+            imgCurrentUserAvatar.load(R.drawable.profile)
+        }
+        revMessengerContacts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
+        val currentFriends = viewModel2.friends.value ?: mutableListOf()
+        Log.d("currentFriends", "$currentFriends")
+        revMessengerContacts.adapter = AdapterFriends(currentFriends)
+        dialog.setContentView(view)
+        dialog.show()
+    }
     private fun navigateTo(cls: Class<*>) : Boolean {
         val intent = Intent(this, cls)
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -264,14 +287,12 @@ class UserProfileActivity : AppCompatActivity() {
         overridePendingTransition(0, 0)
         return false
     }
-
     private fun goToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
     }
-
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_report_profile, null)
@@ -284,7 +305,6 @@ class UserProfileActivity : AppCompatActivity() {
         dialog.setContentView(view)
         dialog.show()
     }
-
     private fun showCommentDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_comment, null)
@@ -292,11 +312,12 @@ class UserProfileActivity : AppCompatActivity() {
         val rcvComments = view.findViewById<RecyclerView>(R.id.rvListComments)
         val edtComment = view.findViewById<EditText>(R.id.edtCommentContent)
         val btnSend = view.findViewById<ImageView>(R.id.btnSendComment)
+        var commentCount = findViewById<TextView>(R.id.txtSLBinhLuan_BaiDang)
 
         val commentAdapter = AdapterComment(emptyList())
         rcvComments.layoutManager = LinearLayoutManager(this)
         rcvComments.adapter = commentAdapter
-
+        viewModel2.clearComments()
         viewModel2.comments.observe(this) { listComments ->
             commentAdapter.updateData(listComments ?: emptyList())
             if (!listComments.isNullOrEmpty()) {
@@ -310,8 +331,10 @@ class UserProfileActivity : AppCompatActivity() {
             val content = edtComment.text.toString()
             if (content.isNotBlank()) {
                 viewModel2.sendComment(post.id, content, accessToken)
+                var tmpCount: Int = post.commentCount + 1
+                commentCount.text = tmpCount.toString()
                 edtComment.setText("")
-                viewModel2.getCommentsByPostId(post.id, accessToken)
+//                viewModel2.getCommentsByPostId(post.id, accessToken)
             }
         }
 

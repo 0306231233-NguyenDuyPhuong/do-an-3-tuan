@@ -61,8 +61,6 @@ class AdapterComment(private var list: List<CommentModel>) :
     }
 
     override fun getItemCount(): Int = list.size
-
-
     fun updateData(newList: List<CommentModel>) {
         list = newList
         notifyDataSetChanged()
