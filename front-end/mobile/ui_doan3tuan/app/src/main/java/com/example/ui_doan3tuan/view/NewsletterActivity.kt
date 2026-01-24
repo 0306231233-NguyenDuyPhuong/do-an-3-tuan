@@ -3,6 +3,7 @@ package com.example.ui_doan3tuan.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -180,7 +181,7 @@ class NewsletterActivity : AppCompatActivity() {
             onReportClick = { post -> showReportDialog(post) },
             onImageClick = { id ->
                 val intent = Intent(this, FriendsProfileActivity::class.java)
-                intent.putExtra("id", id)
+                intent.putExtra("friend_id", id.toInt())
                 startActivity(intent)
             },
             onLikeClick = { post, isActionLike ->

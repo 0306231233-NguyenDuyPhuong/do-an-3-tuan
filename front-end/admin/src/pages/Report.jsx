@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
-import { fetchReport, updateStatusReport } from "../services/ReportService";
+import { fetchReport, /*updateStatusReport*/ } from "../services/ReportService";
 import { Eye, Warning2, Notification } from "iconsax-react";
 import { NavLink, Outlet } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { CiSearch } from "react-icons/ci";
 import { fetchCommentData } from "../services/CommentService";
-import { useNavigate } from "react-router-dom";
+import ReportModel from "../components/ReportModel"
+//import { useNavigate } from "react-router-dom";
 
 const Report = () => {
   const [listReport, setListReports] = useState([]);
   const [total, setTotal] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  //const [currentPage, setCurrentPage] = useState(1);
   const [type, setType] = useState("")
   const [status, setStatus] = useState("")
   const [search, setSearch] = useState("")
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false)
+  //const navigate = useNavigate();
   //const [status, setStatus] = useState(0);
   // map status number -> text
   const statusMap = {
@@ -51,7 +53,7 @@ const Report = () => {
         report_id
       });
       if (res && res.data) {
-        setCurrentPage(page);
+        //setCurrentPage(page);
         setTotal(res?.data?.count ?? 0);
         setListReports(res?.data?.rows ?? []);
       }
@@ -60,27 +62,26 @@ const Report = () => {
     }
   };
 
-  const handleClick = async (item) => {
+  // const handleClick = async () => {
+  //   if (item.target_type === "post") {
+  //     navigate(`/post/${item.target_id}`, { state: { highlightCommentId: item.id } });
+  //   } else if (item.target_type === "user") {
+  //     navigate(`/user/${item.target_id}`);
+  //   } else {
+  //     const res = await fetchCommentData(item.target_id);
+  //     const postId = res.data.rows[0].id
+  //     navigate(`/post/${postId}`, { state: { highlightCommentId: item.target_id } });
+  //   }
+  // }
 
-    if (item.target_type === "post") {
-      navigate(`/post/${item.target_id}`, { state: { highlightCommentId: item.id } });
-    } else if (item.target_type === "user") {
-      navigate(`/user/${item.target_id}`);
-    } else {
-      const res = await fetchCommentData(item.target_id);
-      const postId = res.data.rows[0].id
-      navigate(`/post/${postId}`, { state: { highlightCommentId: item.target_id } });
-    }
-  }
-
-  const updateStatus = async (id) => {
-    try {
-      await updateStatusReport(id, 0);
-      getReport(currentPage);
-    } catch (error) {
-      alert("Update status error", error);
-    }
-  };
+  // const updateStatus = async (id) => {
+  //   try {
+  //     await updateStatusReport(id, 0);
+  //     getReport(currentPage);
+  //   } catch (error) {
+  //     alert("Update status error", error);
+  //   }
+  // };
 
   const handlePageClick = (event) => {
     getReport(event.selected + 1);
@@ -90,6 +91,9 @@ const Report = () => {
     await fetchCommentData(comment.id);
   }
 
+  const openModel = () =>{
+    setOpen(true)
+  }
 
   if (!listReport) {
     return <div>Loading...</div>;
@@ -236,8 +240,9 @@ const Report = () => {
                         size="30"
                         color="#C0C0C0"
                         onClick={() => {
-                          handleClick(item)
-                          updateStatus(item.id)
+                          //handleClick(item)
+                          //updateStatus(item.id)
+                          openModel()
                         }}
                       />
                     </NavLink>
@@ -260,6 +265,8 @@ const Report = () => {
         nextLinkClassName="px-3 py-1 border rounded"
         activeLinkClassName="bg-black text-white"
       />
+      <ReportModel open={open}/>
+      
     </>
   );
 };
