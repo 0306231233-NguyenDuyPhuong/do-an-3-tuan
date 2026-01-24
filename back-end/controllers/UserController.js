@@ -416,6 +416,14 @@ const putUserAdmin = async (req, res) => {
   });
 };
 
+const putUser = async (req, res) => {
+  const { id } = req.params;
+  const role = req.user.role;
+  await db.User.update(req.body, { where: { id } });
+  return res.status(200).json({
+    message: "Update post success",
+  });
+};
 export default {
   getProfile,
   getUsers,
@@ -423,4 +431,5 @@ export default {
   getAdminUserById,
   putUserAdmin,
   update,
+  putUser
 };
