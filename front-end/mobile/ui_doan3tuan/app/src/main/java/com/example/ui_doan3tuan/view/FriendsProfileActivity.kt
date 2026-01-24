@@ -72,7 +72,8 @@ class FriendsProfileActivity : AppCompatActivity() {
     }
 
     private fun getDataFromIntent() {
-        friendId = intent.getIntExtra("friend_id", -1)
+        friendId = intent.getIntExtra("id", -1)
+        Log.d("id", "friendId")
         friendName = intent.getStringExtra("friend_name") ?: "Chưa có tên"
 
         // isFriend = true nếu từ danh sách bạn bè VÀ chưa có trạng thái lưu
