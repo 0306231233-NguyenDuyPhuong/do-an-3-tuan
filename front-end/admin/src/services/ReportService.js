@@ -20,6 +20,15 @@ const fetchReport = ({
         })
 }
 
+const fetchReportById = (id) => {
+    return axios.get(`reports/${id}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            },
+            
+        })
+}
+
 const updateStatusReport = (id, newStatus) => {
 
     return axios.put(`reports/${id}`,
@@ -35,5 +44,6 @@ const updateStatusReport = (id, newStatus) => {
 
 export {
     fetchReport,
+    fetchReportById,
     updateStatusReport
 }

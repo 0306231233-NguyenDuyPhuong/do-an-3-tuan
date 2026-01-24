@@ -198,7 +198,6 @@ const User = () =>{
                     <img
                         className="w-12 h-12 object-cover rounded-full"
                         src={`http://localhost:8989/api/images/${item.avatar}`}
-                        alt={item.full_name}
                     />
                     </div>
                 </td>
