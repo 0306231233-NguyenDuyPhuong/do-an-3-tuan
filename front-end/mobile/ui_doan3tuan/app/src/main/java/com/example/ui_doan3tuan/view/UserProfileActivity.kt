@@ -114,7 +114,8 @@ class UserProfileActivity : AppCompatActivity() {
         val user = sessionManager.getUser()
         txtTenNguoiDung.text = user.full_name ?: "Nguyen Duong"
         val avatarPath = user.avatar
-        Log.d("avatar", "$avatarPath")
+        Log.d("avatar", "Av: $avatarPath")
+        Log.d("avatar", "Name:${user.full_name}")
         if (avatarPath.isNullOrEmpty()) {
             imgAvatar.load(R.drawable.profile)
         } else {

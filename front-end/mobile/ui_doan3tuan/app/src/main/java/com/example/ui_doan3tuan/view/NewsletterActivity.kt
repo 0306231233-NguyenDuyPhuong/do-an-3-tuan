@@ -227,7 +227,7 @@ class NewsletterActivity : AppCompatActivity() {
             btnReport.setOnClickListener {
                 showDetailReportDialog(post.User.id, post.id)
             }
-         dialog.dismiss()
+            dialog.dismiss()
         }
 
         btnSavePost.setOnClickListener {

@@ -62,8 +62,8 @@ class EditProfileViewModel : ViewModel() {
         try {
             val jsonObject = JSONObject()
             jsonObject.put("full_name", full_name)
-            jsonObject.put("phone", JSONObject.NULL)
-            jsonObject.put("gender", JSONObject.NULL)
+            jsonObject.put("phone", null)
+            jsonObject.put("gender", null)
             if (avatar != null) {
                 jsonObject.put("avatar", avatar)
             }
@@ -76,20 +76,20 @@ class EditProfileViewModel : ViewModel() {
                 .addHeader("Authorization", "Bearer $token")
                 .put(requestBody)
                 .build()
-
+            Log.d("update", "$token")
             client.newCall(request).execute().use { resp ->
                 if (resp.isSuccessful) {
                     val bodyString = resp.body?.string().orEmpty()
-                    Log.d("Test", "Update User Success: $bodyString")
+                    Log.d("update", "Update User Success: $bodyString")
                 } else {
-                    Log.e("Test", "Update User Failed: ${resp.code} - ${resp.message}")
+                    Log.e("update", "Update User Failed: ${resp.code} - ${resp.message}")
                     if (resp.code == 403) {
                         _error.postValue("TOKEN_EXPIRED")
                     }
                 }
             }
         } catch (e: Exception) {
-            Log.e("Test", "CRASH updateUserAPI: ${e.message}")
+            Log.e("update", "CRASH updateUserAPI: ${e.message}")
             e.printStackTrace()
         }
     }
