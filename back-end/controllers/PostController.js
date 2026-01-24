@@ -209,7 +209,7 @@ const getPostUser = async (req, res) => {
 
     const formattedData = postData.map(post => {
       const p = post.toJSON();
-      p.is_liked = Boolean(p.is_liked); 
+      p.is_liked = Boolean(p.is_liked);
       return p;
     });
 
@@ -218,7 +218,7 @@ const getPostUser = async (req, res) => {
       total: postTotal,
       page,
       limit,
-      data: formattedData 
+      data: formattedData
     });
 
   } catch (error) {
@@ -228,115 +228,121 @@ const getPostUser = async (req, res) => {
 };
 
 const getPostAdmin = async (req, res) => {
-  const { search, sort,
-    status, date, dateStart,
-    dateEnd, location } = req.query;
-  const page = Number(req.query.page) || 1;
-  const limit = 10;
-  const offset = (page - 1) * limit;
-  const userRole = Number(req.user.role);
-  
-  if (userRole != 1) {
-    return res.status(403).json({
-      message: "User no access rights"
-    })
-  }
-  let whereLoation = {};
-  let order = [["created_at", "DESC"]]
-  if (sort === "trending") {
-    order = [[
-      db.sequelize.literal(`
+  try {
+    const { search, sort,
+      status, date, dateStart,
+      dateEnd, location } = req.query;
+    const page = Number(req.query.page) || 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
+    const userRole = Number(req.user.role);
+
+    if (userRole != 1) {
+      return res.status(403).json({
+        message: "User no access rights"
+      })
+    }
+    let whereLoation = {};
+    let order = [["created_at", "DESC"]]
+    if (sort === "trending") {
+      order = [[
+        db.sequelize.literal(`
         (
         like_count*1 +
         comment_count *2 +
         share_count *3
         )`),
-      "DESC"
-    ]]
-  } else {
-    if (status == 1) {
-      order = [[
-        "status"
+        "DESC"
       ]]
     } else {
-      order = [[
-        "status", "DESC"
-      ]]
-    }
-  }
-
-  const wherePost =
-  {
-    ...(search && {
-      [Op.or]: [
-        { content: { [Op.like]: `%${search}%` } },
-        { id: { [Op.like]: `%${search}%` } },
-        { '$User.full_name$': { [Op.like]: `%${search}%` } },
-        { '$Location.name$': { [Op.like]: `%${search}%` } },
-        { '$Location.address$': { [Op.like]: `%${search}%` } },
-      ]
-    }),
-    ...(status !== undefined && {
-      status: Number(status)
-    }),
-    ...(date !== undefined && {
-      created_at: {
-        [Op.between]: [
-          `${date} 00:00:00`,
-          `${date} 23:59:59`
-        ]
+      if (status == 1) {
+        order = [[
+          "status"
+        ]]
+      } else {
+        order = [[
+          "status", "DESC"
+        ]]
       }
-    }),
-    ...(dateStart !== undefined && dateEnd !== undefined && {
-      created_at: {
-        [Op.between]: [
-          `${dateStart} 00:00:00`,
-          `${dateEnd} 23:59:59`
-        ]
-      },
+    }
 
+    const wherePost =
+    {
+      ...(search && {
+        [Op.or]: [
+          { content: { [Op.like]: `%${search}%` } },
+          { id: { [Op.like]: `%${search}%` } },
+          { '$User.full_name$': { [Op.like]: `%${search}%` } },
+          { '$Location.name$': { [Op.like]: `%${search}%` } },
+          { '$Location.address$': { [Op.like]: `%${search}%` } },
+        ]
+      }),
+      ...(status !== undefined && {
+        status: Number(status)
+      }),
+      ...(date !== undefined && {
+        created_at: {
+          [Op.between]: [
+            `${date} 00:00:00`,
+            `${date} 23:59:59`
+          ]
+        }
+      }),
+      ...(dateStart !== undefined && dateEnd !== undefined && {
+        created_at: {
+          [Op.between]: [
+            `${dateStart} 00:00:00`,
+            `${dateEnd} 23:59:59`
+          ]
+        },
+
+      })
+    }
+
+    const [postData, totalPost] = await Promise.all([
+      db.Post.findAll({
+        subQuery: false,
+        limit,
+        offset,
+        order,
+        where: wherePost,
+        include: [
+          {
+            model: db.User,
+            attributes: ["id", "full_name", "avatar"],
+          },
+          {
+            model: db.PostMedia,
+            separate: true
+          },
+          {
+            model: db.Location,
+            where: whereLoation,
+            required: !!location
+          }
+        ],
+        group: ["Post.id", "User.id"]
+      }),
+      db.Post.count(
+        {
+          distinct: true,
+          col: "id",
+        }
+      )
+    ])
+
+    return res.status(200).json({
+      message: "Get post success",
+      total: totalPost,
+      limit,
+      page,
+      data: postData
+    })
+  } catch (err) {
+    return res.status(500).json({
+      error: err
     })
   }
-
-  const [postData, totalPost] = await Promise.all([
-    db.Post.findAll({
-      subQuery: false,
-      limit,
-      offset,
-      order,
-      where: wherePost,
-      include: [
-        {
-          model: db.User,
-          attributes: ["id", "full_name", "avatar"],
-        },
-        {
-          model: db.PostMedia,
-          separate: true
-        },
-        {
-          model: db.Location,
-          where: whereLoation,
-          required: !!location
-        }
-      ],
-      group: ["Post.id", "User.id"]
-    }),
-    db.Post.count(
-      {
-        distinct: true,
-        col: "id",
-      }
-    )
-  ])
-
-  return res.status(200).json({
-    message: "Get post success",
-    total: totalPost,
-    limit,
-    page,
-    data: postData
-  })
 }
 
 const getPostById = async (req, res) => {
@@ -367,30 +373,30 @@ const getPostById = async (req, res) => {
 
 
 const postPost = async (req, res) => {
-  try{
+  try {
     const { user_id, location_id } = req.body;
-  const userCheck = await db.User.findOne({
-    where: { id: user_id }
-  });
-  const locationCheck = await db.Location.findOne({
-    where: { id: location_id }
-  });
-  if (!locationCheck) {
-    return res.status(404).json({
-      message: "Location not found",
+    const userCheck = await db.User.findOne({
+      where: { id: user_id }
     });
-  }
-  if (!userCheck) {
-    return res.status(404).json({
-      message: "User not found",
+    const locationCheck = await db.Location.findOne({
+      where: { id: location_id }
     });
-  }
-  const postData = await db.Post.create(req.body);
-  return res.status(201).json({
-    message: "Insert post success",
-    data: postData
-  });
-  } catch(e){
+    if (!locationCheck) {
+      return res.status(404).json({
+        message: "Location not found",
+      });
+    }
+    if (!userCheck) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    const postData = await db.Post.create(req.body);
+    return res.status(201).json({
+      message: "Insert post success",
+      data: postData
+    });
+  } catch (e) {
     return res.status(500).json({
       error: e
     })

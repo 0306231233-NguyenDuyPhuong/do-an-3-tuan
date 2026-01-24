@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { fetchCommentData, putStatusComment } from "../services/CommentService";
 import { CiMenuKebab } from "react-icons/ci";
 import dayjs from "dayjs";
+import { postReportAction } from "../services/ReportActionService";
 
 const PostDetail = () => {
   const { postId } = useParams();
@@ -16,6 +17,9 @@ const PostDetail = () => {
   const {state} = useLocation();
   const [openId, setOpenId] = useState(false);
   const reportId = state?.reportId;
+  const user = JSON.parse(localStorage.getItem("user"))
+  const userId = user?.id;
+  
   const statusPost = {
     0: "delete",
     1: "approved"
@@ -64,7 +68,8 @@ const PostDetail = () => {
       await putStatusPost(postId, status);
       getPostDetail(postId)
       if(reportId){
-      await updateStatusReport(reportId, 2)
+        await updateStatusReport(reportId, 2)
+        await postReportAction(reportId, userId, status)
       }
       toast.success("Update status success!")
     } catch (error) {

@@ -189,6 +189,7 @@ const Report = () => {
           <thead className="bg-gray-100">
             <tr>
               <th className="text-2xl py-2">Id</th>
+              <th className="text-2xl py-2">Reporter</th>
               <th className="text-2xl py-2">Target type</th>
               <th className="text-2xl py-2">Reason</th>
               <th className="text-2xl py-2">Status</th>
@@ -210,6 +211,21 @@ const Report = () => {
               return (
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="text-center text-2xl py-2 text-gray-400">{item.id}</td>
+                  <td className="text-center text-2xl py-2 text-gray-400">
+                    <div className="flex flex-row items-center">
+                      <td className="h-15 px-4 py-2 flex items-center justify-center">
+                        <div className="w-12 h-12 bg-amber-400 rounded-full overflow-hidden">
+                          <img
+                            className="w-12 h-12 object-cover rounded-full"
+                            src={`http://localhost:8989/api/images/${item.User.avatar}`}
+                          />
+                        </div>
+                      </td>
+                      <span>
+                        {item.User.full_name}
+                      </span>
+                    </div>
+                  </td>
                   <td className="text-center text-2xl py-2 text-gray-400">
                     {item.target_type}
                   </td>
