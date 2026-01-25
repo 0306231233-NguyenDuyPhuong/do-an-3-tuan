@@ -24,8 +24,11 @@ class PostMediaAdapter(
     }
 
     override fun onBindViewHolder(holder: MediaViewHolder, position: Int) {
+        val media = mediaList[position]
+
+        val fullUrl = "http://10.0.2.2:8989/api/images/${media.media_url}"
         Glide.with(holder.itemView.context)
-            .load(mediaList[position].media_url)
+            .load(fullUrl)
             .into(holder.imgMedia)
     }
 

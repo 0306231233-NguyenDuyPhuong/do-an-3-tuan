@@ -139,11 +139,16 @@ class FriendsProfileActivity : AppCompatActivity() {
         updateButtonUI()
 
         btnNhanTin.setOnClickListener {
-            startActivity(Intent(this, ChatActivity::class.java).apply {
-                putExtra("friend_id", friendId)
-                putExtra("friend_name", friendName)
-            })
+            if (friendId == -1) return@setOnClickListener
+
+            val intent = Intent(this, ChatActivity::class.java).apply {
+                putExtra("id", friendId)
+                putExtra("full_name", friendName)
+                putExtra("avatar", "")
+            }
+            startActivity(intent)
         }
+
 
         btnKetBan.setOnClickListener {
             if (isFriend) showUnfriendDialog()
