@@ -17,6 +17,15 @@ const postReportAction = (report_id, admin_id, action )=>{
     )
 }
 
+const fetchReportAction = (id) =>{
+    return axios.get(`report-actions/${id}`,{
+            headers: {
+                Authorization: `Bearer ${accessToken}`, 
+                "Content-Type":"application/json"
+            }
+        })
+}
 export {
-    postReportAction
+    postReportAction,
+    fetchReportAction
 }

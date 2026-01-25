@@ -31,12 +31,14 @@ const getReportAction = async (req, res) => {
 
 const getReportActionById = async (req, res) => {
   const { id } = req.params;
-  const reportActionData = await db.ReportAction.findByPk(id, {
+  const reportActionData = await db.ReportAction.findOne({
+    where: { report_id: id },
     include: [
-      { model: db.User },
-      { model: db.Report }
-    ],
-  });
+      { model: db.User, attributes:["id", "full_name", "avatar"] },
+      { model: db.Report, include:[{model: db.User, attributes:["id", "full_name", "avatar"]}] }
+    ]
+  })
+
   if (reportActionData) {
     return res.status(200).json({ message: "Get report action", data: reportActionData });
   } else {

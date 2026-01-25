@@ -165,7 +165,7 @@ const Post = () => {
               onChange={(e) => {
                 const value = e.target.value;
                 setSort(value);
-                if(value == "treding"){
+                if(value == "trending"){
                   getPostAdmin({page: 1, sort: value})}
                 else{
                   getPostAdmin({page: 1, status: Number(value)})
