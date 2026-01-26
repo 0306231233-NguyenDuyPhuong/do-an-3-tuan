@@ -48,6 +48,7 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var imgAllPost: ImageView
     private lateinit var imgPostFav: ImageView
     private lateinit var imgPostSave: ImageView
+    private lateinit var txtEmptyState: TextView
     private lateinit var revDSBaiDang: RecyclerView
     private lateinit var revMessengerContacts: RecyclerView
     private lateinit var progressBar: ProgressBar
@@ -105,6 +106,7 @@ class UserProfileActivity : AppCompatActivity() {
         imgAllPost = findViewById(R.id.imgAllPost)
         imgPostFav = findViewById(R.id.imgPostFav)
         imgPostSave = findViewById(R.id.imgPostSave)
+        txtEmptyState = findViewById(R.id.txtEmptyState)
 
         revDSBaiDang = findViewById(R.id.revDSBaiDang)
         progressBar = findViewById(R.id.progressBarLoadingProfile)
@@ -120,8 +122,6 @@ class UserProfileActivity : AppCompatActivity() {
         if (avatarPath.isNullOrEmpty()) {
             imgAvatar.load(R.drawable.profile)
         } else {
-            // MẸO: Thêm timestamp để ép Coil tải ảnh mới thay vì dùng cache cũ
-//            val fullUrl = "http://10.0.2.2:8989/api/images/$avatarPath?t=${System.currentTimeMillis()}"
             val fullUrl = "http://10.0.2.2:8989/api/images/$avatarPath"
             imgAvatar.load(fullUrl) {
                 placeholder(R.drawable.profile)
@@ -159,8 +159,16 @@ class UserProfileActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         viewModel.postsId.observe(this) { listPostsId ->
-            Log.d("UserProfile", "Data loaded: ${listPostsId.size} items")
-            adapterUserProfile.setData(listPostsId)
+            if(listPostsId.isEmpty()){
+                txtEmptyState.visibility = View.VISIBLE
+                revDSBaiDang.visibility = View.GONE
+                txtEmptyState.text = "Không có bài viết nào!"
+            }else{
+                txtEmptyState.visibility = View.GONE
+                revDSBaiDang.visibility = View.VISIBLE
+                Log.d("UserProfile", "Data loaded: ${listPostsId.size} items")
+                adapterUserProfile.setData(listPostsId)
+            }
             slbv = listPostsId.size
             if(interact == 0 ){
                 txtSoLuongBaiViet.text = slbv.toString()

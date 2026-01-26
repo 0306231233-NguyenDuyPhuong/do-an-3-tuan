@@ -62,8 +62,6 @@ class EditProfileViewModel : ViewModel() {
         try {
             val jsonObject = JSONObject()
             jsonObject.put("full_name", full_name)
-            jsonObject.put("phone", "0978264349")
-            jsonObject.put("gender", 1)
             if (avatar != null) {
                 jsonObject.put("avatar", avatar)
             }
