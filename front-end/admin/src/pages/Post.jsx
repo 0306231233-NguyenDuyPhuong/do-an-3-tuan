@@ -33,7 +33,8 @@ const Post = () => {
     try {
       const res = await fetchPostAdmin({
       page,
-      search, sort,
+      search, 
+      sort,
       date, 
       status,
       dateStart,
@@ -164,8 +165,8 @@ const Post = () => {
               onChange={(e) => {
                 const value = e.target.value;
                 setSort(value);
-                if(value == "treding")
-                getPostAdmin({page: 1, sort: value})
+                if(value == "trending"){
+                  getPostAdmin({page: 1, sort: value})}
                 else{
                   getPostAdmin({page: 1, status: Number(value)})
                 }

@@ -4,12 +4,19 @@ import { ArrowCircleLeft, ArrowLeft, CommandSquare, DirectRight, Like, Like1, Me
 import { ToastContainer, toast } from 'react-toastify';
 import { fetchUserById, putStatusUser } from "../services/UserService";
 import {putStatusPost } from "../services/PostService";
+import { useLocation } from "react-router-dom";
+import { postReportAction } from "../services/ReportActionService";
 
 const UserDetail = () => {
   const { userId } = useParams();
   const [userDetailData, setUserDetailData] = useState(null);
   const [listPostByUser, setPostByUser] = useState([]);
   const navigate = useNavigate();
+  const {state} = useLocation();
+  const reportId = state?.reportId;
+  const user = JSON.parse(localStorage.getItem("user"))
+  const userAdminId = user?.id;
+
   const statusPost = {
     0: "delete",
     1: "approved"
@@ -50,6 +57,9 @@ const UserDetail = () => {
 
   const updateStautusUser = async(id, status) =>{
     await putStatusUser(id, status)
+    if(reportId){
+    await postReportAction(reportId, userAdminId, status)
+    }
     await getUserDetail(userId)
     toast.success("Update status success!")
   }

@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
-import { fetchReport, updateStatusReport } from "../services/ReportService";
+import { fetchReport, /*updateStatusReport*/ } from "../services/ReportService";
 import { Eye, Warning2, Notification } from "iconsax-react";
 import { NavLink, Outlet } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { CiSearch } from "react-icons/ci";
-import { fetchCommentData } from "../services/CommentService";
+import ReportModel from "../components/ReportModel"
+import { TbReport } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import { fetchReportAction } from "../services/ReportActionService";
 
 const Report = () => {
   const [listReport, setListReports] = useState([]);
   const [total, setTotal] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  //const [currentPage, setCurrentPage] = useState(1);
   const [type, setType] = useState("")
   const [status, setStatus] = useState("")
   const [search, setSearch] = useState("")
+  const [open, setOpen] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [reportActionData, setReportActionData] = useState([])
+  const [reportId, setReportId] = useState(null)
   const navigate = useNavigate();
   //const [status, setStatus] = useState(0);
   // map status number -> text
@@ -24,6 +30,13 @@ const Report = () => {
     3: "rejected",
   };
 
+  const ACTION_MAP = {
+    0: { label: "Hide", color: "bg-gray-400" },
+    1: { label: "Delete", color: "bg-red-500" },
+    2: { label: "Warn", color: "bg-yellow-500" },
+    3: { label: "Ban", color: "bg-black" },
+  }
+
   const statusClasses = {
     pending: "bg-yellow-100 text-yellow-500 border border-yellow-300",
     reviewed: "bg-blue-100 text-blue-500 border border-blue-300",
@@ -33,9 +46,13 @@ const Report = () => {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability
-    getReport({ page: 1 });
-    // eslint-disable-next-line react-hooks/immutability
-  }, []);
+    getReport({ page: 1 })
+    if (open && reportId) {
+      // eslint-disable-next-line react-hooks/immutability
+      getReportAction(reportId)
+    }
+  }, [], [open, reportId]);
+
 
   const getReport = async ({
     page = 1,
@@ -51,7 +68,7 @@ const Report = () => {
         report_id
       });
       if (res && res.data) {
-        setCurrentPage(page);
+        //setCurrentPage(page);
         setTotal(res?.data?.count ?? 0);
         setListReports(res?.data?.rows ?? []);
       }
@@ -60,35 +77,65 @@ const Report = () => {
     }
   };
 
-  const handleClick = async (item) => {
-
-    if (item.target_type === "post") {
-      navigate(`/post/${item.target_id}`, { state: { highlightCommentId: item.id } });
-    } else if (item.target_type === "user") {
-      navigate(`/user/${item.target_id}`);
-    } else {
-      const res = await fetchCommentData(item.target_id);
-      const postId = res.data.rows[0].id
-      navigate(`/post/${postId}`, { state: { highlightCommentId: item.target_id } });
+  const getReportAction = async (id) => {
+    const res = await fetchReportAction(id)
+    if (res && res.data) {
+      setReportActionData(res.data)
     }
   }
 
-  const updateStatus = async (id) => {
-    try {
-      await updateStatusReport(id, 0);
-      getReport(currentPage);
-    } catch (error) {
-      alert("Update status error", error);
+  const openModel = (item) => {
+    setReportId(item.id)
+    setSelectedItem(item)
+    getReportAction(item.id)
+    setOpen(true)
+  }
+
+  const closeModeal = () => {
+    setOpen(false)
+    selectedItem(null)
+  }
+
+  const handleView = (item) => {
+    if (item.target_type === "post") {
+      navigate(`/post/${item.target_id}`, {
+        state: { reportId: item.id }
+      })
+    } else if (item.target_type === "user") {
+      navigate(`/user/${item.target_id}`, {
+        state: { reportId: item.id }
+      })
     }
-  };
+  }
+
+  // const handleClick = async () => {
+  //   if (item.target_type === "post") {
+  //     navigate(`/post/${item.target_id}`, { state: { highlightCommentId: item.id } });
+  //   } else if (item.target_type === "user") {
+  //     navigate(`/user/${item.target_id}`);
+  //   } else {
+  //     const res = await fetchCommentData(item.target_id);
+  //     const postId = res.data.rows[0].id
+  //     navigate(`/post/${postId}`, { state: { highlightCommentId: item.target_id } });
+  //   }
+  // }
+
+  // const updateStatus = async (id) => {
+  //   try {
+  //     await updateStatusReport(id, 0);
+  //     getReport(currentPage);
+  //   } catch (error) {
+  //     alert("Update status error", error);
+  //   }
+  // };
 
   const handlePageClick = (event) => {
     getReport(event.selected + 1);
   };
 
-  const handleReportComment = async (comment) => {
-    await fetchCommentData(comment.id);
-  }
+  // const handleReportComment = async (comment) => {
+  //   await fetchCommentData(comment.id);
+  // }
 
 
   if (!listReport) {
@@ -185,6 +232,7 @@ const Report = () => {
           <thead className="bg-gray-100">
             <tr>
               <th className="text-2xl py-2">Id</th>
+              <th className="text-2xl py-2">Reporter</th>
               <th className="text-2xl py-2">Target type</th>
               <th className="text-2xl py-2">Reason</th>
               <th className="text-2xl py-2">Status</th>
@@ -207,6 +255,21 @@ const Report = () => {
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="text-center text-2xl py-2 text-gray-400">{item.id}</td>
                   <td className="text-center text-2xl py-2 text-gray-400">
+                    <div className="flex flex-row items-center">
+                      <td className="h-15 px-4 py-2 flex items-center justify-center">
+                        <div className="w-12 h-12 bg-amber-400 rounded-full overflow-hidden">
+                          <img
+                            className="w-12 h-12 object-cover rounded-full"
+                            src={`http://localhost:8989/api/images/${item.User.avatar}`}
+                          />
+                        </div>
+                      </td>
+                      <span>
+                        {item.User.full_name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="text-center text-2xl py-2 text-gray-400">
                     {item.target_type}
                   </td>
                   <td className="text-center text-2xl py-2 text-gray-400">
@@ -221,27 +284,27 @@ const Report = () => {
                     </span>
                   </td>
                   <td className="text-center py-2">
-                    <NavLink
-                      to={
-                        item.target_type === "post"
-                          ? `/post/${item.target_id}` :
-                          (item.target_type === "user")
-                            ? (`/user/${item.target_id}`) :
-                            handleReportComment(item.target_id)
-                      }
-                      state={{ reportId: item.id }}
+                    <div className="flex flex-row justify-center items-center gap-2">
 
-                    >
-                      <Eye
-                        size="30"
-                        color="#C0C0C0"
-                        onClick={() => {
-                          handleClick(item)
-                          updateStatus(item.id)
-                        }}
-                      />
-                    </NavLink>
+                      {/* Eye → xem */}
+                      <button
+                        onClick={() => handleView(item)}
+                        className="hover:scale-110 transition"
+                      >
+                        <Eye size={30} color="#C0C0C0" />
+                      </button>
+
+                      {/* Report → mở modal */}
+                      <button
+                        onClick={() => openModel(item)}
+                        className="hover:scale-110 transition"
+                      >
+                        <TbReport size={30} color="#C0C0C0" />
+                      </button>
+
+                    </div>
                   </td>
+
                 </tr>
               );
             })}
@@ -250,7 +313,6 @@ const Report = () => {
         <Outlet />
       </div>
 
-      {/* ===== PAGINATION ===== */}
       <ReactPaginate
         pageCount={Math.ceil((total || 0) / 10)}
         onPageChange={handlePageClick}
@@ -260,6 +322,119 @@ const Report = () => {
         nextLinkClassName="px-3 py-1 border rounded"
         activeLinkClassName="bg-black text-white"
       />
+      {open && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-[520px]">
+
+            {!reportActionData ? (
+              <div className="text-center py-10">
+                Loading...
+              </div>
+            ) : (
+              <>
+                <h2 className="text-lg font-bold mb-4">
+                  Report Action Detail
+                </h2>
+
+                <div className="mb-4">
+                  <p className="font-semibold mb-1">Admin xử lý</p>
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={`http://localhost:8989/api/images/${reportActionData.User?.avatar}`}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <span>{reportActionData.User?.full_name}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">Action:</span>
+                    <span
+                      className={`px-2 py-1 rounded text-white text-xs
+                ${ACTION_MAP[reportActionData.action]?.color}`}
+                    >
+                      {ACTION_MAP[reportActionData.action]?.label}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="font-semibold">Note:</span>
+                    <span className="ml-2">
+                      {reportActionData.note || "—"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="font-semibold">Created at:</span>
+                    <span className="ml-2">
+                      {new Date(reportActionData.created_at).toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="font-semibold">Updated at:</span>
+                    <span className="ml-2">
+                      {new Date(reportActionData.updated_at).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border-t pt-4">
+                  <p className="font-semibold mb-2">Report detail</p>
+
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="font-semibold">Target:</span>
+                      <span className="ml-2">
+                        {reportActionData.Report?.target_type}
+                        #{reportActionData.Report?.target_id}
+                      </span>
+                    </div>
+
+                    <div>
+                      <span className="font-semibold">Reason:</span>
+                      <span className="ml-2">
+                        {reportActionData.Report?.reason}
+                      </span>
+                    </div>
+
+                    <div>
+                      <span className="font-semibold">Description:</span>
+                      <p className="ml-2 text-gray-600">
+                        {reportActionData.Report?.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <p className="font-semibold mb-2">Reporter</p>
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={`http://localhost:8989/api/images/${reportActionData.Report?.User?.avatar}`}
+                      className="w-9 h-9 rounded-full"
+                    />
+                    <span>{reportActionData.Report?.User?.full_name}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-6">
+                  <button
+                    className="px-4 py-2 bg-red-500 text-white rounded"
+                    onClick={closeModeal}
+                  >
+                    Close
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+
+
     </>
   );
 };

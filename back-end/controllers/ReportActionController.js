@@ -4,35 +4,41 @@ import db from "../models/index.js";
 const getReportAction = async (req, res) => {
   try {
     const reprotActionData = await db.ReportAction.findAll({
-    /*include: [
-      { model: db.User },
-      {
-        model: db.Report,
-        include: [
-          {
-            model: db.User
-          }
-        ]
-      }
-    ],*/
-  });
-  return res.status(200).json({ message: "Get report action", data: reprotActionData });
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "full_name", "avatar"]
+        },
+        {
+          model: db.Report,
+          include: [
+            {
+              model: db.User,
+              attributes: ["id", "full_name", "avatar"]
+            }
+          ]
+        }
+      ],
+    });
+    return res.status(200).json({ message: "Get report action", data: reprotActionData });
   } catch (error) {
     return res.status(400).json({
       error: error
     })
   }
-  
+
 };
 
 const getReportActionById = async (req, res) => {
   const { id } = req.params;
-  const reportActionData = await db.ReportAction.findByPk(id, {
+  const reportActionData = await db.ReportAction.findOne({
+    where: { report_id: id },
     include: [
-      { model: db.User },
-      { model: db.Report }
-    ],
-  });
+      { model: db.User, attributes:["id", "full_name", "avatar"] },
+      { model: db.Report, include:[{model: db.User, attributes:["id", "full_name", "avatar"]}] }
+    ]
+  })
+
   if (reportActionData) {
     return res.status(200).json({ message: "Get report action", data: reportActionData });
   } else {

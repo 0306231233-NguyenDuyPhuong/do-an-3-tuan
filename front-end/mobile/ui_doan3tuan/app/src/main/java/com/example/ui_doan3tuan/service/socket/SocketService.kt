@@ -11,8 +11,7 @@ class SocketService {
     private lateinit var socket: Socket
 
     fun connect(token:String){
-        Log.e("Token", token)
-        val opts = IO.Options().apply {
+            val opts = IO.Options().apply {
             query = "token=$token"
             transports = arrayOf("websocket")
         }
@@ -34,8 +33,6 @@ class SocketService {
         json.put("content", content)
         socket.emit("send_message_to_user", json)
     }
-
-
 
     fun onMessage(callback: (JSONObject) -> Unit) {
         socket.on("receive_message") {

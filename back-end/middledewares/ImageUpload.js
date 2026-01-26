@@ -14,10 +14,13 @@ const storage = multer.diskStorage({
 
 //Cấu hình filter chỉ cho phép file ảnh
 const fileFilter = (req, file, callback) => {
-  if (file.mimetype.startsWith("image")) {
+  if (
+    file.mimetype.startsWith("image") ||
+    file.mimetype.startsWith("video")
+  ) {
     callback(null, true);
   } else {
-    callback(new Error("Chỉ được tải anh lên file ảnh!"), false);
+    callback(new Error("Chỉ được tải anh lên file ảnh hoặc video!"), false);
   }
 };
 

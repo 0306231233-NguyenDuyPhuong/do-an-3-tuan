@@ -44,7 +44,13 @@ const getReport = async (req, res) => {
     const reportData = await db.Report.findAndCountAll({
       offset,
       limit,
-      where: whereReport
+      where: whereReport,
+      include: [
+        {
+          model: db.User,
+          attributes:["id", "full_name", "avatar"]
+        },
+      ]
     })
     return res.status(200).json({
       message: "Get report success",
@@ -60,7 +66,26 @@ const getReport = async (req, res) => {
 };
 
 const getReportById = async (req, res) => {
-  return res.status(200).json({ message: "ok" });
+  try {
+    const { id } = req.params;
+    const reportData = await db.Report.findByPk(id,{
+      include: [
+        {
+          model: db.User,
+          attributes:["id", "full_name", "avatar"]
+        },
+        
+      ]
+    })
+    return res.status(200).json({
+      message: "Get report success",
+      data: reportData
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: error
+    })
+  }
 };
 
 const postReport = async (req, res) => {

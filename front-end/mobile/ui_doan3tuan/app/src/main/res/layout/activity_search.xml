@@ -67,7 +67,7 @@
         android:drawableStart="@drawable/search_icon"
         android:drawableTint="#80FFFFFF"
         android:drawablePadding="12dp"
-        android:hint="Nguyen Van A"
+        android:hint="Tìm kiếm"
         android:textColorHint="#80FFFFFF"
         android:textColor="@color/white"
         android:paddingHorizontal="16dp"
