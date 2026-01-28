@@ -74,9 +74,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etName"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:inputType="textPersonName"
-                        android:textColor="#FFF5F5F5"
+                        android:layout_height="50dp"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/white"
+                        android:background="@drawable/bg_button_gray"
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -102,9 +103,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etEmailSignup"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
+                        android:layout_height="50dp"
                         android:inputType="textEmailAddress"
-                        android:textColor="#FFF5F5F5"
+                        android:textColor="@color/white"
+                        android:background="@drawable/bg_button_gray"
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -132,10 +134,11 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPasswordSignup"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:inputType="textPassword"
-                        android:textColor="#FFF5F5F5"
-                        android:textSize="14sp" />
+                        android:layout_height="50dp"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/white"
+                        android:background="@drawable/bg_button_gray"
+                        android:textSize="14sp"  />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -162,21 +165,22 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etConfirmPassword"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:inputType="textPassword"
-                        android:textColor="#FFF5F5F5"
+                        android:layout_height="50dp"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/white"
+                        android:background="@drawable/bg_button_gray"
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.button.MaterialButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnSignup"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="50dp"
                     android:layout_marginTop="24dp"
-                    android:backgroundTint="@color/background_btn"
                     android:text="@string/signup_button"
                     android:textAllCaps="false"
-                    android:textColor="#FFFFFFFF"
+                    android:textColor="@color/white"
+                    android:background="@drawable/bg_button_blue"
                     android:textSize="16sp"
                     app:cornerRadius="26dp"
                     app:elevation="4dp" />

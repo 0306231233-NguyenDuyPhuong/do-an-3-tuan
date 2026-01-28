@@ -88,17 +88,16 @@
                         <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/etEmail"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-
+                            android:layout_height="50dp"
                             android:paddingStart="16dp"
                             android:paddingTop="14dp"
                             android:paddingEnd="16dp"
                             android:paddingBottom="14dp"
-                            android:textColor="#FFF5F5F5"
                             android:textColorHint="#FF99A3B3"
                             android:textSize="14sp"
                             android:minHeight="48dp"
                             android:hint="@string/email_phone"
+                            android:background="@drawable/bg_button_gray"
                         android:inputType="textEmailAddress|textPersonName" />
                     </LinearLayout>
 
@@ -121,16 +120,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <androidx.appcompat.widget.AppCompatEditText
+                            <EditText
                                 android:id="@+id/etPassword"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="50dp"
                                 android:paddingStart="16dp"
                                 android:paddingTop="14dp"
                                 android:paddingEnd="48dp"
                                 android:paddingBottom="14dp"
-                                android:textColor="#FFF5F5F5"
                                 android:textColorHint="#FF99A3B3"
+                                android:background="@drawable/bg_button_gray"
                                 android:textSize="14sp"
                                 android:minHeight="48dp"
                                 android:hint="@string/password"
@@ -151,15 +150,16 @@
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnLogin"
                         android:layout_width="match_parent"
-                        android:layout_height="52dp"
+                        android:layout_height="50dp"
                         android:layout_marginTop="24dp"
-                       android:background="@drawable/bg_button_blue"
-                    android:gravity="center"
-                    android:text="@string/login_button"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    app:cornerRadius="26dp" />
+                        android:gravity="center"
+                        android:text="@string/login_button"
+                        android:textAllCaps="false"
+                        android:textSize="16sp"
+                        app:cornerRadius="26dp"
+                        android:background="@drawable/bg_button_blue"
+                        android:textColor="@color/white"
+                        />
 
                     <TextView
                         android:id="@+id/tvForgotPassword"
