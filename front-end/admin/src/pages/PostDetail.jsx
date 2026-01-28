@@ -19,6 +19,7 @@ const PostDetail = () => {
   const reportId = state?.reportId;
   const user = JSON.parse(localStorage.getItem("user"))
   const userId = user?.id;
+  
 
   const statusPost = {
     0: "delete",
@@ -98,6 +99,7 @@ const PostDetail = () => {
   return (
     <>
       <div className="flex flex-col gap-5">
+        
         <ArrowLeft size="30" color="black" onClick={() => navigate(-1)} />
         <h2 className="font-bold text-2xl">
           {postDetailData.title}

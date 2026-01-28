@@ -5,21 +5,30 @@ import { NavLink, Outlet } from "react-router-dom";
 import ReactPaginate from 'react-paginate';
 import { CiSearch } from "react-icons/ci";
 import Calenda from "../components/Calenda"
+import {useNavigate } from "react-router-dom";
+
+
 const Post = () => {
+  const params = new URLSearchParams(location.search)
+  const page = Number(params.get("page")) || 1;
+  const search = params.get("search") || ""
   const [listPosts, setListPosts] = useState([]);
   let [total, setTotatl] = useState(null);
   const [date, setDate] = useState("")
   const [dateEnd, setDateEnd] = useState("")
+  const [pageState, setPageState] = useState(1)
   const statusPost = {
     0: "delete",
     1: "approved"
   }
   const [sort, setSort] = useState("");
-  const [search, setSearch] = useState("");
+  const [searchState, setSearchState] = useState("");
+  const navigate = useNavigate();
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability
-    getPostAdmin({page: 1})
-  }, []);
+    getPostAdmin({page, search:search})
+  }, [page, sort, searchState, date, dateEnd]);
 
   const getPostAdmin = async ({
     page = 1,
@@ -51,15 +60,8 @@ const Post = () => {
 
   const handlePageClick = (event) => {
     const selectedPage = event.selected +1;
-    getPostAdmin({
-      page: selectedPage,
-      search,
-      sort, 
-      date, 
-      dateStart: date, 
-      dateEnd
-    })
-    
+    setPageState(selectedPage)
+    navigate(`?page=${selectedPage}`);
   }
 
   return (
@@ -87,49 +89,12 @@ const Post = () => {
             </div>
           </div>
         </div>
-        <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl border border-gray-300 shadow-md p-10">
-          <div className="flex justify-between items-center">
-            <div className="flex gap-4">
-              <div className="size-10 bg-white border border-gray-200 shadow-md rounded-md p-1">
-                <Notification size="25" color="#000" />
-              </div>
-              <div className="text-xl font-bold"> Quantity user</div>
-            </div>
-            <div className="size-8 bg-white border border-gray-200 shadow-md p-1 rounded-2xl">
-              <Warning2 size="20" color="#000" />
-            </div>
-          </div>
-          <div className="flex gap-2 items-center justify-between mt-5">
-            <div className="flex items-center">
-              <span className="text-5xl font-bold mr-2 text-green-500">129</span>
-              <span className="w-15 h-8 border rounded-md border-gray-200 bg-green-100 text-green-400 flex items-center justify-center">tang</span>
-            </div>
-            <div className="text-xl text-gray-400">
-              vs last week
-            </div>
-          </div>
+        <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl">
+          
+          
         </div>
-        <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl border border-gray-300 shadow-md p-10">
-          <div className="flex justify-between items-center">
-            <div className="flex gap-4">
-              <div className="size-10 bg-white border border-gray-200 shadow-md rounded-md p-1">
-                <Notification size="25" color="#000" />
-              </div>
-              <div className="text-xl font-bold"> Quantity user</div>
-            </div>
-            <div className="size-8 bg-white border border-gray-200 shadow-md p-1 rounded-2xl">
-              <Warning2 size="20" color="#000" />
-            </div>
-          </div>
-          <div className="flex gap-2 items-center justify-between mt-5">
-            <div className="flex items-center">
-              <span className="text-5xl font-bold mr-2 text-green-400">129</span>
-              <span className="w-15 h-8 border rounded-md border-gray-200 bg-green-100 text-green-500 p-1 flex justify-center items-center">tang</span>
-            </div>
-            <div className="text-xl text-gray-400">
-              vs last week
-            </div>
-          </div>
+        <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl">
+          
         </div>
       </div>
 
@@ -145,11 +110,11 @@ const Post = () => {
           <div className="">
             <input className="flex h-10 w-200 flex-1 outline-none text-2xl"
               placeholder="Search post" type="text" name="search"
-              value={search}
+              value={searchState}
               onChange={(e) => {
                 const value = e.target.value;
-                setSearch(value)
-                getPostAdmin({page: 1, search: search})
+                setSearchState(value)
+                navigate(`?page=1&search=${value}`);
               }}
             />
           </div>
@@ -238,7 +203,7 @@ const Post = () => {
                   </div>
                 </td>
                 <td className="h-15 px-4 py-2 text-center">
-                  <NavLink to={`/post/${item.id}`} className="hover:text-blue-500">
+                  <NavLink to={`/post/${item.id}?page=${pageState}`} className="hover:text-blue-500">
                     <Eye size="30" color="#C0C0C0" />
                   </NavLink>
                 </td>

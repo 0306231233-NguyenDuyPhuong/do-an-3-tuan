@@ -13,7 +13,7 @@ class InsertLocatioinRequest{
             user_id: Joi.number().integer().min(1).required(),
             content: Joi.string().allow("").optional(),
             privacy: Joi.number()
-            .valid(0, 1)
+            .valid(0, 1, 2)
             .default(0)
             .integer(),
             location_id: Joi.number().integer().required(),
