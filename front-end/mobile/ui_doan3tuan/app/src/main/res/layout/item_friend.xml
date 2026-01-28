@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/friendItem"
     android:layout_width="match_parent"
     android:layout_height="70dp"
@@ -17,6 +19,7 @@
 
 
     <!-- Tên bạn bè -->
+
     <TextView
         android:id="@+id/txtTenBaBe"
         android:layout_width="wrap_content"
@@ -25,6 +28,28 @@
         android:layout_marginStart="16dp"
         android:text="Tên bạn bè"
         android:textColor="@android:color/white"
-        android:textSize="29sp"/>
+        android:textSize="16dp"
+        app:layout_constraintStart_toEndOf="@+id/imgBanBe"
+        app:layout_constraintTop_toTopOf="@+id/imgBanBe" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_circle_green"
+        app:layout_constraintBottom_toBottomOf="@+id/imgBanBe"
+        app:layout_constraintEnd_toEndOf="@+id/imgBanBe"
+        app:layout_constraintStart_toEndOf="@+id/imgBanBe" />
+
+    <TextView
+        android:id="@+id/textView31"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Đang hoạt động"
+        android:textSize="10dp"
+        android:textColor="@color/success"
+        app:layout_constraintStart_toStartOf="@+id/txtTenBaBe"
+        app:layout_constraintTop_toBottomOf="@+id/txtTenBaBe" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

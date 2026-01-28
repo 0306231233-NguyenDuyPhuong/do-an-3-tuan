@@ -144,13 +144,16 @@
                     android:text="Đẹp trai có gì sai"
                     android:textColor="@color/white" />
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnChinhSuaTrangCaNhan"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="10dp"
-                    android:backgroundTint="@color/background_btn"
+                    android:background="@drawable/bg_button_gray"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
                     android:text="Chỉnh sửa trang cá nhân" />
 
                 <LinearLayout
@@ -193,6 +196,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
+                android:layout_marginTop="10dp"
                 />
 
             <TextView

@@ -36,7 +36,7 @@
                 android:gravity="center"
                 android:text="Cài đặt"
                 android:textColor="@color/white"
-                android:textSize="20dp"
+                android:textSize="25dp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -82,8 +82,11 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="60dp"
+                android:padding="10dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_container_gray_bold"
+                >
 
                 <ImageView
                     android:id="@+id/imageView5"
@@ -114,8 +117,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:background="@drawable/bg_container_gray_bold"
+                android:layout_marginTop="10dp"
+                >
 
                 <ImageView
                     android:id="@+id/imageView10"
@@ -156,8 +163,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:background="@drawable/bg_container_gray_bold"
+                android:layout_marginTop="10dp"
+                >
 
                 <ImageView
                     android:id="@+id/imageView11"
@@ -189,8 +200,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:background="@drawable/bg_container_gray_bold"
+                android:layout_marginTop="10dp"
+                >
 
                 <ImageView
                     android:id="@+id/imageView15"
@@ -272,8 +287,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:background="@drawable/bg_container_gray_bold"
+                android:layout_marginTop="10dp"
+                >
 
                 <ImageView
                     android:id="@+id/imageView19"
@@ -304,8 +323,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:background="@drawable/bg_container_gray_bold"
+                android:layout_marginTop="10dp"
+                >
 
                 <ImageView
                     android:id="@+id/imageView21"
@@ -335,11 +358,15 @@
             </LinearLayout>
         </LinearLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnDangXuat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:background="@drawable/bg_container_gray_bold"
+            android:textSize="16dp"
+            android:textColor="#DE6054"
+            android:textStyle="bold"
             android:text="Đăng xuất" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

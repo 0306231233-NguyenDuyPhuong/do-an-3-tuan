@@ -42,6 +42,7 @@
     <color name="primary_dark">#FF1976D2</color>
     <color name="primary_light">#FF64B5F6</color>
     <color name="primary_cyan">#FF4DD0E1</color>
+    <color name="primary_blue">#362196F3</color>
     <color name="gradient_start">#FF2196F3</color>
     <color name="gradient_end">#FF4DD0E1</color>
 
