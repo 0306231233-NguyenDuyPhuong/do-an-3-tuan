@@ -59,7 +59,7 @@
             android:background="@drawable/bg_button_blue"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:textSize="18dp"
+            android:textSize="15dp"
             android:text="Kết bạn"/>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -70,7 +70,7 @@
             android:background="@drawable/bg_button_gray"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:textSize="18dp"
+            android:textSize="15dp"
             android:text="Nhắn tin"/>
     </LinearLayout>
 

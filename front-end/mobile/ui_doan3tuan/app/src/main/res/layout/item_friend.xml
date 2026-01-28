@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Đang hoạt động"
-        android:textSize="10dp"
+        android:textSize="14dp"
         android:textColor="@color/success"
         app:layout_constraintStart_toStartOf="@+id/txtTenBaBe"
         app:layout_constraintTop_toBottomOf="@+id/txtTenBaBe" />
