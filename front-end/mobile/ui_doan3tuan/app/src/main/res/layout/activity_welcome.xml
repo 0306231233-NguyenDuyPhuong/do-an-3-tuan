@@ -67,15 +67,15 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnCreateAccount"
-                android:layout_width="357dp"
-                android:layout_height="63dp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
                 android:layout_marginTop="48dp"
                 android:background="@drawable/bg_button_blue"
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:text="@string/create_account"
                 android:textAllCaps="false"
-                android:textSize="25dp"
+                android:textSize="20dp"
                 app:cornerRadius="26dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

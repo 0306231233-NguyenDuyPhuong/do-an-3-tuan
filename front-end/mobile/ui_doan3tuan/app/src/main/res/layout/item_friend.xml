@@ -7,7 +7,7 @@
     android:layout_height="70dp"
     android:orientation="horizontal"
     android:padding="11dp"
-    android:background="#1a1a1a"
+    android:background="#0b141a"
     android:layout_marginBottom="1dp">
 
     <!-- Ảnh đại diện -->
