@@ -207,9 +207,6 @@ class UserProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, SettingActivity::class.java))
         }
 
-        findViewById<ImageView>(R.id.imgThoatHoSoNguoiDung).setOnClickListener {
-            finish()
-        }
 
         findViewById<Button>(R.id.btnChinhSuaTrangCaNhan).setOnClickListener {
             val intent = Intent(this, EditProfileActivity::class.java)
