@@ -1,35 +1,33 @@
 import axios from "../services/customize-axio.s";
 const accessToken = localStorage.getItem("accessToken");
 const fetchPostAdmin = ({
-    page=1,
-    search="",
-    sort="", 
+    page = 1,
+    search = "",
+    sort = "",
     status,
     date,
-    dateStart, 
+    dateStart,
     dateEnd
-})=>{
-
-    
+}) => {
     return axios.get(`posts/admin`, {
         headers: {
             Authorization: `Bearer ${accessToken}`
         },
         params: {
-            page, 
+            page,
             search,
-            status, 
-            sort, 
-            ...(date && {date}),
+            status,
+            sort,
+            ...(date && { date }),
             ...(dateStart && dateEnd && {
-                dateStart, 
+                dateStart,
                 dateEnd,
             })
         }
     })
 }
 
-const fetchPostById = (id) =>{
+const fetchPostById = (id) => {
     return axios.get(`posts/${id}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`
@@ -37,15 +35,15 @@ const fetchPostById = (id) =>{
     })
 }
 
-const putStatusPost = (id, newStatus) =>{
+const putStatusPost = (id, newStatus) => {
     return axios.put(`posts/admin/${id}`,
-        {status: newStatus},
+        { status: newStatus },
         {
-            headers:{
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-        }
-    })
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            }
+        })
 }
 export {
     fetchPostAdmin,

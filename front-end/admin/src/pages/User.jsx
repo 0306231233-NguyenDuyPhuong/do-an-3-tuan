@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import { Eye, Warning2 , Notification} from "iconsax-react";
+import { Eye, Warning2 , Notification, Sort} from "iconsax-react";
 import { NavLink, Outlet } from "react-router-dom";
 import ReactPaginate from 'react-paginate';
 import { CiSearch } from "react-icons/ci";
 import { fetchUser } from "../services/UserService";
+import {useNavigate } from "react-router-dom";
+
 const User = () =>{
+    const params = new URLSearchParams(location.search)
+    const page = Number(params.get("page")) || 1;
+    const search = params.get("search") || ""
     const [listUsers, setListUsers] = useState([]);
+    const [pageState, setPageState] = useState(1);
     let [total, setTotatl] = useState(null);
+    const navigate = useNavigate();
+    const [searchState, setSearchState] = useState("");
+
     const statusPost = {
       2: "banned", 
       1: "approved"
@@ -17,11 +26,10 @@ const User = () =>{
     }
     //const [sort, setSort] = useState("");
     const [role, setRole] = useState("");
-    const [search, setSearch] = useState("");
     useEffect(() => {
         // eslint-disable-next-line react-hooks/immutability
-        getUser({page:1})
-    }, []);
+        getUser({page, search: search})
+    }, [page, searchState]);
 
     const getUser = async ({
       page,
@@ -38,7 +46,7 @@ const User = () =>{
           });
           if (res && res.data) {
               setListUsers(res.data.data);
-              setTotatl(res.total);
+              setTotatl(res.data.total);
           }
         } catch (error) {
           console.log("Get user error: ", error)
@@ -46,8 +54,9 @@ const User = () =>{
     }
 
     const handlePageClick = (event) =>{
-      console.log(">>> seleted: ",event)
-      getUser(+event.selected+1);
+      const selectedPage = event.selected+1;
+      setPageState(selectedPage)
+      navigate(`?page=${selectedPage}`)
     }
 
     if(!listUsers){
@@ -80,48 +89,12 @@ const User = () =>{
                       </div>
                     </div>
                   </div>
-                <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl border border-gray-300 shadow-md p-10">
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-4">
-                        <div className="size-10 bg-white border border-gray-200 shadow-md rounded-md p-1">
-                          <Notification size="25" color="#000"/>
-                        </div>
-                        <div className="text-xl font-bold"> Quantity user</div>
-                      </div>
-                      <div className="size-8 bg-white border border-gray-200 shadow-md p-1 rounded-2xl">
-                        <Warning2 size="20" color="#000"/>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 items-center justify-between mt-5">
-                      <div className="flex items-center">
-                        <span className="text-5xl font-bold mr-2 text-green-500">129</span>
-                        <span className="w-15 h-8 border rounded-md border-gray-200 bg-green-100 text-green-400 flex items-center justify-center">tang</span>
-                      </div>
-                      <div className="text-xl text-gray-400">
-                        vs last week
-                      </div>
-                    </div>
+                <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl ">
+                   
                   </div>
-                <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl border border-gray-300 shadow-md p-10">
+                <div className="flex-1 min-w-[200px] h-50 bg-white rounded-xl ">
                     <div className="flex justify-between items-center">
-                      <div className="flex gap-4">
-                        <div className="size-10 bg-white border border-gray-200 shadow-md rounded-md p-1">
-                          <Notification size="25" color="#000"/>
-                        </div>
-                        <div className="text-xl font-bold"> Quantity user</div>
-                      </div>
-                      <div className="size-8 bg-white border border-gray-200 shadow-md p-1 rounded-2xl">
-                        <Warning2 size="20" color="#000"/>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 items-center justify-between mt-5">
-                      <div className="flex items-center">
-                        <span className="text-5xl font-bold mr-2 text-green-400">129</span>
-                        <span className="w-15 h-8 border rounded-md border-gray-200 bg-green-100 text-green-500 p-1 flex justify-center items-center">tang</span>
-                      </div>
-                      <div className="text-xl text-gray-400">
-                        vs last week
-                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -139,8 +112,12 @@ const User = () =>{
               placeholder="Search post" type="text" name="search"
               value={search}
               onChange={(e)=>{
-                setSearch(e.target.value)
-                getUser({page:1, search:search})
+                //setSearch(e.target.value)
+                //getUser({page:1, search:search})
+                const value = e.target.value;
+                setSearchState(value)
+                navigate(`?page=1&search=${value}`);
+
               }}
               />
             </div>
@@ -225,7 +202,7 @@ const User = () =>{
                     </div>
                 </td>
                 <td className="h-15 px-4 py-2 text-center">
-                    <NavLink to={`/user/${item.id}`} className="hover:text-blue-500">
+                    <NavLink to={`/user/${item.id}?page=${pageState}`} className="hover:text-blue-500">
                     <Eye size="30" color="#C0C0C0" />
                     </NavLink>
                 </td>
@@ -244,8 +221,6 @@ const User = () =>{
         nextLinkClassName="px-3 py-1 border rounded"
         activeLinkClassName="bg-black text-white"
       />
-
-
         </>
     )
 }

@@ -21,39 +21,51 @@ const getProfile = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
 const getUsers = async (req, res) => {
   try {
-    const { search, userId, role, status } = req.query;
+    const { search, role, status, page = 1 } = req.query;
     const currentUserId = req.user.userId;
+
+    const limit = 10;
+    const offset = (Number(page) - 1) * limit;
 
     const whereUser = {
       ...(search && {
         full_name: { [Op.like]: `%${search}%` },
       }),
-      ...(status && {
-        status: status
+      ...(status !== undefined && {
+        status: status,
+      }),
+      ...(role !== undefined && {
+        role: role,
       }),
       ...(currentUserId && {
-        id: {[Op.ne]: currentUserId}
+        id: { [Op.ne]: currentUserId },
       }),
-      ...(role&& {
-        role: role
-      })
-    }
-    const users = await db.User.findAll({
+    };
+
+    const { rows: users, count: total } = await db.User.findAndCountAll({
       where: whereUser,
+      limit,
+      offset,
       attributes: ["id", "full_name", "avatar", "status", "role"],
+      order: [["id", "DESC"]],
     });
 
     return res.json({
       message: "Get user success",
-      data: users,
+        total,
+        page: Number(page),
+        limit,
+        totalPage: Math.ceil(total / limit),
+        data: users,
+      
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 // const getUserById = async (req, res) => {
 //   try {
@@ -176,7 +188,6 @@ const getUserById = async (req, res) => {
           status: 1,
           user_id: id,
         },
-        // --- SỬ DỤNG LITERAL ĐỂ TÍNH IS_LIKED (Giống getPostUser) ---
         attributes: {
           include: [
             [

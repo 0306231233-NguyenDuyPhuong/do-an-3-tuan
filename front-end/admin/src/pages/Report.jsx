@@ -10,12 +10,16 @@ import { useNavigate } from "react-router-dom";
 import { fetchReportAction } from "../services/ReportActionService";
 
 const Report = () => {
+  const params = new URLSearchParams(location.search)
+  const page = Number(params.get("page")) || 1;
+  const search = params.get("search") || ""
   const [listReport, setListReports] = useState([]);
   const [total, setTotal] = useState(0);
   //const [currentPage, setCurrentPage] = useState(1);
   const [type, setType] = useState("")
   const [status, setStatus] = useState("")
-  const [search, setSearch] = useState("")
+  const [pageState, setPageState] = useState(1)
+  const [searchState, setSearchState] = useState("")
   const [open, setOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [reportActionData, setReportActionData] = useState([])
@@ -46,12 +50,12 @@ const Report = () => {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability
-    getReport({ page: 1 })
+    getReport({ page, search:search })
     if (open && reportId) {
       // eslint-disable-next-line react-hooks/immutability
       getReportAction(reportId)
     }
-  }, [], [open, reportId]);
+  }, [page], [open, reportId]);
 
 
   const getReport = async ({
@@ -98,7 +102,7 @@ const Report = () => {
 
   const handleView = (item) => {
     if (item.target_type === "post") {
-      navigate(`/post/${item.target_id}`, {
+      navigate(`/post/${item.target_id}?page=${pageState}`, {
         state: { reportId: item.id }
       })
     } else if (item.target_type === "user") {
@@ -130,7 +134,9 @@ const Report = () => {
   // };
 
   const handlePageClick = (event) => {
-    getReport(event.selected + 1);
+        const selectedPage = event.selected +1;
+    setPageState(selectedPage)
+    navigate(`?page=${selectedPage}`);
   };
 
   // const handleReportComment = async (comment) => {
@@ -160,6 +166,12 @@ const Report = () => {
             <span className="text-gray-400">vs last week</span>
           </div>
         </div>
+        <div className="flex-1 bg-white rounded-xl">
+          
+        </div>
+        <div className="flex-1 bg-white rounded-xl">
+          
+        </div>
       </div>
 
       <div className="flex gap-5 items-center mt-10">
@@ -171,11 +183,11 @@ const Report = () => {
             name="search"
             placeholder="Search post"
             className="flex-1 outline-none text-2xl h-10"
-            value={search}
+            value={searchState}
             onChange={(e) => {
-              const value = e.target.value;
-              setSearch(value);
-              getReport({ page: 1, report_id: search })
+                const value = e.target.value;
+                setSearchState(value)
+                navigate(`?page=1&search=${value}`);
             }}
           />
         </div>
