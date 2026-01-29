@@ -27,7 +27,7 @@
 
     <!-- Forgot Password Screen -->
     <string name="forgot_password_title">Quên mật khẩu</string>
-    <string name="forgot_password_subtitle">Nhập email hoặc số điện thoại của bạn để đặt lại mật khẩu</string>
+    <string name="forgot_password_subtitle">Nhập email của bạn để nhận mật khẩu mới qua email. Sau đó đăng nhập với email và mật khẩu mới.</string>
     <string name="reset_password_button">Đặt lại mật khẩu</string>
     <!-- Reset Password Screen -->
     <string name="reset_password_title">Đặt lại mật khẩu</string>
