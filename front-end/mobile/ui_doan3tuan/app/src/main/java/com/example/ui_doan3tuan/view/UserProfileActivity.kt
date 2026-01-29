@@ -152,7 +152,15 @@ class UserProfileActivity : AppCompatActivity() {
             },
             onShareClick = { post ->
                 showShareDialog(post)
-            }
+            },
+            onImageClick = { id ->
+                if(id.toInt()==userId){
+                    return@AdapterUserProfile
+                }
+                val intent = Intent(this, FriendsProfileActivity::class.java)
+                intent.putExtra("friend_id", id.toInt())
+                startActivity(intent)
+            },
         )
         revDSBaiDang.adapter = adapterUserProfile
     }

@@ -21,7 +21,8 @@ class AdapterUserProfile(
     val onCommentClick:(PostModel)-> Unit,
     val onReportClick:(PostModel)-> Unit,
     val onLikeClick: (PostModel, Boolean) -> Unit,
-    val onShareClick: (PostModel) -> Unit
+    val onShareClick: (PostModel) -> Unit,
+    val onImageClick: (String) -> Unit
 ): RecyclerView.Adapter<AdapterUserProfile.UserProfileViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -175,6 +176,13 @@ class AdapterUserProfile(
             }
         } else {
             holder.imgDaiDien.load(R.drawable.profile)
+        }
+        holder.imgDaiDien.setOnClickListener {
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION) {
+                onImageClick(list[pos].User.id.toString())
+
+            }
         }
 
 
