@@ -2,112 +2,9 @@ import { stat } from "@babel/core/lib/gensync-utils/fs.js";
 import db from "../models/index.js";
 import { Sequelize, where, Op } from "sequelize";
 
-// const getPostUser = async (req, res) => {
-//   try {
-//     const { search, sort, date, dateStart, dateEnd } = req.query;
-
-//     const page = Number(req.query.page) || 1;
-//     const limit = 10;
-//     const offset = (page - 1) * limit;
-//     const userId = Number(req.user.userId);
-//     const userRole = Number(req.user.role);
-
-//     if (userRole !== 0) {
-//       return res.status(403).json({ message: "User not role user" });
-//     }
-
-//     let order = [["created_at", "DESC"]];
-//     if (sort === "trending") {
-//       order = [[
-//         db.sequelize.literal(`
-//           (like_count*1 + comment_count*2 + share_count*3)
-//         `),
-//         "DESC"
-//       ]];
-//     }
-
-//     const friendBlock = await db.Friendship.findAll({
-//       where: { user_id: userId, status: 3 },
-//       attributes: ["friend_id"]
-//     });
-//     const blockIds = friendBlock.map(item => item.friend_id);
-
-//     let createdAtFilter = {};
-//     if (date) {
-//       createdAtFilter = {
-//         [Op.between]: [`${date} 00:00:00`, `${date} 23:59:59`]
-//       };
-//     } else if (dateStart && dateEnd) {
-//       createdAtFilter = {
-//         [Op.between]: [`${dateStart} 00:00:00`, `${dateEnd} 23:59:59`]
-//       };
-//     }
-
-//     const wherePost = {
-//       status: 1,
-//       privacy: { [Op.ne]: 2 }, 
-
-//       ...(blockIds.length && {
-//         user_id: { [Op.notIn]: blockIds }
-//       }),
-
-//       ...(Object.keys(createdAtFilter).length && {
-//         created_at: createdAtFilter
-//       }),
-
-//       ...(search && {
-//         [Op.or]: [
-//           { content: { [Op.like]: `%${search}%` } },
-//           ...(Number(search) ? [{ id: Number(search) }] : []),
-//           { '$User.full_name$': { [Op.like]: `%${search}%` } },
-//           { '$Location.name$': { [Op.like]: `%${search}%` } },
-//           { '$Location.address$': { [Op.like]: `%${search}%` } },
-//         ]
-//       })
-//     };
-
-//     const [postData, postTotal] = await Promise.all([
-//       db.Post.findAll({
-//         limit,
-//         offset,
-//         order,
-//         subQuery: false,
-//         where: wherePost,
-//         include: [
-//           { model: db.User, attributes: ["id", "full_name", "avatar"], required: false },
-//           { model: db.PostMedia },
-//           { model: db.Location, required: false }
-//         ],
-//         distinct: true
-//       }),
-
-//       db.Post.count({
-//         where: wherePost,
-//         include: [
-//           { model: db.User, attributes: [], required: false },
-//           { model: db.Location, attributes: [], required: false }
-//         ],
-//         distinct: true
-//       })
-//     ]);
-
-//     return res.status(200).json({
-//       message: "Post",
-//       total: postTotal,
-//       page,
-//       limit,
-//       data: postData
-//     });
-
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
 const getPostUser = async (req, res) => {
   try {
     const { search, sort, date, dateStart, dateEnd } = req.query;
-
     const page = Number(req.query.page) || 1;
     const limit = 5;
     const offset = (page - 1) * limit;
@@ -127,13 +24,18 @@ const getPostUser = async (req, res) => {
         "DESC"
       ]];
     }
-
-    // Lấy danh sách người dùng đã block để lọc bài viết
     const friendBlock = await db.Friendship.findAll({
       where: { user_id: userId, status: 3 },
       attributes: ["friend_id"]
     });
+
+    const friendList = await db.Friendship.findAll({
+      where: { user_id: userId, status: 1 },
+      attributes: ["friend_id"]
+    });
+
     const blockIds = friendBlock.map(item => item.friend_id);
+    const friendIds = friendList.map(item => item.friend_id);
 
     let createdAtFilter = {};
     if (date) {
@@ -148,7 +50,6 @@ const getPostUser = async (req, res) => {
 
     const wherePost = {
       status: 1,
-      privacy: { [Op.ne]: 2 }, // Không lấy bài viết riêng tư
 
       ...(blockIds.length && {
         user_id: { [Op.notIn]: blockIds }
@@ -166,8 +67,18 @@ const getPostUser = async (req, res) => {
           { '$Location.name$': { [Op.like]: `%${search}%` } },
           { '$Location.address$': { [Op.like]: `%${search}%` } },
         ]
-      })
+      }),
+
+      [Op.or]: [
+        { privacy: 0 },
+        { privacy: 1, user_id: userId },
+        {
+          privacy: 2,
+          user_id: { [Op.in]: friendIds }
+        }
+      ]
     };
+
 
     const [postData, postTotal] = await Promise.all([
       db.Post.findAll({

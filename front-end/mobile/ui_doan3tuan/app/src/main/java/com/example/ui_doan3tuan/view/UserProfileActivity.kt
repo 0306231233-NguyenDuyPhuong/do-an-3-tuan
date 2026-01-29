@@ -40,7 +40,6 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var adapterUserProfile: AdapterUserProfile
     private val viewModel: UserProfileViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
-
     private lateinit var imgAvatar: ImageView
     private lateinit var txtTenNguoiDung: TextView
     private lateinit var txtSoLuongBaiViet: TextView

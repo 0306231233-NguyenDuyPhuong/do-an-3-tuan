@@ -24,8 +24,8 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgUserChat"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_marginEnd="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/bg_button_blue"
