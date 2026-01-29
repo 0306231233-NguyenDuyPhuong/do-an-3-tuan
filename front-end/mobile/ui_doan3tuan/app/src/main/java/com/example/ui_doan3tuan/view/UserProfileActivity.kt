@@ -129,11 +129,14 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     private fun loadPostData() {
+
         viewModel2.getListfriends(accessToken)
         if (interact == 0) {
             viewModel.getPostID(accessToken, userId)
         } else if (interact == 2) {
             viewModel.getListPostSave(accessToken)
+        } else if (interact == 3) {
+            viewModel.getListPostLike(accessToken)
         }
     }
 
@@ -156,18 +159,18 @@ class UserProfileActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         viewModel.postsId.observe(this) { listPostsId ->
-            if(listPostsId.isEmpty()){
+            if (listPostsId.isEmpty()) {
                 txtEmptyState.visibility = View.VISIBLE
                 revDSBaiDang.visibility = View.GONE
                 txtEmptyState.text = "Không có bài viết nào!"
-            }else{
+            } else {
                 txtEmptyState.visibility = View.GONE
                 revDSBaiDang.visibility = View.VISIBLE
                 Log.d("UserProfile", "Data loaded: ${listPostsId.size} items")
                 adapterUserProfile.setData(listPostsId)
             }
             slbv = listPostsId.size
-            if(interact == 0 ){
+            if (interact == 0) {
                 txtSoLuongBaiViet.text = slbv.toString()
                 txtSoLuongBanBe.text = slbb.toString()
             }
@@ -199,6 +202,7 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun setupListeners() {
         findViewById<ImageView>(R.id.imgSetting).setOnClickListener {
             startActivity(Intent(this, SettingActivity::class.java))
@@ -210,17 +214,17 @@ class UserProfileActivity : AppCompatActivity() {
             editProfileLauncher.launch(intent)
         }
         imgAllPost.setOnClickListener {
-            if (interact != 0) {
-                interact = 0
-                updateIconState(imgAllPost)
-                adapterUserProfile.setData(emptyList())
-                viewModel.getPostID(accessToken, userId)
-            }
+            interact = 0
+            updateIconState(imgAllPost)
+            adapterUserProfile.setData(emptyList())
+            viewModel.getPostID(accessToken, userId)
         }
         imgPostFav.setOnClickListener {
+            interact = 3
             updateIconState(imgPostFav)
             adapterUserProfile.setData(emptyList())
-            Toast.makeText(this, "Tính năng đang phát triển...", Toast.LENGTH_SHORT).show()
+            viewModel.getListPostLike(accessToken)
+
         }
         imgPostSave.setOnClickListener {
             if (interact != 2) {
@@ -234,6 +238,7 @@ class UserProfileActivity : AppCompatActivity() {
         // Set mặc định icon state
         updateIconState(imgAllPost)
     }
+
     private fun updateIconState(selectedIcon: ImageView) {
         val colorUnselected = getColor(R.color.gray)
         val colorSelected = getColor(R.color.white)
@@ -242,6 +247,7 @@ class UserProfileActivity : AppCompatActivity() {
         imgPostSave.setColorFilter(colorUnselected)
         selectedIcon.setColorFilter(colorSelected)
     }
+
     private fun setupBottomNav() {
         bottomNav.selectedItemId = R.id.nav_profile
         bottomNav.setOnItemSelectedListener { item ->
@@ -255,6 +261,7 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun showShareDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_share, null)
@@ -274,30 +281,34 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             imgCurrentUserAvatar.load(R.drawable.profile)
         }
-        revMessengerContacts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        revMessengerContacts.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         val currentFriends = viewModel2.friends.value ?: mutableListOf()
         Log.d("currentFriends", "$currentFriends")
-        revMessengerContacts.adapter = AdapterFriends(currentFriends){
+        revMessengerContacts.adapter = AdapterFriends(currentFriends) {
             val intent = Intent(this, FriendsProfileActivity::class.java)
             intent.putExtra("friend_id", it.id)
         }
         dialog.setContentView(view)
         dialog.show()
     }
-    private fun navigateTo(cls: Class<*>) : Boolean {
+
+    private fun navigateTo(cls: Class<*>): Boolean {
         val intent = Intent(this, cls)
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
         overridePendingTransition(0, 0)
         return false
     }
+
     private fun goToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
     }
+
     private fun showReportDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_buttom_sheet_report_profile, null)
@@ -310,6 +321,7 @@ class UserProfileActivity : AppCompatActivity() {
         dialog.setContentView(view)
         dialog.show()
     }
+
     private fun showCommentDialog(post: PostModel) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_comment, null)

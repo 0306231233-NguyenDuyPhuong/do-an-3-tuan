@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ui_doan3tuan.model.CommentModel
+import com.example.ui_doan3tuan.model.LikedPostModel
 import com.example.ui_doan3tuan.model.ListCommentModel
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.PostResponseIDModel
@@ -111,6 +112,45 @@ class UserProfileViewModel: ViewModel() {
 
             } catch (e: Exception) {
                 Log.e("ListSavePost", "Lỗi mạng: ${e.message}")
+                _error.postValue("Kết nối mạng không ổn định, vui lòng thử lại sau!")
+            }finally {
+                _isLoading.postValue(false)
+            }
+        }
+    }
+    fun getListPostLike(token: String) {
+        _isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val req = Request.Builder()
+                    .url("http://10.0.2.2:8989/api/interact/post/like")
+                    .addHeader("Authorization", "Bearer $token")
+                    .get()
+                    .build()
+                Log.e("ListLikePost", "Vào 1")
+                client.newCall(req).execute().use { resp ->
+                    if (!resp.isSuccessful) {
+                        Log.e("API_ERROR", "Lỗi: ${resp.code}")
+                        if (resp.code == 401||resp.code == 403) {
+                            _error.postValue("TOKEN_EXPIRED")
+                            return@use
+                        }
+                    }
+                    val jsonBody = resp.body?.string().orEmpty()
+                    val response = json.decodeFromString<LikedPostModel>(jsonBody)
+                    val listPostId = response.data
+                    val listPost: MutableList<PostModel> = mutableListOf()
+                    for (post in listPostId) {
+                        listPost.add(post.Post)
+                    }
+                    Log.d("ListLikePost", "listPostId $listPostId")
+                    Log.d("ListLikePost", "listPost $listPost")
+
+                    _postsId.postValue(listPost)
+                }
+
+            } catch (e: Exception) {
+                Log.e("ListLikePost", "Lỗi mạng: ${e.message}")
                 _error.postValue("Kết nối mạng không ổn định, vui lòng thử lại sau!")
             }finally {
                 _isLoading.postValue(false)
