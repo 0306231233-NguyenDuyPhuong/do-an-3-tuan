@@ -10,6 +10,7 @@ import Logout from "../pages/Logout";
 import PostDetail from "../pages/PostDetail";
 import ProtectedRoute from "./ProtectedRoute";
 import UserDetail from "../pages/UserDetail";
+import EditProfile from "../pages/UserProfile";
 
 const AppRoutes = () => {
   return (
@@ -31,6 +32,7 @@ const AppRoutes = () => {
         <Route path="comment" element={<Comment />} />
         <Route path="report" element={<Report />} />
         <Route path="logout" element={<Logout />} />
+        <Route path="/user-profile" element={<EditProfile />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

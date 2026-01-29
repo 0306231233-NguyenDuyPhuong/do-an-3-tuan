@@ -40,7 +40,6 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var adapterUserProfile: AdapterUserProfile
     private val viewModel: UserProfileViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
-
     private lateinit var imgAvatar: ImageView
     private lateinit var txtTenNguoiDung: TextView
     private lateinit var txtSoLuongBaiViet: TextView
@@ -117,8 +116,6 @@ class UserProfileActivity : AppCompatActivity() {
         val user = sessionManager.getUser()
         txtTenNguoiDung.text = user.full_name ?: "Nguyen Duong"
         val avatarPath = user.avatar
-        Log.d("avatar", "Av: $avatarPath")
-        Log.d("avatar", "Name:${user.full_name}")
         if (avatarPath.isNullOrEmpty()) {
             imgAvatar.load(R.drawable.profile)
         } else {

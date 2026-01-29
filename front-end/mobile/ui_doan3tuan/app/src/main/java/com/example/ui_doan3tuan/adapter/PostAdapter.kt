@@ -63,7 +63,7 @@ class PostAdapter(
 
         holder.txtName.text = post.User.full_name
         Glide.with(holder.itemView.context)
-            .load(post.User.avatar)
+            .load("http://10.0.2.2:8989/api/images/${post.User.avatar}")
             .placeholder(R.drawable.profile)
             .into(holder.imgAvatar)
 

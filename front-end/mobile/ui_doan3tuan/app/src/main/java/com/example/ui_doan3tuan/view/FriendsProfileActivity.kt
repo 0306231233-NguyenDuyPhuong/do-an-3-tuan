@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -24,11 +25,14 @@ class FriendsProfileActivity : AppCompatActivity() {
     private lateinit var btnKetBan: Button
     private lateinit var btnNhanTin: Button
     private lateinit var postAdapter: PostAdapter
+    private lateinit var btnblock : ImageButton
+    private var isBlocked = false
 
     private var friendId: Int = -1
     private var friendName: String = ""
     private var isFriend: Boolean = false
     private var hasSentRequest: Boolean = false
+    private var avatarPath: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +46,6 @@ class FriendsProfileActivity : AppCompatActivity() {
         findViews()
         showInfo()
         setupButtons()
-
-
         checkFriendStatusFromAPI()
     }
 
@@ -57,6 +59,7 @@ class FriendsProfileActivity : AppCompatActivity() {
     private fun findViews() {
         btnKetBan = findViewById(R.id.btnKetBan)
         btnNhanTin = findViewById(R.id.btnNhanTin)
+        btnblock = findViewById(R.id.imageblock)
     }
 
     private fun showInfo() {
@@ -70,8 +73,6 @@ class FriendsProfileActivity : AppCompatActivity() {
             .placeholder(R.drawable.profile)
             .into(imgAvatar)
     }
-
-
 
     private fun checkFriendStatusFromAPI() {
         val token = getToken()
@@ -89,12 +90,9 @@ class FriendsProfileActivity : AppCompatActivity() {
 
                         updateButtonUI()
 
-                        if (isFriend) {
-                            loadFriendPosts()
-                        }
+                        loadFriendPosts()
                     }
                 }
-
                 override fun onFailure(call: Call<FriendListResponse>, t: Throwable) {
                     Log.e("FriendsProfile", "Check friend error", t)
                 }
@@ -119,14 +117,24 @@ class FriendsProfileActivity : AppCompatActivity() {
 
 
                     val user = body.user
-                    friendName = user.full_name ?: ""
 
+                    friendName = user.full_name ?: ""
                     findViewById<TextView>(R.id.textView9).text = friendName
 
-                    Glide.with(this@FriendsProfileActivity)
-                        .load(user.avatar)
-                        .placeholder(R.drawable.profile)
-                        .into(findViewById(R.id.imageView9))
+                    avatarPath = user.avatar
+                    if (avatarPath.isNullOrEmpty()) {
+                        Glide.with(this@FriendsProfileActivity)
+                            .load(R.drawable.profile)
+                            .into(findViewById(R.id.imageView9))
+                    } else {
+                        val fullUrl = "http://10.0.2.2:8989/api/images/$avatarPath"
+                        Log.d("AVATAR", "avatar = ${user.avatar}")
+                        Glide.with(this@FriendsProfileActivity)
+                            .load(fullUrl)
+                            .placeholder(R.drawable.profile)
+                            .error(R.drawable.profile)
+                            .into(findViewById(R.id.imageView9))
+                    }
 
                     postAdapter.setData(body.posts ?: emptyList())
                 }
@@ -139,6 +147,15 @@ class FriendsProfileActivity : AppCompatActivity() {
 
     private fun setupButtons() {
         updateButtonUI()
+        btnblock.setOnClickListener {
+
+            if (isBlocked) {
+                unblockUser()
+            } else {
+                blockUser()
+            }
+
+        }
 
         btnNhanTin.setOnClickListener {
             if (friendId == -1) return@setOnClickListener
@@ -146,7 +163,7 @@ class FriendsProfileActivity : AppCompatActivity() {
             val intent = Intent(this, ChatActivity::class.java).apply {
                 putExtra("id", friendId)
                 putExtra("full_name", friendName)
-                putExtra("avatar", "")
+                putExtra("avatar", avatarPath)
             }
             startActivity(intent)
         }
@@ -163,6 +180,13 @@ class FriendsProfileActivity : AppCompatActivity() {
     }
 
     private fun updateButtonUI() {
+        if (isBlocked) {
+            btnKetBan.text = "Đã chặn"
+            btnKetBan.isEnabled = false
+            btnNhanTin.isEnabled = false
+            return
+        }
+
         when {
             isFriend -> {
                 btnKetBan.text = "Bạn bè"
@@ -192,10 +216,11 @@ class FriendsProfileActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ApiMessage>, response: Response<ApiMessage>) {
                 if (response.isSuccessful) {
                     hasSentRequest = true
+                    Log.d("KB", "Vao")
+
                     updateButtonUI()
                 }
             }
-
             override fun onFailure(call: Call<ApiMessage>, t: Throwable) {}
         })
     }
@@ -228,6 +253,68 @@ class FriendsProfileActivity : AppCompatActivity() {
             override fun onFailure(call: Call<ApiMessage>, t: Throwable) {}
         })
     }
+    private fun blockUser() {
+        val token = getToken()
+        if (token.isEmpty()) return
+
+        ApiClient.apiService.blockUser(
+            "Bearer $token",
+            BlockRequest(friendId)).enqueue(object : Callback<ApiMessage> {
+
+            override fun onResponse(
+                call: Call<ApiMessage>,
+                response: Response<ApiMessage>
+            ) {
+                Log.d("TRUE", "${response}")
+                if (response.isSuccessful) {
+                    isBlocked = true
+                    isFriend = false
+                    hasSentRequest = false
+                    postAdapter.setData(emptyList())
+                    updateButtonUI()
+
+                    Toast.makeText(
+                        this@FriendsProfileActivity,
+                        "Đã chặn người dùng",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ApiMessage>, t: Throwable) {
+                Log.e("BLOCK", "Block fail", t)
+            }
+        })
+    }
+    private fun unblockUser() {
+        val token = getToken()
+        if (token.isEmpty()) return
+
+        ApiClient.apiService.unblockUser(
+            "Bearer $token",
+            BlockRequest(friendId)).enqueue(object : Callback<ApiMessage> {
+
+            override fun onResponse(
+                call: Call<ApiMessage>,
+                response: Response<ApiMessage>
+            ) {
+                if (response.isSuccessful) {
+                    isBlocked = false
+
+                    Toast.makeText(
+                        this@FriendsProfileActivity,
+                        "Đã bỏ chặn",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ApiMessage>, t: Throwable) {
+                Log.e("UNBLOCK", "Unblock fail", t)
+            }
+        })
+    }
+
 
     private fun getToken(): String {
         return getSharedPreferences("user_data", MODE_PRIVATE)

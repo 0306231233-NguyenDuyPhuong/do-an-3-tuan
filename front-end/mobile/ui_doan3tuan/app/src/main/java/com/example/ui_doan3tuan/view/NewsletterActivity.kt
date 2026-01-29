@@ -191,7 +191,6 @@ class NewsletterActivity : AppCompatActivity() {
                 }
                 val intent = Intent(this, FriendsProfileActivity::class.java)
                 intent.putExtra("friend_id", id.toInt())
-                Log.d("Test id", "${id.toInt()}")
                 startActivity(intent)
             },
             onLikeClick = { post, isActionLike ->

@@ -54,12 +54,12 @@ const getUsers = async (req, res) => {
 
     return res.json({
       message: "Get user success",
-        total,
-        page: Number(page),
-        limit,
-        totalPage: Math.ceil(total / limit),
-        data: users,
-      
+      total,
+      page: Number(page),
+      limit,
+      totalPage: Math.ceil(total / limit),
+      data: users,
+
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -155,14 +155,45 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const { id } = req.params; // ID của người dùng mà bạn đang xem profile
+    const { id } = req.params;
     const page = Number(req.query.page) || 1;
     const limit = 10;
     const offset = (page - 1) * limit;
-
-    // Lấy ID của người đang thực hiện request (người đang xem)
-    // Nếu req.user không tồn tại (chưa login) thì gán bằng 0 để query không lỗi
     const currentUserId = req.user ? Number(req.user.userId) : 0;
+
+    const friendBlock = await db.Friendship.findAll({
+      where: { user_id: id, status: 3 },
+      attributes: ["friend_id"]
+    });
+
+    const friendList = await db.Friendship.findAll({
+      where: { user_id: currentUserId, friend_id: id, status: 1 },
+      attributes: ["friend_id"]
+    });
+
+    const blockIds = friendBlock.map(item => item.friend_id);
+    const friendIds = friendList.map(item => item.friend_id);
+    const wherePost = {
+      status: 1,
+      user_id: id,
+
+      ...(blockIds.length && {
+        user_id: { [Op.notIn]: blockIds }
+      }),
+
+      [Op.or]: [
+        { privacy: 0 },
+
+        ...(currentUserId === Number(id)
+          ? [{ privacy: 1 }]
+          : []),
+
+        ...(friendIds
+          ? [{ privacy: 2 }]
+          : [])
+      ]
+    };
+
 
     const [
       user,
@@ -172,22 +203,21 @@ const getUserById = async (req, res) => {
       totalPost,
       totalFriend
     ] = await Promise.all([
-      // 1. Lấy thông tin User (Profile owner)
       db.User.findOne({
         where: { id },
         attributes: ["id", "full_name", "email", "phone", "avatar", "status"],
       }),
 
-      // 2. Lấy danh sách Post
       db.Post.findAll({
         subQuery: false,
         limit,
         offset,
         order: [["created_at", "DESC"]],
-        where: {
-          status: 1,
-          user_id: id,
-        },
+        // where: {
+        //   status: 1,
+        //   user_id: id,
+        // },
+        where: wherePost,
         attributes: {
           include: [
             [
@@ -201,7 +231,6 @@ const getUserById = async (req, res) => {
             ]
           ]
         },
-        // -----------------------------------------------------------
         include: [
           {
             model: db.User,
@@ -228,10 +257,9 @@ const getUserById = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 4. Format dữ liệu: Convert is_liked từ 1/0 sang true/false
     const posts = postData.map(post => {
       const p = post.toJSON();
-      p.is_liked = Boolean(p.is_liked); // Ép kiểu về boolean
+      p.is_liked = Boolean(p.is_liked);
       return p;
     });
 
@@ -359,7 +387,6 @@ const getAdminUserById = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    console.log(req.body);
     const userId = req.user.userId;
     if (!userId)
       return res.status(400).json({ message: "Token missed userId" });

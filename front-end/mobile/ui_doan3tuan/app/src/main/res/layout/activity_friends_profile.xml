@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -12,34 +13,42 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="16dp"
-        app:srcCompat="@drawable/back"
-        app:tint="@color/white"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/back"
+        app:tint="@color/white" />
 
     <!-- AVATAR -->
-    <ImageView
-        android:id="@+id/imageView9"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="16dp"
-        app:srcCompat="@drawable/profile"
-        app:layout_constraintTop_toBottomOf="@id/imgThoatFP"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- NAME -->
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageView9"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="5dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgThoatFP"
+        app:shapeAppearanceOverlay="@style/CircleImage"
+        app:srcCompat="@drawable/profile" />
+
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Tên bạn"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/imageView9"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/imageView9" />
 
     <!-- BUTTONS -->
     <LinearLayout
@@ -54,8 +63,8 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnKetBan"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
             android:background="@drawable/bg_button_blue"
             android:textStyle="bold"
             android:textColor="@color/white"
@@ -64,14 +73,14 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnNhanTin"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
             android:layout_marginStart="16dp"
             android:background="@drawable/bg_button_gray"
-            android:textStyle="bold"
+            android:text="Nhắn tin"
             android:textColor="@color/white"
             android:textSize="15dp"
-            android:text="Nhắn tin"/>
+            android:textStyle="bold" />
     </LinearLayout>
 
 
@@ -86,4 +95,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutButton"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/imageblock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/outline_report_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>

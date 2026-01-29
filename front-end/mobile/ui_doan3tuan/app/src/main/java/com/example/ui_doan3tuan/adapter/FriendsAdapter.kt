@@ -32,7 +32,7 @@ class FriendsAdapter(
         holder.txtName.text = friend.full_name
         if (!friend.avatar.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
-                .load(friend.avatar)
+                .load("http://10.0.2.2:8989/api/images/${friend.avatar}")
                 .placeholder(R.drawable.profile)
                 .into(holder.imgAvatar)
         }
