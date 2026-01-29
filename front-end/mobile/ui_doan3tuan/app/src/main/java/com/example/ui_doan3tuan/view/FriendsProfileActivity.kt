@@ -42,14 +42,11 @@ class FriendsProfileActivity : AppCompatActivity() {
         findViews()
         showInfo()
         setupButtons()
-
-
         checkFriendStatusFromAPI()
     }
 
     private fun getDataFromIntent() {
         friendId = intent.getIntExtra("friend_id", -1)
-        Log.d("friend_id", friendId.toString())
         friendName = intent.getStringExtra("friend_name") ?: "Chưa có tên"
         isFriend = intent.getBooleanExtra("from_friends_list", false)
     }

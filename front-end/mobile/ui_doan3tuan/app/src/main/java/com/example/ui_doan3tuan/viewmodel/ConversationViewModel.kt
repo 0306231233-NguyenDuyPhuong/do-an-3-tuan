@@ -1,5 +1,6 @@
 package com.example.ui_doan3tuan.viewmodel
 
+import android.util.Log
 import com.example.ui_doan3tuan.model.ConversationMemberModel
 import com.example.ui_doan3tuan.model.ConversationModel
 import com.example.ui_doan3tuan.model.ConversationResponse
@@ -27,6 +28,7 @@ class ConversationViewModel(
                 throw Exception(response.message)
             }
             val conversation = json.decodeFromString<ConversationResponse>(bodyString)
+            Log.e("CV", bodyString.toString())
             conversatitonList.addAll(conversation.data)
             return@use conversatitonList
         }

@@ -3,8 +3,7 @@ import db, { Sequelize } from "../models";
 
 const getConversation = async (req, res) => {
   try {
-   // const currentUserId = req.user.userId;
-    const currentUserId = 4;
+    const currentUserId = req.user.userId;
     const conversations = await db.Conversation.findAll({
       where: {
         type: 0, // private
