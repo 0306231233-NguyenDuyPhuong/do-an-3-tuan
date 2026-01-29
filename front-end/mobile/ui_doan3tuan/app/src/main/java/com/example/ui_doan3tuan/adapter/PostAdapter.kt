@@ -1,5 +1,6 @@
 package com.example.ui_doan3tuan.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,10 +61,9 @@ class PostAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
 
-
         holder.txtName.text = post.User.full_name
         Glide.with(holder.itemView.context)
-            .load(post.User.avatar)
+            .load("http://10.0.2.2:8989/api/images/${post.User.avatar}")
             .placeholder(R.drawable.profile)
             .into(holder.imgAvatar)
 

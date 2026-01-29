@@ -29,6 +29,7 @@ class FriendsProfileActivity : AppCompatActivity() {
     private var friendName: String = ""
     private var isFriend: Boolean = false
     private var hasSentRequest: Boolean = false
+    private var avatarPath: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,11 +43,14 @@ class FriendsProfileActivity : AppCompatActivity() {
         findViews()
         showInfo()
         setupButtons()
+
+
         checkFriendStatusFromAPI()
     }
 
     private fun getDataFromIntent() {
         friendId = intent.getIntExtra("friend_id", -1)
+        Log.d("friend_id", friendId.toString())
         friendName = intent.getStringExtra("friend_name") ?: "Chưa có tên"
         isFriend = intent.getBooleanExtra("from_friends_list", false)
     }
@@ -59,12 +63,10 @@ class FriendsProfileActivity : AppCompatActivity() {
     private fun showInfo() {
         findViewById<TextView>(R.id.textView9).text = friendName
 
-        val avatar = intent.getStringExtra("friend_avatar")
         val imgAvatar = findViewById<ImageView>(R.id.imageView9)
 
         Glide.with(this)
-            .load(avatar)
-            .placeholder(R.drawable.profile)
+            .load(R.drawable.profile)
             .into(imgAvatar)
     }
 
@@ -86,12 +88,9 @@ class FriendsProfileActivity : AppCompatActivity() {
 
                         updateButtonUI()
 
-                        if (isFriend) {
-                            loadFriendPosts()
-                        }
+                        loadFriendPosts()
                     }
                 }
-
                 override fun onFailure(call: Call<FriendListResponse>, t: Throwable) {
                     Log.e("FriendsProfile", "Check friend error", t)
                 }
@@ -113,17 +112,26 @@ class FriendsProfileActivity : AppCompatActivity() {
                     if (!response.isSuccessful) return
 
                     val body = response.body() ?: return
-
-
                     val user = body.user
-                    friendName = user.full_name ?: ""
 
+                    friendName = user.full_name ?: ""
                     findViewById<TextView>(R.id.textView9).text = friendName
 
-                    Glide.with(this@FriendsProfileActivity)
-                        .load(user.avatar)
-                        .placeholder(R.drawable.profile)
-                        .into(findViewById(R.id.imageView9))
+
+                    avatarPath = user.avatar
+                    if (avatarPath.isNullOrEmpty()) {
+                        Glide.with(this@FriendsProfileActivity)
+                            .load(R.drawable.profile)
+                            .into(findViewById(R.id.imageView9))
+                    } else {
+                        val fullUrl = "http://10.0.2.2:8989/api/images/$avatarPath"
+                        Log.d("AVATAR", "avatar = ${user.avatar}")
+                        Glide.with(this@FriendsProfileActivity)
+                            .load(fullUrl)
+                            .placeholder(R.drawable.profile)
+                            .error(R.drawable.profile)
+                            .into(findViewById(R.id.imageView9))
+                    }
 
                     postAdapter.setData(body.posts ?: emptyList())
                 }
@@ -143,7 +151,7 @@ class FriendsProfileActivity : AppCompatActivity() {
             val intent = Intent(this, ChatActivity::class.java).apply {
                 putExtra("id", friendId)
                 putExtra("full_name", friendName)
-                putExtra("avatar", "")
+                putExtra("avatar", avatarPath)
             }
             startActivity(intent)
         }
