@@ -86,8 +86,6 @@ class NewsletterActivity : AppCompatActivity() {
             }
         }
 //        loadPostData()
-
-
     }
     override fun onResume(){
         super.onResume()

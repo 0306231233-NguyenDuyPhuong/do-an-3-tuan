@@ -60,17 +60,11 @@ class PostAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
 
-        val avatarPath = post.User.avatar
-        val avatarUrl = if (!avatarPath.isNullOrEmpty()) {
-            "http://10.0.2.2:8989/api/images/$avatarPath"
-        } else {
-            null
-        }
+
         holder.txtName.text = post.User.full_name
         Glide.with(holder.itemView.context)
-            .load(avatarUrl)
+            .load("http://10.0.2.2:8989/api/images/${post.User.avatar}")
             .placeholder(R.drawable.profile)
-            .error(R.drawable.profile)
             .into(holder.imgAvatar)
 
         holder.txtHour.text = post.createdAt

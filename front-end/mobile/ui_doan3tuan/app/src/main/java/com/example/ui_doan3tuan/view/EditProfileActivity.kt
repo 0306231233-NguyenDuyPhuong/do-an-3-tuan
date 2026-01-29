@@ -79,6 +79,10 @@ class EditProfileActivity : AppCompatActivity() {
             userProfileViewModel.getPostID(accessToken, userId)
         }
     }
+    override fun onResume() {
+        super.onResume()
+        loadData()
+    }
     private fun initViews(){
         imgAvatar = findViewById(R.id.imgAnhDaiDien)
         txtUserName = findViewById(R.id.edtTenCSHS)
@@ -126,6 +130,23 @@ class EditProfileActivity : AppCompatActivity() {
         }
         editProfileViewModel.error.observe(this) { errorMsg ->
             Snackbar.make(txtUserName, "Lỗi: $errorMsg", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+    private fun loadData(){
+        var currentUser = sessionManager.getUser()
+        var name = currentUser.full_name
+        var image = currentUser.avatar
+        txtUserName.setText(name ?: "")
+        if (selectedImageFile == null) {
+            val avatarUrl = if (image.isNullOrEmpty()) {
+                R.drawable.profile
+            } else {
+                "http://10.0.2.2:8989/api/images/${image}"
+            }
+            imgAvatar.load(avatarUrl) {
+                placeholder(R.drawable.profile)
+                error(R.drawable.profile)
+            }
         }
     }
 

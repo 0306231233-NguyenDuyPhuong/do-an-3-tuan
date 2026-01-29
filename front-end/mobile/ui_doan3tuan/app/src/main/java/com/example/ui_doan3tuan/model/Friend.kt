@@ -55,3 +55,8 @@ data class CancelRequest(
 data class ApiMessage(
     val message: String
 )
+
+//Block friend
+data class BlockRequest(
+    val otherId: Int
+)

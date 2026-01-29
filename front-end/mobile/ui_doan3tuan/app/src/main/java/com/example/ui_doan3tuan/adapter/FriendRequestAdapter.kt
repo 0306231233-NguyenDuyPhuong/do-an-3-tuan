@@ -39,8 +39,7 @@ class FriendRequestAdapter(
         // Load ảnh
         if (!request.sender.avatar.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
-                .load(request.sender.avatar)
-                .placeholder(R.drawable.profile)
+                .load("http://10.0.2.2:8989/api/images/${request.sender.avatar}")                .placeholder(R.drawable.profile)
                 .into(holder.imgAvatar)
         } else {
             // Nếu không có ảnh, dùng ảnh mặc định

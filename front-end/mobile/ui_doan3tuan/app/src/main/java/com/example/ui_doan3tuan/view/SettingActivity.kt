@@ -84,8 +84,8 @@ class SettingActivity : AppCompatActivity() {
         btnDangXuat.setOnClickListener {
             accessToken = sessionManager.getAccessToken().toString()
             refreshToken = sessionManager.getRefreshToken().toString()
-            Log.d("User", "$accessToken")
-            Log.d("User", "$refreshToken")
+            Log.d("Logout", "accessToken: $accessToken")
+            Log.d("Logout", "refreshToken: $refreshToken")
             if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
                 viewModel.logout(accessToken, refreshToken)
             }

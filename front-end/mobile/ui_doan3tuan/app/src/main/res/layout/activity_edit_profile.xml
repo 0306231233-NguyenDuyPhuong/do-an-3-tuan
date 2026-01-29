@@ -68,11 +68,17 @@
             android:gravity="center"
             android:orientation="vertical">
 
+
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgAnhDaiDien"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="5dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imgThoatFP"
                 app:shapeAppearanceOverlay="@style/CircleImage"
                 app:srcCompat="@drawable/profile" />
 

@@ -359,7 +359,6 @@ const getAdminUserById = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    console.log(req.body);
     const userId = req.user.userId;
     if (!userId)
       return res.status(400).json({ message: "Token missed userId" });
