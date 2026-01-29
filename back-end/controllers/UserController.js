@@ -66,93 +66,6 @@ const getUsers = async (req, res) => {
   }
 };
 
-
-// const getUserById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const page = Number(req.query.page) || 1;
-//     const limit = 10;
-//     const offset = (page - 1) * limit;
-//     const [user, postData, totalLike, totalComment, totalPost, totalFriend] =
-//       await Promise.all([
-//         db.User.findOne({
-//           where: {
-//             id,
-//           },
-//           attributes: ["id", "full_name", "email", "phone", "avatar", "status"],
-//         }),
-
-//         db.Post.findAll({
-//           subQuery: false,
-//           limit,
-//           offset,
-//           order: [["created_at", "DESC"]],
-//           where: {
-//             [Op.and]: [
-//               { status: 1 },
-//               {
-//                 [Op.or]: [{ /*privacy: 2, */ user_id: id }],
-//               },
-//             ],
-//           },
-//           include: [
-//             {
-//               model: db.User,
-//               attributes: ["id", "full_name", "avatar"],
-//             },
-//             {
-//               model: db.PostMedia,
-//             },
-//             {
-//               model: db.Location,
-//             },
-//           ],
-//         }),
-//         db.Post.sum("like_count", {
-//           where: {
-//             user_id: id,
-//             //status: 1
-//           },
-//         }),
-//         db.Post.sum("comment_count", {
-//           where: {
-//             user_id: id,
-//             //status: 1
-//           },
-//         }),
-//         db.Post.count({
-//           where: {
-//             user_id: id,
-//           },
-//         }),
-//         db.Friendship.count({
-//           where: {
-//             user_id: id,
-//             status: 1,
-//           },
-//         }),
-//       ]);
-
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     return res.status(200).json({
-//       message: "Post",
-//       like_count: totalLike,
-//       comment_count: totalComment,
-//       post_count: totalPost,
-//       friend_count: totalFriend,
-//       page,
-//       limit,
-//       user: user,
-//       post: postData,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
-
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -167,12 +80,18 @@ const getUserById = async (req, res) => {
     });
 
     const friendList = await db.Friendship.findAll({
-      where: { user_id: currentUserId, friend_id: id, status: 1 },
-      attributes: ["friend_id"]
-    });
+          where: { [Op.or]:[
+            {user_id: currentUserId},
+            {friend_id: currentUserId}
+          ], status: 1 },
+          attributes: ["user_id", "friend_id"],
+          raw: true
+        });
 
     const blockIds = friendBlock.map(item => item.friend_id);
-    const friendIds = friendList.map(item => item.friend_id);
+     const friendIds = friendList.map(item =>
+      item.user_id === currentUserId ? item.friend_id : item.user_id
+    );
     const wherePost = {
       status: 1,
       user_id: id,
@@ -183,13 +102,11 @@ const getUserById = async (req, res) => {
 
       [Op.or]: [
         { privacy: 0 },
-
         ...(currentUserId === Number(id)
-          ? [{ privacy: 1 }]
-          : []),
-
-        ...(friendIds
           ? [{ privacy: 2 }]
+          : []),
+        ...(friendIds
+          ? [{ privacy: 1 }]
           : [])
       ]
     };

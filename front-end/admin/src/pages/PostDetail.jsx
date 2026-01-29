@@ -19,7 +19,7 @@ const PostDetail = () => {
   const reportId = state?.reportId;
   const user = JSON.parse(localStorage.getItem("user"))
   const userId = user?.id;
-  
+
 
   const statusPost = {
     0: "delete",
@@ -99,7 +99,7 @@ const PostDetail = () => {
   return (
     <>
       <div className="flex flex-col gap-5">
-        
+
         <ArrowLeft size="30" color="black" onClick={() => navigate(-1)} />
         <h2 className="font-bold text-2xl">
           {postDetailData.title}
@@ -179,10 +179,15 @@ const PostDetail = () => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto min-h-[100px] min-w-[200px] bg-white border border-gray-200 rounded-2xl shadow-md p-10">
-            <span className="flex items-center justify-center text-2xl font-bold">{totalComment} Comments</span>
+          <div className="flex-1 max-h-[600px] overflow-y-auto min-w-[200px] bg-white border border-gray-200 rounded-2xl shadow-md p-10">
+
+            {/* Title */}
+            <span className="flex items-center justify-center text-2xl font-bold mb-5 sticky top-0 bg-white z-10">
+              {totalComment} Comments
+            </span>
+
             {commentsList.map((item, index) => (
-              <div key={`data-$${index}`}>
+              <div key={`data-${index}`}>
                 <div className="flex gap-2 mt-10 justify-between">
 
                   <div className="flex gap-5">
@@ -195,38 +200,53 @@ const PostDetail = () => {
 
                     <div className="flex flex-col">
                       <div className="flex gap-3">
-                        <span className="text-md text-gray-400 font-bold">{item.User.full_name}</span>
-                        <div className={item.status == 0 ? "flex justify-center items-center rounded-md font-bold bg-red-100" : "flex justify-center items-center rounded-md font-bold bg-green-100"}>
-                          <span className={item.status == 0 ? "text-red-500" : "text-green-500"} >
-                            {statusComment[item.status]}</span>
+                        <span className="text-md text-gray-400 font-bold">
+                          {item.User.full_name}
+                        </span>
+
+                        <div
+                          className={`flex justify-center items-center rounded-md font-bold px-2
+                  ${item.status == 0 ? "bg-red-100" : "bg-green-100"}`}
+                        >
+                          <span className={item.status == 0 ? "text-red-500" : "text-green-500"}>
+                            {statusComment[item.status]}
+                          </span>
                         </div>
                       </div>
+
                       <span className="text-black">{item.content}</span>
-                      <span className="text-gray-300">{dayjs(item.created_at).format("DD/MM/YYYY")}</span>
+                      <span className="text-gray-300">
+                        {dayjs(item.created_at).format("DD/MM/YYYY")}
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center">
-                    {
-                      openId == item.id && (
-                        <select onChange={(e) => {
-                          const value = e.target.value;
-                          const id = item.id;
-                          updateStatusComment(postId, id, value);
-                        }}>
-                          <option value="">Selected</option>
-                          <option value="0">hidden</option>
-                          <option value="1">active</option>
-                        </select>
-                      )
-                    }
-                    <CiMenuKebab size={20} onClick={() => setOpenId(openId === item.id ? null : item.id)} />
+                  <div className="flex items-center gap-2">
+                    {openId === item.id && (
+                      <select
+                        className="border rounded px-2 py-1"
+                        onChange={(e) =>
+                          updateStatusComment(postId, item.id, e.target.value)
+                        }
+                      >
+                        <option value="">Selected</option>
+                        <option value="0">Hidden</option>
+                        <option value="1">Active</option>
+                      </select>
+                    )}
 
+                    <CiMenuKebab
+                      size={20}
+                      className="cursor-pointer"
+                      onClick={() => setOpenId(openId === item.id ? null : item.id)}
+                    />
                   </div>
+
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </div>
 

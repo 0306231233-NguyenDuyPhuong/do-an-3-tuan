@@ -30,12 +30,19 @@ const getPostUser = async (req, res) => {
     });
 
     const friendList = await db.Friendship.findAll({
-      where: { user_id: userId, status: 1 },
-      attributes: ["friend_id"]
+      where: { [Op.or]:[
+        {user_id: userId},
+        {friend_id: userId}
+      ], status: 1 },
+      attributes: ["user_id", "friend_id"],
+      raw: true
     });
 
     const blockIds = friendBlock.map(item => item.friend_id);
-    const friendIds = friendList.map(item => item.friend_id);
+    const friendIds = friendList.map(item =>
+      item.user_id === userId ? item.friend_id : item.user_id
+    );
+
 
     let createdAtFilter = {};
     if (date) {
@@ -50,7 +57,6 @@ const getPostUser = async (req, res) => {
 
     const wherePost = {
       status: 1,
-
       ...(blockIds.length && {
         user_id: { [Op.notIn]: blockIds }
       }),
@@ -71,14 +77,13 @@ const getPostUser = async (req, res) => {
 
       [Op.or]: [
         { privacy: 0 },
-        { privacy: 1, user_id: userId },
+        { privacy: 2, user_id: userId },
         {
-          privacy: 2,
+          privacy: 1,
           user_id: { [Op.in]: friendIds }
         }
       ]
     };
-
 
     const [postData, postTotal] = await Promise.all([
       db.Post.findAll({
