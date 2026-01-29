@@ -26,7 +26,8 @@ data class RegisterResponse(
 data class User(
     val id: Int,
     val email: String?,
-    val phone: String?,
+    var phone: String?,
+    var gender: Int,
     var full_name: String,
     val role: String,
     var avatar:String?
