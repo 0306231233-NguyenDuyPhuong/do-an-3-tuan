@@ -289,44 +289,45 @@ const forgotPassword = async (req, res) => {
   const { username } = req.body;
   if (!username)
     return res.status(400).json({ message: "Username is required" });
-  //find user in database
+
   const isEmail = username.includes("@");
+  if (!isEmail)
+    return res.status(400).json({
+      message: "Vui lòng nhập email để đặt lại mật khẩu",
+    });
 
-  const whereCondition = isEmail ? { email: username } : { phone: username };
   const user = await db.User.findOne({
-    where: whereCondition,
+    where: { email: username },
   });
-  // if not found user
-  if (!user) return res.status(404).json({ message: "User not found" });
+  if (!user) return res.status(404).json({ message: "Email chưa đăng ký" });
 
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  const expire = Date.now() + 15 * 60 * 1000;
+  const newPassword = crypto.randomBytes(6).toString("hex");
+  const hashedPassword = await argon2.hash(newPassword);
 
   await db.User.update(
-    { reset_token: resetToken, reset_token_expire: expire },
+    {
+      password: hashedPassword,
+      reset_token: null,
+      reset_token_expire: null,
+    },
     { where: { id: user.id } }
   );
-  if (isEmail) {
-    const resetLink = `http://localhost:8989/api/auth/reset-password?token=${resetToken}`;
 
-    const transporter = createTransporter();
-    await transporter.sendMail({
-      to: username,
-      subject: "Reset Password",
-      html: `
-     <h3>Đặt lại mật khẩu</h3>
-        <p>Link có hiệu lực trong 15 phút</p>
-        <a href="${resetLink}">Đặt lại mật khẩu</a>
+  const transporter = createTransporter();
+  await transporter.sendMail({
+    from: `"mannopro" <${process.env.EMAIL_USER}>`,
+    to: username,
+    subject: "Mật khẩu mới của bạn",
+    html: `
+      <h3>Đặt lại mật khẩu</h3>
+      <p>Mật khẩu mới của bạn:</p>
+      <p><b>${newPassword}</b></p>
+      <p>Vui lòng đăng nhập với email và mật khẩu mới này.</p>
     `,
-    });
-  } else {
-    return res
-      .status(200)
-      .json({ message: "User only resetpassword by email now" });
-  }
+  });
 
   return res.status(200).json({
-    message: "If email exists, reset link has been sent",
+    message: "Mật khẩu mới đã gửi đến email của bạn. Vui lòng kiểm tra và đăng nhập.",
   });
 };
 
