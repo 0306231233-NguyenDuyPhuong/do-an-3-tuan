@@ -52,6 +52,7 @@ class NewsletterActivity : AppCompatActivity() {
 
     private var token: String? = ""
     private var page: Int = 1
+    private var tmppage: Int = 1
     private var userId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,10 +83,10 @@ class NewsletterActivity : AppCompatActivity() {
             if (!v.canScrollVertically(1)) {
                 Toast.makeText(this, "Đang tải thêm...", Toast.LENGTH_SHORT).show()
                 page += 1
+                tmppage = page;
                 viewModel.getPost(token!!, page)
             }
         }
-//        loadPostData()
 
 
     }
@@ -136,7 +137,11 @@ class NewsletterActivity : AppCompatActivity() {
 
         viewModel.friends.observe(this) { listFriend ->
             if (listFriend.isNotEmpty()) {
-                val newAdapter = AdapterFriends(listFriend)
+                val newAdapter = AdapterFriends(listFriend){
+                    val intent = Intent(this, FriendsProfileActivity::class.java)
+                    intent.putExtra("friend_id", it.id)
+                    startActivity(intent)
+                }
                 revDSBanBe.adapter = newAdapter
             }
         }
@@ -201,7 +206,9 @@ class NewsletterActivity : AppCompatActivity() {
         )
         revHienBaiDang.adapter = adapterNewsletter
         revDSBanBe.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        adapterFriends = AdapterFriends(mutableListOf())
+        adapterFriends = AdapterFriends(mutableListOf()){
+
+        }
         revDSBanBe.adapter = adapterFriends
     }
     private fun navigateTo(cls: Class<*>) : Boolean {
@@ -216,6 +223,7 @@ class NewsletterActivity : AppCompatActivity() {
         scrollView.smoothScrollTo(0, 0)
         //Xóa dữ liệu cũ trong ViewModel (Màn hình sẽ trắng/loading)
         viewModel.clearPosts()
+
         page = 1
         viewModel.getPost(token!!, page)
         viewModel.getListfriends(token!!)
@@ -265,7 +273,11 @@ class NewsletterActivity : AppCompatActivity() {
         }
         revMessengerContacts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         val currentFriends = viewModel.friends.value ?: mutableListOf()
-        revMessengerContacts.adapter = AdapterFriends(currentFriends)
+        revMessengerContacts.adapter = AdapterFriends(currentFriends){
+            val intent = Intent(this, FriendsProfileActivity::class.java)
+            intent.putExtra("friend_id", it.id)
+            startActivity(intent)
+        }
         dialog.setContentView(view)
         dialog.show()
     }

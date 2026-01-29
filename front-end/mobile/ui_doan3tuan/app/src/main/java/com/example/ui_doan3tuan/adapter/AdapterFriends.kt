@@ -11,7 +11,7 @@ import com.example.ui_doan3tuan.R
 import com.example.ui_doan3tuan.model.PostModel
 import com.example.ui_doan3tuan.model.UserModel
 
-class AdapterFriends(private var listFriend: List<UserModel>): RecyclerView.Adapter<AdapterFriends.FriendsViewHolder>() {
+class AdapterFriends(private var listFriend: List<UserModel>,private var onClick:(UserModel)-> Unit): RecyclerView.Adapter<AdapterFriends.FriendsViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -34,6 +34,9 @@ class AdapterFriends(private var listFriend: List<UserModel>): RecyclerView.Adap
             }
         } else{
             holder.imgBanBe.setImageResource(R.drawable.profile)
+        }
+        holder.itemView.setOnClickListener {
+            onClick(listFriend[position])
         }
 
 

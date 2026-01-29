@@ -281,7 +281,10 @@ class UserProfileActivity : AppCompatActivity() {
 
         val currentFriends = viewModel2.friends.value ?: mutableListOf()
         Log.d("currentFriends", "$currentFriends")
-        revMessengerContacts.adapter = AdapterFriends(currentFriends)
+        revMessengerContacts.adapter = AdapterFriends(currentFriends){
+            val intent = Intent(this, FriendsProfileActivity::class.java)
+            intent.putExtra("friend_id", it.id)
+        }
         dialog.setContentView(view)
         dialog.show()
     }

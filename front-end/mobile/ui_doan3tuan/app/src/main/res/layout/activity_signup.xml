@@ -135,10 +135,10 @@
                         android:id="@+id/etPasswordSignup"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:inputType="textEmailAddress"
-                        android:textColor="@color/white"
                         android:background="@drawable/bg_button_gray"
-                        android:textSize="14sp"  />
+                        android:inputType="textPassword"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -166,7 +166,7 @@
                         android:id="@+id/etConfirmPassword"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:inputType="textEmailAddress"
+                        android:inputType="textPassword"
                         android:textColor="@color/white"
                         android:background="@drawable/bg_button_gray"
                         android:textSize="14sp" />

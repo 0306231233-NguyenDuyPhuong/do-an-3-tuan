@@ -43,7 +43,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val viewModel: SearchViewModel by viewModels()
     private val viewModel2: NewsletterViewModel by viewModels()
-
+    private var userId: Int = -1
     var page: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +53,8 @@ class SearchActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(applicationContext)
         val tokenFromSession = sessionManager.getAccessToken()
-
+        val user = sessionManager.getUser()
+        userId = user.id
         if (tokenFromSession == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
@@ -82,8 +83,12 @@ class SearchActivity : AppCompatActivity() {
             onCommentClick = { post -> showCommentDialog(post) },
             onReportClick = { post -> showReportDialog(post) },
             onImageClick = { id ->
+                if(id.toInt()==userId){
+                    startActivity(Intent(this, UserProfileActivity::class.java))
+                    return@AdapterNewsletter
+                }
                 val intent = Intent(this, FriendsProfileActivity::class.java)
-                intent.putExtra("id", id)
+                intent.putExtra("friend_id", id.toInt())
                 startActivity(intent)
             },
             onLikeClick = { post, isActionLike ->
@@ -167,9 +172,13 @@ class SearchActivity : AppCompatActivity() {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_report, null)
         val btnReport = view.findViewById<LinearLayout>(R.id.btnReport)
-        btnReport.setOnClickListener {
-            showDetailReportDialog(post.User.id, post.id)
-
+        if(post.User.id == userId) {
+            btnReport.visibility = View.GONE
+        }else{
+            btnReport.visibility = View.VISIBLE
+            btnReport.setOnClickListener {
+                showDetailReportDialog(post.User.id, post.id)
+            }
             dialog.dismiss()
         }
         val btnSavePost = view.findViewById<LinearLayout>(R.id.btnSavePost)
