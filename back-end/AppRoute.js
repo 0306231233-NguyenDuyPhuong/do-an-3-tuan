@@ -127,6 +127,12 @@ const AppRoute = (app) => {
     verifyToken,
     InteractController.isLiked
   );
+    router.get(
+    "/interact/post/like",
+    verifyToken,
+    InteractController.getLikedPost
+  );
+
 
   //router.get("/interact/count/:postId", InteractController.getCount);
 
