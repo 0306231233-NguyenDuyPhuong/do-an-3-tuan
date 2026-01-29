@@ -23,9 +23,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="20dp"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/txtHuy"
@@ -133,6 +132,61 @@
                 android:scrollbars="vertical"
                 android:text="Trăm năm chỉ có một lần ngàn năm chỉ có một người yêu tôi"
                 android:textColor="#E6DFDF" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Số điện thoại"
+                android:textColor="@color/white" />
+
+            <EditText
+                android:id="@+id/edtPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:scrollbars="vertical"
+                android:text="0978264349"
+                android:textColor="#E6DFDF" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Giới tính"
+                android:textColor="@color/white" />
+
+            <RadioGroup
+                android:id="@+id/rgGender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbMale"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:textColor="@color/white"
+                    android:text="Nam" />
+
+                <RadioButton
+                    android:id="@+id/rbFemale"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:textColor="@color/white"
+                    android:text="Nữ" />
+                <RadioButton
+                    android:id="@+id/rbOther"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:textColor="@color/white"
+                    android:text="Lựa chọn khác" />
+
+            </RadioGroup>
 
             <TextView
                 android:id="@+id/textView12"

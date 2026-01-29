@@ -33,7 +33,7 @@ class EditProfileViewModel : ViewModel() {
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
-    fun updateUserFull(token: String, full_name: String, file: File?) {
+    fun updateUserFull(token: String, full_name: String, file: File?,gender:Int,phone:String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 var avatarUrl: String? = null
@@ -47,7 +47,7 @@ class EditProfileViewModel : ViewModel() {
                     avatarUrl2 = avatarUrl
                 }
 
-                updateUserAPI(token, full_name, avatarUrl)
+                updateUserAPI(token, full_name, avatarUrl,gender,phone)
                 _updateUser.postValue(true)
 
             } catch (e: Exception) {
@@ -57,14 +57,17 @@ class EditProfileViewModel : ViewModel() {
         }
     }
 
-    private fun updateUserAPI(token: String, full_name: String, avatar: String?) {
+    private fun updateUserAPI(token: String, full_name: String, avatar: String?,gender:Int,phone:String?) {
         Log.d("Test", "--- BẮT ĐẦU updateUserAPI ---")
         try {
             val jsonObject = JSONObject()
             jsonObject.put("full_name", full_name)
+            jsonObject.put("phone", phone)
             if (avatar != null) {
                 jsonObject.put("avatar", avatar)
             }
+            jsonObject.put("gender", gender)
+
             val requestBodyString = jsonObject.toString()
             val mediaType = "application/json;charset=utf-8".toMediaType()
             val requestBody = requestBodyString.toRequestBody(mediaType)

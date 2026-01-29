@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
@@ -38,6 +39,8 @@ class EditProfileActivity : AppCompatActivity() {
     private var selectedImageFile: File? = null
     private lateinit var imgAvatar: ImageView
     private lateinit var txtUserName: EditText
+    private lateinit var txtPhone: EditText
+    private lateinit var rdoGioiTinh: RadioGroup
     private lateinit var btnLuu: TextView
     private lateinit var btnHuy: TextView
     private lateinit var btnEditImage: TextView
@@ -86,6 +89,8 @@ class EditProfileActivity : AppCompatActivity() {
     private fun initViews(){
         imgAvatar = findViewById(R.id.imgAnhDaiDien)
         txtUserName = findViewById(R.id.edtTenCSHS)
+        txtPhone = findViewById(R.id.edtPhone)
+        rdoGioiTinh = findViewById(R.id.rgGender)
         btnHuy = findViewById(R.id.txtHuy)
         btnLuu = findViewById(R.id.txtLuu)
         btnEditImage = findViewById(R.id.txtChinhSuaImage)
@@ -116,11 +121,22 @@ class EditProfileActivity : AppCompatActivity() {
                 var currentUser = sessionManager.getUser()
                 var newName = txtUserName.text.toString().trim()
                 currentUser.full_name = newName
+                currentUser.phone = txtPhone.text.toString().trim()
+                val checkedId = rdoGioiTinh.checkedRadioButtonId
+
+                val gender = when (checkedId) {
+                    R.id.rbMale -> 0
+                    R.id.rbFemale -> 1
+                    else -> 2
+                }
+                sessionManager.updateGender(gender)
+
                 if (avatarUrl2 != null){
                     currentUser.avatar = avatarUrl2
                     sessionManager.updateAvatar(avatarUrl2 ?: "")
                 }
                 sessionManager.updateUserName(newName)
+               sessionManager.updatePhone(txtPhone.text.toString().trim())
                 Snackbar.make(txtUserName, "Cập nhật thành công!", Snackbar.LENGTH_SHORT).show()
                 setResult(RESULT_OK)
                 finish()
@@ -136,7 +152,22 @@ class EditProfileActivity : AppCompatActivity() {
         var currentUser = sessionManager.getUser()
         var name = currentUser.full_name
         var image = currentUser.avatar
+        var phone = currentUser.phone
+        Log.d("Gender", "${currentUser.gender}")
+        var gender = currentUser.gender
+
         txtUserName.setText(name ?: "")
+        txtPhone.setText(phone?:"")
+        if(gender == 0) {
+            rdoGioiTinh.check(R.id.rbMale)
+        }else if(gender == 1) {
+            rdoGioiTinh.check(R.id.rbFemale)
+        }else if(gender == 2) {
+            rdoGioiTinh.check(R.id.rbOther)
+        }
+
+
+
         if (selectedImageFile == null) {
             val avatarUrl = if (image.isNullOrEmpty()) {
                 R.drawable.profile
@@ -157,12 +188,21 @@ class EditProfileActivity : AppCompatActivity() {
         // Nút Lưu
         btnLuu.setOnClickListener {
             val fullName = txtUserName.text.toString().trim()
+            val phone = txtPhone.text.toString().trim()
+            val checkedId = rdoGioiTinh.checkedRadioButtonId
+
+            val gender = when (checkedId) {
+                R.id.rbMale -> 0
+                R.id.rbFemale -> 1
+                else -> 2
+            }
+            Log.d("Gender", "tmp: ${gender}")
             if (fullName.isEmpty()) {
                 Snackbar.make(it, "Tên không được để trống", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             Snackbar.make(it, "Đang lưu...", Snackbar.LENGTH_SHORT).show()
-            editProfileViewModel.updateUserFull(accessToken, fullName, selectedImageFile)
+            editProfileViewModel.updateUserFull(accessToken, fullName, selectedImageFile,gender,phone)
         }
         btnHuy.setOnClickListener {
             finish()
