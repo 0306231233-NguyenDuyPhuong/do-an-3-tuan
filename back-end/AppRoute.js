@@ -78,6 +78,7 @@ const AppRoute = (app) => {
     verifyToken,
     InteractController.isLiked
   );
+  
   //INTERACT
   router.post(
     "/interact/like",

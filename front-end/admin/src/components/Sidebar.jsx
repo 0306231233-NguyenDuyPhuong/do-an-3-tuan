@@ -5,6 +5,8 @@ import { BsBookmark } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 import logo from "../images/logo.png"
+import { LuUserPen } from "react-icons/lu";
+
 const Sidebar = () => {
     const user = JSON.parse(localStorage.getItem("user"))
     const full_name = user?.full_name;
@@ -48,7 +50,9 @@ const Sidebar = () => {
                     <div className="flex flex-col gap-4">
                         <NavLink to="/" className={({ isActive }) =>
                             `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-gray-200 text-black font-bold" : "hover:bg-gray-50-100 text-2xl"}`
+                        ${isActive
+                                ? "bg-[rgb(132,93,240)] text-white font-bold"
+                                : "hover:bg-gray-100 text-gray-500"}`
                         }>
                             <div className="flex items-center gap-3">
                                 <FaChartBar size={30} color="grey" />
@@ -73,7 +77,9 @@ const Sidebar = () => {
 
                         <NavLink to="/user" className={({ isActive }) =>
                             `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-gray-200 text-black font-bold" : "hover:bg-gray-50-100 text-2xl"}`
+                        ${isActive
+                                ? "bg-[rgb(132,93,240)] text-white font-bold"
+                                : "hover:bg-gray-100 text-gray-500"}`
                         }>
                             <div className="flex items-center gap-3">
                                 <FaRegUser size="30" color="grey" />
@@ -84,7 +90,9 @@ const Sidebar = () => {
 
                         <NavLink to="/report" className={({ isActive }) =>
                             `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-gray-200 text-black font-bold" : "hover:bg-gray-50-100 text-2xl"}`
+                        ${isActive
+                                ? "bg-[rgb(132,93,240)] text-white font-bold"
+                                : "hover:bg-gray-100 text-gray-500"}`
                         }>
                             <div className="flex items-center gap-3">
                                 <BsBookmark size="30" color="grey" />
@@ -94,10 +102,12 @@ const Sidebar = () => {
 
                         <NavLink to="/user-profile" className={({ isActive }) =>
                             `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-gray-200 text-black font-bold" : "hover:bg-gray-50-100 text-2xl"}`
+                        ${isActive
+                                ? "bg-[rgb(132,93,240)] text-white font-bold"
+                                : "hover:bg-gray-100 text-gray-500"}`
                         }>
                             <div className="flex items-center gap-3">
-                                <BsBookmark size="30" color="grey" />
+                                <LuUserPen size="30" color="grey" />
                                 <span className="text-xl">User profile</span>
                             </div>
                         </NavLink>
@@ -107,7 +117,9 @@ const Sidebar = () => {
                             }}
                             className={({ isActive }) =>
                                 `block rounded-lg px-4 py-2 transition 
-                        ${isActive ? "bg-gray-200 text-black font-bold" : "hover:bg-gray-50-100 text-2xl"}`
+                        ${isActive
+                                    ? "bg-[rgb(132,93,240)] text-white font-bold"
+                                    : "hover:bg-gray-100 text-gray-500"}`
                             }>
                             <div className="flex items-center gap-3">
                                 <FiLogOut size="30" color="grey" />
