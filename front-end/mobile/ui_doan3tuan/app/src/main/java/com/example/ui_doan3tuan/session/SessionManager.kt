@@ -3,6 +3,7 @@ package com.example.ui_doan3tuan.session
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.example.ui_doan3tuan.model.User
 
 class SessionManager(context: Context) {
@@ -18,7 +19,8 @@ class SessionManager(context: Context) {
         pref.edit().apply {
             putString("access_token", accessToken)
             putString("refresh_token", refreshToken)
-
+            Log.d("Logout", "accessTokenSession: $accessToken")
+            Log.d("Logout", "refreshTokenSession: $refreshToken")
             putInt("user_id", user.id)
             putString("user_role", user.role)
             putString("full_name", user.full_name)

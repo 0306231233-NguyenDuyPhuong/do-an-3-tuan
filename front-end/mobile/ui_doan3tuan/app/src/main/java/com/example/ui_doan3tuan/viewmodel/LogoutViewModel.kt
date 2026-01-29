@@ -40,16 +40,17 @@ class LogoutViewModel: ViewModel() {
                     .post(requestBody)
                     .build()
                 val response = client.newCall(request).execute()
-
+                Log.d("Logout", "accessToken: $token")
+                Log.d("Logout", "refreshToken: $refreshToken")
                 if (response.isSuccessful) {
-                    Log.d("Test", "Đăng xuất thành công")
+                    Log.d("Logout", "Đăng xuất thành công")
 
                     _logout.postValue(true)
                 }
                 else{
-                    Log.d("Test", "Đăng xuất thất bại")
-                    Log.d("Test", "${response.code}")
-                    Log.d("Test", "${response.body}")
+                    Log.d("Logout", "Đăng xuất thất bại")
+                    Log.d("Logout", "${response.code}")
+                    Log.d("Logout", "${response.body}")
                 }
 
 
