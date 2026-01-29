@@ -373,6 +373,52 @@ const getSavePost = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const getLikedPost = async (req, res) => {
+  try {
+    const myId = req.user.userId;
+
+    const liked = await db.Like.findAll({
+      where: {
+        user_id: myId,
+      },
+      include: [
+        // user đang like post
+        {
+          model: db.User,
+          attributes: ["id", "full_name", "avatar", "status"],
+        },
+        {
+          model: db.Post,
+          where: { status: 1 },
+          include: [
+            {
+              model: db.User,
+              attributes: ["id", "full_name", "avatar"],
+            },
+            { model: db.Location },
+            { model: db.PostMedia },
+          ],
+        },
+      ],
+      order: [["created_at", "DESC"]],
+    });
+
+    const data = liked.map(item => {
+      const json = item.toJSON();
+      if (json.Post) {
+        json.Post.is_liked = true;
+      }
+      return json;
+    });
+
+    return res.status(200).json({ data });
+  } catch (error) {
+    console.error("get liked post error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export default {
   likePost,
   unlikePost,
@@ -383,4 +429,5 @@ export default {
   getSharedPost,
   getSavePost,
   isLiked,
+  getLikedPost
 };
