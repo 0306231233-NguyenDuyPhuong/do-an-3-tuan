@@ -53,6 +53,39 @@ export const putStatusUser = (id, newStatus) =>{
     })
 }
 
+export const putUser = (data) => {
+  return axios.put(
+    `http://localhost:8989/api/user/update`,
+    {
+      full_name: data.full_name,
+      phone: data.phone,
+      gender: data.gender,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
+
+export const uploadAvatar = (file, accessToken) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  return axios.post(
+    "http://localhost:8989/api/images/upload",
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+};
+
 export const refreshAccessToken = async () =>{
   try{
     const refreshToken = localStorage.getItem("refreshToken");
