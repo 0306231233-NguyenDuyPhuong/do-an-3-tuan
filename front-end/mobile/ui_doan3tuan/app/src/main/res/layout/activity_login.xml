@@ -96,6 +96,7 @@
                             android:textColorHint="#FF99A3B3"
                             android:textSize="14sp"
                             android:minHeight="48dp"
+                            android:textColor="@color/white"
                             android:hint="@string/email_phone"
                             android:background="@drawable/bg_button_gray"
                         android:inputType="textEmailAddress|textPersonName" />
@@ -132,6 +133,7 @@
                                 android:background="@drawable/bg_button_gray"
                                 android:textSize="14sp"
                                 android:minHeight="48dp"
+                                android:textColor="@color/white"
                                 android:hint="@string/password"
                             android:inputType="textPassword" />
 
