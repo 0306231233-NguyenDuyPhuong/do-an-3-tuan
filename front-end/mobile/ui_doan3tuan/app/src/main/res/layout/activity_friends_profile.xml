@@ -93,4 +93,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutButton"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/imageblock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/outline_report_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>

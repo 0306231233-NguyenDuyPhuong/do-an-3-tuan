@@ -59,6 +59,19 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("userId") userId: Int
     ): Call<UserPostResponse>
+
+    //Block friend
+    @POST("/api/friends/block")
+    fun blockUser(
+        @Header("Authorization") token: String,
+        @Body request: BlockRequest
+    ): Call<ApiMessage>
+    @PATCH("/api/friends/unblock")
+    fun unblockUser(
+        @Header("Authorization") token: String,
+        @Body request: BlockRequest
+    ): Call<ApiMessage>
+
 }
 
 object ApiClient {

@@ -1,6 +1,5 @@
 package com.example.ui_doan3tuan.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,6 +59,7 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
+
 
         holder.txtName.text = post.User.full_name
         Glide.with(holder.itemView.context)
