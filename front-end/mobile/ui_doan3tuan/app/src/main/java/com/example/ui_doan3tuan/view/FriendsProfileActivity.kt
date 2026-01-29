@@ -153,11 +153,13 @@ class FriendsProfileActivity : AppCompatActivity() {
     private fun setupButtons() {
         updateButtonUI()
         btnblock.setOnClickListener {
+
             if (isBlocked) {
                 unblockUser()
             } else {
                 blockUser()
             }
+
         }
 
         btnNhanTin.setOnClickListener {
@@ -219,10 +221,14 @@ class FriendsProfileActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ApiMessage>, response: Response<ApiMessage>) {
                 if (response.isSuccessful) {
                     hasSentRequest = true
+                    Log.d("KB", "Vao")
+
                     updateButtonUI()
                 }
-            }
+                Log.d("KB", "Ra")
+                Log.d("KB", "${response}")
 
+            }
             override fun onFailure(call: Call<ApiMessage>, t: Throwable) {}
         })
     }
@@ -267,6 +273,7 @@ class FriendsProfileActivity : AppCompatActivity() {
                 call: Call<ApiMessage>,
                 response: Response<ApiMessage>
             ) {
+                Log.d("TRUE", "${response}")
                 if (response.isSuccessful) {
                     isBlocked = true
                     isFriend = false
