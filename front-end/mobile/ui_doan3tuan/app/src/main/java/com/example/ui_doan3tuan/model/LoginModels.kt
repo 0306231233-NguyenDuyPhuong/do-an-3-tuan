@@ -35,3 +35,11 @@ data class User(
 data class ErrorResponse(
     val message: String
 )
+
+data class ForgotPasswordRequest(
+    val username: String
+)
+
+data class ForgotPasswordResponse(
+    val message: String
+)

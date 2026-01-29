@@ -12,6 +12,9 @@ interface ApiService {
     @POST("auth/register")
     fun register(@Body request: RegisterRequest): Call<RegisterResponse>
 
+    @POST("auth/forgot-password")
+    fun forgotPassword(@Body request: ForgotPasswordRequest): Call<ForgotPasswordResponse>
+
     // Friend Requests
     @GET("friends/requests")
     fun getFriendRequests(
